@@ -3,6 +3,7 @@
  */
 var api = require('express').Router();
 var User = require('../models/user');
+var Message = require('../models/message');
 
 api.post('/login', function(req, res) {
     User.findOne({
@@ -38,6 +39,16 @@ api.post('/register', function(req, res) {
         else {
             res.json({register: false});
         }
+    });
+});
+
+api.get('/session', function(req, res) {
+    res.json(req.session);
+});
+
+api.get('/messages', function(req, res) {
+    Message.findAll().then(function(messages) {
+        res.json(messages);
     });
 });
 
