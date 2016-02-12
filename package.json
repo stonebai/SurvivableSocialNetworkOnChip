@@ -1,0 +1,28 @@
+{
+  "name": "ssnoc-app",
+  "version": "1.0.0",
+  "description": "a team project in 18652(fse) course in CMU",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmusv-fse/S16-A2-SSNoC.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmusv-fse/S16-A2-SSNoC/issues"
+  },
+  "homepage": "https://github.com/cmusv-fse/S16-A2-SSNoC#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "express-socket.io-session": "^1.3.1",
+    "sequelize": "^3.19.2",
+    "socket.io": "^1.4.5",
+    "sqlite3": "^3.1.1"
+  }
+}

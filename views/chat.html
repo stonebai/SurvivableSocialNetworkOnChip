@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chatroom</title>
+    <script src="/public/js/jquery-1.12.0.min.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="/public/stylesheets/bootstrap-theme.css">
+    <script src="/public/js/bootstrap.min.js"></script>
+    <script src="/public/js/angular.min.js"></script>
+    <script src="/public/js/angular-route.min.js"></script>
+    <script src="/public/js/socket.io.js"></script>
+    <script src="/controllers/chat.js"></script>
+    <style>
+        .chatbox{
+            background-color: #EFEFEF;
+            margin-bottom: 1px;
+            padding: 5px;
+            opacity: 0.8;
+        }
+        .username-in-chatbox{
+            display: inline-block;
+            margin-right:30px;
+        }
+        .chatArea{
+            height: 600px;
+            padding: 0px;
+            overflow: scroll;
+        }
+    </style>
+</head>
+<body background="/public/img/chat-backgroud.jpg" style="background-size: cover">
+    <div class="container" ng-controller="MainCtrl" ng-app="chat">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <h4 style="display: inline-block">Hello <span>{{session.username}}</span>!</h4>
+                <button class="btn btn-default pull-right" ng-click="logout()">Logout</button>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="col-md-10 chatArea">
+                    <div class="chatbox" ng-repeat="message in messages">
+                        <h4 class="username-in-chatbox">{{message.author}}</h4>
+                        <small>{{message.timestamp}}</small>
+                        <p>{{message.content}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <input autocomplete="off" type="text" ng-model="post" clear-input>
+                <button class="btn btn-primary" ng-click="sendMessage(post)">Send</button>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+</body>
+</html>
