@@ -24,6 +24,7 @@
             margin-right:30px;
         }
         .chatArea{
+            height: 600px;
             padding: 0px;
             overflow: scroll;
         }
@@ -42,7 +43,7 @@
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-                <div class="col-md-8 chatArea">
+                <div class="col-md-10 chatArea">
                     <div class="chatbox" ng-repeat="message in messages">
                         <h4 class="username-in-chatbox">{{message.author}}</h4>
                         <small>{{message.timestamp}}</small>
