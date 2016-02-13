@@ -30,18 +30,9 @@ router.get('/login', function(req, res) {
     res.sendFile(path.join(__dirname, '../views/login.html'));
 });
 
-router.post('/chat', function(req, res) {
-    User.findOne({
-        where: {
-            username: req.body.loginUsername
-        }
-    }).then(function (user) {
-        if(user.password==req.body.password) {
-            req.session.username = req.body.loginUsername;
-            req.session.username = req.body.loginPassword;
-            res.sendFile(__dirname + '/../views/chat.html');
-        }
-    });
+router.get('/logout', function(req, res) {
+    req.session.destroy();
+    res.redirect('/login');
 });
 
 module.exports = router;

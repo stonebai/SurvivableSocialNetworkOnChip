@@ -31,10 +31,14 @@ app.controller('MainCtrl', function ($scope, $http, $window) {
                 }
             }
             else {
-                alert('Register failed!');
+                alert('Duplicate user name!');
             }
         });
     };
+
+    $scope.validate = function(ngFormController) {
+        return ngFormController.$valid;
+    }
 
     $scope.x = {
         mode: 'login'

@@ -3,7 +3,7 @@
  */
 var app = angular.module('chat', []);
 
-app.controller('MainCtrl', function($scope, $http) {
+app.controller('MainCtrl', function($scope, $http, $window, $location, $anchorScroll) {
 
     var socket = io();
 
@@ -27,11 +27,22 @@ app.controller('MainCtrl', function($scope, $http) {
             timestamp: new Date()
         }
         socket.emit('public chat', post);
+        $scope.post = "";
     };
+
+    $scope.logout = function() {
+        $window.location.href = '/logout';
+    }
 
     socket.on('public chat', function(post) {
         $scope.messages.push(post);
         $scope.$apply();
+        $location.hash('bottom');
+        $anchorScroll();
+        $scope.$apply();
     });
+
+    $location.hash('bottom');
+    $anchorScroll();
 
 });

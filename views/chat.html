@@ -13,6 +13,10 @@
     <script src="/public/js/socket.io.js"></script>
     <script src="/controllers/chat.js"></script>
     <style>
+        body{
+            background: url("/public/img/chat-backgroud.jpg") no-repeat center fixed;
+            background-size: cover;
+        }
         .chatbox{
             background-color: #EFEFEF;
             margin-bottom: 1px;
@@ -24,56 +28,59 @@
             margin-right:30px;
         }
         .chatArea{
-            height: 600px;
+            height: 400px;
             padding: 0px;
-            overflow: scroll;
+            overflow-y: scroll;
         }
 
-        .input_form input {
-            display: block;
-            width: 400px;
-            float: left;
+        .input_form input{
+            display: inline-block;
+            width: 70%;
+            margin: 5px;
         }
 
-        .input_form button {
-            display: block;
-            float : left;
+        .input_form button{
+            margin: 1px;
         }
 
+        .logoutbtn{
+            margin: 3px;
+        }
     </style>
 </head>
-<body background="/public/img/chat-backgroud.jpg" style="background-size: cover">
+<body>
     <div class="container" ng-controller="MainCtrl" ng-app="chat">
         <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
+            <div class="col-md-2 col-sm-2 col-xs-1"></div>
+            <div class="col-md-8 col-sm-8 col-xs-10">
                 <h4 style="display: inline-block">Hello <span>{{session.username}}</span>!</h4>
-                <button class="btn btn-default pull-right" ng-click="logout()">Logout</button>
+                <button class="btn btn-default pull-right logoutbtn" ng-click="logout()">Logout</button>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2 col-sm-2 col-xs-1"></div>
         </div>
         <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
-                <div class="col-md-10 chatArea">
+            <div class="col-md-2 col-sm-2"></div>
+            <div class="col-md-8 col-sm-8 col-xs-12">
+                <div class="chatArea">
                     <div class="chatbox" ng-repeat="message in messages">
                         <h4 class="username-in-chatbox">{{message.author}}</h4>
                         <small>{{message.timestamp}}</small>
                         <p>{{message.content}}</p>
                     </div>
+                    <div id="bottom"></div>
                 </div>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2 col-sm-2"></div>
         </div>
         <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
+            <div class="col-md-2 col-sm-2 col-xs-1"></div>
+            <div class="col-md-8 col-sm-8 col-sm-10">
                 <form class="input_form">
-                    <input autocomplete="off" type="text" ng-model="post" clear-input>
-                    <button type="submit" class="btn btn-primary" ng-click="sendMessage(post)">Send</button>
+                    <input autocomplete="off" type="text" ng-model="post">
+                    <button type="submit" class="btn btn-primary pull-right" ng-click="sendMessage(post)">Send</button>
                 </form>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2 col-sm-2 col-xs-1"></div>
         </div>
     </div>
 </body>
