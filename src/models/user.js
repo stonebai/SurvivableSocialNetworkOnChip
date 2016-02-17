@@ -4,7 +4,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('users', '', '', {
     dialect: 'sqlite',
-    storage: __dirname + '/../db/user.db'
+    storage: __dirname + '/../db/all.db'
 });
 
 /**

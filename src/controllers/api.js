@@ -11,13 +11,18 @@ api.post('/login', function(req, res) {
             username: req.body.loginUsername
         }
     }).then(function (user) {
-        if(user!=null && user.password==req.body.loginPassword) {
-            req.session.username = req.body.loginUsername;
-            req.session.password = req.body.loginPassword;
-            res.json({login:true});
+        if(user!=null) {
+            if (user.password==req.body.loginPassword) {
+                req.session.username = req.body.loginUsername;
+                req.session.password = req.body.loginPassword;
+                res.json({login:'success'});
+            }
+            else {
+                res.json({login:'fail'});
+            }
         }
         else {
-            res.json({login:false});
+            res.json({login:'empty'});
         }
     });
 });
@@ -33,6 +38,8 @@ api.post('/register', function(req, res) {
                 username: req.body.registerUsername,
                 password: req.body.registerPassword
             }).then(function (user) {
+                req.session.username = user.username;
+                req.session.password = user.password;
                 res.json({register: true});
             });
         }
@@ -40,6 +47,10 @@ api.post('/register', function(req, res) {
             res.json({register: false});
         }
     });
+});
+
+api.get('/users', function(req, res) {
+
 });
 
 api.get('/session', function(req, res) {

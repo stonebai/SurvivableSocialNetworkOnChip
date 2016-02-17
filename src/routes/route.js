@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
                 username: req.session.username
             }
         }).then(function(user) {
-            if(user.password!=null && user.password==req.session.password) {
+            if(user!=null && user.password==req.session.password) {
                 res.sendFile(path.join(__dirname, '../views/chat.html'));
             }
             else {

@@ -10,6 +10,7 @@
     <script src="/public/js/bootstrap.min.js"></script>
     <script src="/public/js/angular.min.js"></script>
     <script src="/public/js/angular-route.min.js"></script>
+    <script src="/public/js/angular-confirm.js"></script>
     <script src="/controllers/login.js"></script>
     <style>
         body{
@@ -27,15 +28,15 @@
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4"></div>
         </div>
-        <div class="row" ng-switch on="x.mode">
+        <div class="row">
             <div class="col-md-2 col-sm-1 col-xs-1"></div>
-            <div class="col-md-8 col-sm-10 col-xs-10" ng-switch-when="login">
-                <form role="form">
+            <div class="col-md-8 col-sm-10 col-xs-10">
+                <form role="form" name="loginForm">
                     <div class="form-group row">
                         <div class="col-md-3 col-sm-2 col-xs-1"></div>
                         <div class="col-md-6 col-sm-8 col-xs-10">
                             <label for="loginUsername">User Name:</label>
-                            <input type="text" class="form-control" id="loginUsername" ng-model="user.loginName">
+                            <input type="text" class="form-control" id="loginUsername" ng-model="user.name">
                         </div>
                         <div class="col-md-3 col-sm-2 col-xs-1"></div>
                     </div>
@@ -43,45 +44,15 @@
                         <div class="col-md-3 col-sm-2 col-xs-1"></div>
                         <div class="col-md-6 col-sm-8 col-xs-10">
                             <label for="loginPassword">Password:</label>
-                            <input type="password" class="form-control" id="loginPassword" ng-model="user.loginPassword">
+                            <input type="password" class="form-control" id="loginPassword" ng-model="user.password">
                         </div>
                         <div class="col-md-3 col-sm-2 col-xs-1"></div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 col-sm-2 col-xs-1"></div>
                         <div class="col-md-3 col-sm-4 col-xs-5">
-                            <button class="btn btn-primary" ng-click="checkUser(user)">Login</button>
+                            <button class="btn btn-primary" ng-click="login(user)">Login</button>
                         </div>
-                        <div class="col-md-3 col-sm-4 col-xs-5"><a ng-click="x.mode='register'">No Account Yet?</a></div>
-                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-8 col-sm-10 col-xs-10" ng-switch-when="register">
-                <form role="form" name="registerForm">
-                    <div class="form-group row">
-                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
-                        <div class="col-md-6 col-sm-8 col-xs-10">
-                            <label for="registerUsername">User Name:</label>
-                            <input type="text" class="form-control" id="registerUsername" ng-required="true" ng-model="user.registerName">
-                        </div>
-                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
-                        <div class="col-md-6 col-sm-8 col-xs-10">
-                            <label for="registerPassword">Password:</label>
-                            <input type="password" class="form-control" id="registerPassword" ng-required="true"
-                                   ng-maxlength="20" ng-model="user.registerPassword">
-                        </div>
-                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
-                        <div class="col-md-3 col-sm-4 col-xs-5">
-                            <button class="btn btn-primary" ng-disabled="!validate(registerForm)" ng-click="createUser(user)">Register</button>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-xs-5"><a ng-click="x.mode='login'">Go Login?</a></div>
                         <div class="col-md-3 col-sm-2 col-xs-1"></div>
                     </div>
                 </form>

@@ -1,3 +1,5 @@
 .idea/
-db/*.db
+src/db/
 *.db
+src/node_modules/
+*.DS_Store

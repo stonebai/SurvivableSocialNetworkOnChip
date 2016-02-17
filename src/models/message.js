@@ -4,7 +4,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('messages', '', '', {
     dialect: 'sqlite',
-    storage: __dirname + '/../db/message.db'
+    storage: __dirname + '/../db/all.db'
 });
 
 var Message = sequelize.define('message', {
