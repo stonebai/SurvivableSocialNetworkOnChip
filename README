@@ -1,1 +1,9 @@
 This is a README file.
+
+Deployment steps:
+1) connect to the internet 
+2) run "npm install"
+3) run "node src/app.js"
+
+The application should now be avilable at yourip:3000 
+
