@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <script src="/public/js/jquery-1.12.0.min.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="/public/stylesheets/bootstrap-theme.css">
+    <script src="/public/js/bootstrap.min.js"></script>
+    <script src="/public/js/angular.min.js"></script>
+    <script src="/public/js/angular-route.min.js"></script>
+    <script src="/controllers/login.js"></script>
+    <style>
+        body{
+            background: url("/public/img/login-backgroud.jpg") no-repeat center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" ng-controller="MainCtrl" ng-app='login'>
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-4"></div>
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <img src="/public/img/login-icon.png" class="center-block" style="max-width: 100%; max-height: 100%;">
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4"></div>
+        </div>
+        <div class="row" ng-switch on="x.mode">
+            <div class="col-md-2 col-sm-1 col-xs-1"></div>
+            <div class="col-md-8 col-sm-10 col-xs-10" ng-switch-when="login">
+                <form role="form">
+                    <div class="form-group row">
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                        <div class="col-md-6 col-sm-8 col-xs-10">
+                            <label for="loginUsername">User Name:</label>
+                            <input type="text" class="form-control" id="loginUsername" ng-model="user.loginName">
+                        </div>
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                        <div class="col-md-6 col-sm-8 col-xs-10">
+                            <label for="loginPassword">Password:</label>
+                            <input type="password" class="form-control" id="loginPassword" ng-model="user.loginPassword">
+                        </div>
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                        <div class="col-md-3 col-sm-4 col-xs-5">
+                            <button class="btn btn-primary" ng-click="checkUser(user)">Login</button>
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-5"><a ng-click="x.mode='register'">No Account Yet?</a></div>
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-8 col-sm-10 col-xs-10" ng-switch-when="register">
+                <form role="form" name="registerForm">
+                    <div class="form-group row">
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                        <div class="col-md-6 col-sm-8 col-xs-10">
+                            <label for="registerUsername">User Name:</label>
+                            <input type="text" class="form-control" id="registerUsername" ng-required="true" ng-model="user.registerName">
+                        </div>
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                        <div class="col-md-6 col-sm-8 col-xs-10">
+                            <label for="registerPassword">Password:</label>
+                            <input type="password" class="form-control" id="registerPassword" ng-required="true"
+                                   ng-maxlength="20" ng-model="user.registerPassword">
+                        </div>
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                        <div class="col-md-3 col-sm-4 col-xs-5">
+                            <button class="btn btn-primary" ng-disabled="!validate(registerForm)" ng-click="createUser(user)">Register</button>
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-5"><a ng-click="x.mode='login'">Go Login?</a></div>
+                        <div class="col-md-3 col-sm-2 col-xs-1"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2 col-sm-1 col-xs-1"></div>
+        </div>
+    </div>
+</body>
+</html>
