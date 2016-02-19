@@ -5,6 +5,15 @@ var api = require('express').Router();
 var User = require('../models/user');
 var Message = require('../models/message');
 
+api.get('/checklogin', function (req, res) {
+    if (!req.session || !req.session.username) {
+        res.json({ 'logined': false });
+    }
+    else {
+        res.json({ 'logined': true, 'username': req.session.username });
+    }
+});
+
 api.post('/login', function(req, res) {
     User.findOne({
         where: {

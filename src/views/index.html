@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html ng-app="MyApp">
+<head>
+    <!-- Required meta tags-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Your app title -->
+    <title>My App</title>
+    <!-- Path to Framework7 Library CSS, iOS Theme -->
+    <link rel="stylesheet" href="/public/framework7/css/framework7.ios.min.css">
+    <!-- Path to Framework7 color related styles, iOS Theme -->
+    <link rel="stylesheet" href="/public/framework7/css/framework7.ios.colors.min.css">
+    <!-- Path to your custom app styles-->
+    <link rel="stylesheet" href="/public/framework7/css/my-app.css">
+</head>
+<body>
+    <!-- LOGIN Page -->
+    <div class="login-screen">
+        <!-- Default view-page layout -->
+        <div class="view">
+            <div class="page" ng-controller="LoginController">
+                <!-- page-content has additional login-screen content -->
+                <div class="page-content login-screen-content">
+                    <div class="login-screen-title">My App</div>
+                    <!-- Login form -->
+                    <form>
+                        <div class="list-block">
+                            <ul>
+                                <li class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-input">
+                                            <input type="text" name="username" placeholder="Username" ng-model="user.name">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-password"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-input">
+                                            <input type="password" name="password" placeholder="Password" ng-model="user.password">
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                    <a href="#" class="item-link list-button" ng-click="login(user)">Sign In</a>
+                                </li>
+                            </ul>
+                            <div class="list-block-labe">Some text with login information.</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Status bar overlay for full screen mode (PhoneGap) -->
+    <div class="statusbar-overlay"></div>
+    <!-- Views -->
+    <div class="views">
+        <!-- Your main view, should have "view-main" class -->
+        <div class="view view-main">
+            <!-- Top Navbar-->
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
+                    <div class="center sliding">Awesome App</div>
+                </div>
+            </div>
+            <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
+            <div class="pages navbar-through toolbar-through">
+                <!-- Page, "data-page" contains page name -->
+                <div data-page="index" class="page" ng-controller="ChatController">
+                    <!-- messagebar -->
+                    <div class="toolbar messagebar">
+                        <div class="toolbar-inner">
+                            <textarea placeholder="Message" ng-model="post"></textarea>
+                            <a href="#" class="link" ng-click="sendMessage(post)" ng-disabled="post.trim()==''">Send</a>
+                        </div>
+                    </div>
+                    <!-- Scrollable page content -->
+                    <div class="page-content">
+                        <div class="messages">
+                            <!--
+                            <div ng-repeat="m in messages"
+                                 ng-class='{"message-received":m.author != session.username,
+                                 "message-sent":m.author == session.username}'
+                                 class="message message-sent message-with-tail">
+                                <div class="message-name" ng-bind="m.author">Kate</div>
+                                <div class="message-text" ng-bind="m.content"></div>
+                            </div>
+                                -->
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+    <!-- Path to Framework7 Library JS-->
+    <script type="text/javascript" src="/public/framework7/js/framework7.min.js"></script>
+    <!-- Path to your app js-->
+    <script src="/public/js/angular.min.js"></script>
+    <script src="/public/js/socket.io.js"></script>
+    <script type="text/javascript" src="/public/js/config.js"></script>
+    <script type="text/javascript" src="/public/js/BootService.js"></script>
+    <script type="text/javascript" src="/public/js/controller/login.js"></script>
+    <script type="text/javascript" src="/public/js/controller/chat.js"></script>
+</body>
+</html>
+

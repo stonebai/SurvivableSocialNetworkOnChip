@@ -6,7 +6,13 @@ var router = express.Router();
 var path = require('path');
 var User = require(path.join(__dirname, '../models/user'));
 
-router.get('/', function(req, res, next) {
+
+
+router.get('/', function (req, res, next) {
+    
+    res.sendFile(path.join(__dirname, '../views/index.html'));
+    
+    /*
     if(req.session.username!=null && req.session.password!=null) {
         User.findOne({
             where: {
@@ -14,7 +20,7 @@ router.get('/', function(req, res, next) {
             }
         }).then(function(user) {
             if(user!=null && user.password==req.session.password) {
-                res.sendFile(path.join(__dirname, '../views/chat.html'));
+                res.sendFile(path.join(__dirname, '../views/index.html'));
             }
             else {
                 res.redirect('/login');
@@ -24,6 +30,7 @@ router.get('/', function(req, res, next) {
     else {
         res.redirect('/login');
     }
+     */
 });
 
 router.get('/login', function(req, res) {

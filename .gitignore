@@ -3,3 +3,8 @@ src/db/
 *.db
 src/node_modules/
 *.DS_Store
+*.njsproj
+*.sln
+*.dll
+bin/
+obj/
