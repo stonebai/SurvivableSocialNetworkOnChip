@@ -1,11 +1,11 @@
-﻿MyApp.angular.controller('ChatController', 
+﻿MyApp.angular.controller('PublicChatController',
     ['$scope', '$http', '$window', '$location', '$anchorScroll', 'BootService', 
     function ($scope, $http, $window, $location, $anchorScroll, BootService) {
         
         $scope.messages = [];
-        $scope.session = null;
+        $scope.username = "";
         var socket = null;
-        var messageLayout = MyApp.fw7.app.messages('.messages', {
+        var messageLayout = MyApp.fw7.app.messages('#public_messages', {
             autoLayout: true
         });
         
@@ -24,7 +24,22 @@
                 //time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
             });
         }
-        
+
+        function addMessages(data) {
+            var msgs = [];
+            for(var i = 0; i < data.length; i++) {
+                var post = data[i];
+                var messageType = (post.author == MyApp.username) ? 'sent': 'received';
+                msgs.push({
+                    text: post.content,
+                    type: messageType,
+                    name: post.author,
+                });
+            }
+            messageLayout.addMessages(msgs, 'append', false);
+            messageLayout.scrollMessages();
+        }
+
         $scope.sendMessage = function (message) {
             var post = {
                 author: MyApp.username,
@@ -38,6 +53,7 @@
         BootService.addEventListener('login', function () {
             
             socket = MyApp.socket;
+            $scope.username = MyApp.username;
             
             /*
             $http.get('/api/session').success(function (data, status) {
@@ -52,9 +68,8 @@
             });
              */
             $http.get('/api/messages').success(function (data, status) {
-                for (var i = 0; i < data.length; i++) {
-                    addMessageToLayout(data[i]);
-                }
+                addMessages(data);
+
             });
 
             socket.on('public chat', function (post) {

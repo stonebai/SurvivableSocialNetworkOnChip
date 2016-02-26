@@ -33,13 +33,10 @@ router.get('/', function (req, res, next) {
      */
 });
 
-router.get('/login', function(req, res) {
-    res.sendFile(path.join(__dirname, '../views/login.html'));
-});
+//router.get('/login', function(req, res) {
+//    res.sendFile(path.join(__dirname, '../views/login.html'));
+//});
 
-router.get('/logout', function(req, res) {
-    req.session.destroy();
-    res.redirect('/login');
-});
+
 
 module.exports = router;

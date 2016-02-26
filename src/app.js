@@ -8,7 +8,7 @@ var session = require('express-session')({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1 * 60 * 1000
+        maxAge: 1 * 60 * 1000 * 100
     }
 });
 var http = require('http');

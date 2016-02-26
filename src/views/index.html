@@ -16,6 +16,32 @@
     <link rel="stylesheet" href="/public/framework7/css/my-app.css">
 </head>
 <body>
+
+    <!-- Right panel -->
+    <div class="panel panel-left panel-reveal" ng-controller="SidePanelController">
+        <div class="content-block">
+            <p>Current User: <span ng-bind="username"></span></p>
+            <!-- Click on link with "close-panel" class will close panel -->
+            <p><a href="#public_chat" class="close-panel">Public Chat</a></p>
+            <p><a href="#" ng-click="logout()">Logout</a></p>
+            <p><a href="#about" class="close-panel" >About</a></p>
+
+            <div class="content-block-title">All Users</div>
+            <div class="list-block">
+                <ul style="background: #111">
+                    <a ng-repeat="u in users" href="#" class="item-link close-panel" ng-click="openPrivateChat(u)">
+                        <li class="item-content">
+                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title" ng-bind="u.username">Item title</div>
+                            </div>
+                        </li>
+                    </a>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- LOGIN Page -->
     <div class="login-screen">
         <!-- Default view-page layout -->
@@ -52,7 +78,6 @@
                                     <a href="#" class="item-link list-button" ng-click="login(user)">Sign In</a>
                                 </li>
                             </ul>
-                            <div class="list-block-labe">Some text with login information.</div>
                         </div>
                     </form>
                 </div>
@@ -63,21 +88,35 @@
 
     <!-- Status bar overlay for full screen mode (PhoneGap) -->
     <div class="statusbar-overlay"></div>
+
+
+
+
+
+
     <!-- Views -->
     <div class="views">
         <!-- Your main view, should have "view-main" class -->
         <div class="view view-main">
+
             <!-- Top Navbar-->
-            <div class="navbar">
+            <div class="navbar" ng-controller="NavbarController">
                 <div class="navbar-inner">
                     <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
-                    <div class="center sliding">Awesome App</div>
+                    <div class="left">
+                        <a href="#" class="open-panel link icon-only" ng-click="clickNav()">
+                            <i class="icon icon-bars"></i>
+                        </a>
+                    </div>
+                    <div class="center sliding">Public Chat</div>
+
                 </div>
             </div>
+
             <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
-            <div class="pages navbar-through toolbar-through">
+            <div class="pages">
                 <!-- Page, "data-page" contains page name -->
-                <div data-page="index" class="page" ng-controller="ChatController">
+                <div data-page="public_chat" class="page" ng-controller="PublicChatController">
                     <!-- messagebar -->
                     <div class="toolbar messagebar">
                         <div class="toolbar-inner">
@@ -87,21 +126,45 @@
                     </div>
                     <!-- Scrollable page content -->
                     <div class="page-content">
-                        <div class="messages">
-                            <!--
-                            <div ng-repeat="m in messages"
-                                 ng-class='{"message-received":m.author != session.username,
-                                 "message-sent":m.author == session.username}'
-                                 class="message message-sent message-with-tail">
-                                <div class="message-name" ng-bind="m.author">Kate</div>
-                                <div class="message-text" ng-bind="m.content"></div>
-                            </div>
-                                -->
+                        <div class="messages" id="public_messages">
                         </div>
-                        
                     </div>
                 </div>
+
+                <div data-page="private_chat" class="page cached" ng-controller="PrivateChatController">
+                    <!-- messagebar -->
+                    <div class="toolbar messagebar">
+                        <div class="toolbar-inner">
+                            <textarea placeholder="Message" ng-model="post"></textarea>
+                            <a href="#" class="link" ng-click="sendMessage(post)" ng-disabled="post.trim()==''">Send</a>
+                        </div>
+                    </div>
+                    <!-- Scrollable page content -->
+                    <div class="page-content">
+                        <div class="messages" id="private_messages">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div data-page="about" class="page cached">
+                    <div class="page-content">
+                        <h1>Survivable Social Network</h1>
+                        <p>
+                            We call it Survivable Social Network on a Chip, or SSNoC.
+                            Imagine that a natural disaster struck your neighborhood. There is a blackout - no electricity. The cellular network is down. You have a mobile phone,  but you can’t use it. Most of your neighbors have smartphones, which are now useless.  Power and cellular service may be restored soon, but in the meantime you wish to touch base with your neighbors, exchange information with them, ask for help, and tell them you’re ok. What do you do?
+                            You plug in the SSNoC to a battery pack, which powers up and instantly creates a small wifi network. It has limited range, but it will do for now.
+                            Your neighbors can connect to SSNoC wifi through their smartphones, fire up their mobile browser, sign up on the SSNoC, and start sharing and receiving information.
+                            They should not need to download an app to access SSNoC. Well, there is no internet, no cellular service, no power, nothing.
+                        </p>
+                    </div>
+                </div>
+
+
+
             </div>
+
+
            
         </div>
     </div>
@@ -111,9 +174,12 @@
     <script src="/public/js/angular.min.js"></script>
     <script src="/public/js/socket.io.js"></script>
     <script type="text/javascript" src="/public/js/config.js"></script>
-    <script type="text/javascript" src="/public/js/BootService.js"></script>
-    <script type="text/javascript" src="/public/js/controller/login.js"></script>
-    <script type="text/javascript" src="/public/js/controller/chat.js"></script>
+    <script type="text/javascript" src="/public/js/service/BootService.js"></script>
+    <script type="text/javascript" src="/public/js/controller/LoginController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/NavbarController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/PublicChatController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/SidePanelController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/PrivateChatController.js"></script>
 </body>
 </html>
 

@@ -7,7 +7,9 @@ MyApp.angular = angular.module('MyApp', []);
 
 MyApp.fw7 = {
     app : new Framework7({
-        animateNavBackIcon: true
+        animateNavBackIcon: true,
+        dynamicNavbar: true,
+        domCache: true,
     }),
     options : {
         dynamicNavbar: true,
@@ -15,7 +17,6 @@ MyApp.fw7 = {
     },
     views : [],
 };
-
 
 MyApp.fw7.app.loginScreen();
 MyApp.socket = null;

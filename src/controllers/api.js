@@ -22,8 +22,8 @@ api.post('/login', function(req, res) {
     }).then(function (user) {
         if(user!=null) {
             if (user.password==req.body.loginPassword) {
+                req.session.uid = user.id;
                 req.session.username = req.body.loginUsername;
-                req.session.password = req.body.loginPassword;
                 res.json({login:'success'});
             }
             else {
@@ -47,8 +47,8 @@ api.post('/register', function(req, res) {
                 username: req.body.registerUsername,
                 password: req.body.registerPassword
             }).then(function (user) {
+                req.session.uid = user.id;
                 req.session.username = user.username;
-                req.session.password = user.password;
                 res.json({register: true});
             });
         }
@@ -59,7 +59,17 @@ api.post('/register', function(req, res) {
 });
 
 api.get('/users', function(req, res) {
-
+    console.log("session id " + req.session.id)
+    User.findAll({
+        attributes: ['id', 'username'],
+        where: {
+            "id": {
+                $ne: req.session.uid,
+            }
+        }
+    }).then(function(users){
+        res.json(users);
+    });
 });
 
 api.get('/session', function(req, res) {
@@ -70,6 +80,11 @@ api.get('/messages', function(req, res) {
     Message.findAll().then(function(messages) {
         res.json(messages);
     });
+});
+
+api.post('/logout', function(req, res) {
+    req.session.destroy();
+    res.json({'status' : 'OK'});
 });
 
 module.exports = api;

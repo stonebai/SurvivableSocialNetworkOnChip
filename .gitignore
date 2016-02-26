@@ -8,3 +8,4 @@ src/node_modules/
 *.dll
 bin/
 obj/
+.ntvs_analysis.dat
