@@ -1,6 +1,5 @@
 var router = require('express').Router();
 var User = require('../models/user.js');
-var Ret = require('../models/Ret.js');
 var Session = require('../models/Session.js');
 
 /* Register or Login API */
@@ -27,12 +26,12 @@ router.post('/users/:userName', function(req, res){
                 }).then(function(user){
                     Session.login(req, user);
                     //if new user is created, status code = 201
-                    res.status(201).json(Ret("", {}));
+                    res.status(201).json({});
                 });
             }else{
                 Session.login(req, user);
                 //if user exists, status code = 200
-                res.status(200).json(Ret("", {}));
+                res.status(200).json({});
             }
         });
     }
@@ -44,7 +43,7 @@ router.get('/users', function(req, res){
         attributes: ['id', 'username'],
         where: {}
     }).then(function(users){
-        res.status(200).json(Ret("", users));
+        res.status(200).json(users);
     });
 });
 
@@ -57,9 +56,9 @@ router.get('/users/:userName', function(req, res){
         }
     }).then(function(user){
         if (!user) {
-            res.status(404).json(Ret("", {}));
+            res.status(404).json({});
         } else {
-            res.status(200).json(Ret("", user));
+            res.status(200).json(user);
         }
     });
 });
