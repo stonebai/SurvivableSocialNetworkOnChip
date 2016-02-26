@@ -1,13 +1,13 @@
 var session = require("express-session")
 
 var Session = {
-
+    onlineUser: {}
 };
 
 /* Session check for API */
 Session.loginRequired = function(req, res, next){
     if(!req.session.user){
-        res.redirect("/login");
+        res.status(401).json({});
     }else{
         next();
     }
@@ -19,14 +19,16 @@ Session.login = function(req, user){
         username: user.username
     };
 
-    //Todo: add user to online list
-}
+    Session.onlineUser[req.session.user.username] = {
+        //used for the socket.io
+        count: 0,
+    };
+};
 
 
 Session.logout = function(req){
+    delete Session.onlineUser[req.session.user.username];
     req.session.user = null;
-
-    //Todo: remove the user from online list
-}
+};
 
 module.exports = Session

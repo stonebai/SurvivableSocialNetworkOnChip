@@ -13,33 +13,33 @@ var sequelize = new Sequelize('users', '', '', {
  */
 var User = sequelize.define('user', {
     username: {
-        field: 'username'
+        field: 'username',
         type: Sequelize.STRING,
     },
     password: {
-        field: 'password'
+        field: 'password',
         type: Sequelize.STRING,
     },
     createdAt: {
-        field: 'createdAt'
+        field: 'createdAt',
         type: Sequelize.INTEGER,
     },
     updatedAt: {
-        field: 'updatedAt'
-        tyep: Sequelize.INTEGER,
+        field: 'updatedAt',
+        type: Sequelize.INTEGER,
     },
     lastLoginAt: {
-        field: 'lastLoginAt'
+        field: 'lastLoginAt',
         type: Sequelize.INTEGER,
     },
     lastStatusCode: {
-        field: 'lastStatusCode'
+        field: 'lastStatusCode',
         type: Sequelize.ENUM,
         values: ['GREEN', 'YELLOW', 'RED'],
         defaultValue: 'GREEN'
-    }
+    },
     accountStatus: {
-        field: 'accountStatus'
+        field: 'accountStatus',
         type: Sequelize.ENUM,
         values: ['ACTIVE', 'INACTIVE'],
         defaultValue: 'ACTIVE'

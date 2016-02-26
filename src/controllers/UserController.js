@@ -29,15 +29,20 @@ router.post('/users/:userName', function(req, res){
                     res.status(201).json({});
                 });
             }else{
-                Session.login(req, user);
-                //if user exists, status code = 200
-                res.status(200).json({});
+                if(user.password == passowrd){
+                    Session.login(req, user);
+                    //if user exists, status code = 200
+                    res.status(200).json({});
+                }else{
+                    res.status(401).json({});
+                }
             }
         });
     }
 });
 
 /* Retireve all users */
+router.get('/users', Session.loginRequired);
 router.get('/users', function(req, res){
     User.findAll({
         attributes: ['id', 'username'],
@@ -49,6 +54,7 @@ router.get('/users', function(req, res){
 
 
 /* Retrieve a user's record */
+router.get('/users/:userName', Session.loginRequired);
 router.get('/users/:userName', function(req, res){
     User.findOne({
         where: {
