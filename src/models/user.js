@@ -13,16 +13,40 @@ var sequelize = new Sequelize('users', '', '', {
  */
 var User = sequelize.define('user', {
     username: {
-        type: Sequelize.STRING,
         field: 'username'
+        type: Sequelize.STRING,
     },
     password: {
-        type: Sequelize.STRING,
         field: 'password'
+        type: Sequelize.STRING,
+    },
+    createdAt: {
+        field: 'createdAt'
+        type: Sequelize.INTEGER,
+    },
+    updatedAt: {
+        field: 'updatedAt'
+        tyep: Sequelize.INTEGER,
+    },
+    lastLoginAt: {
+        field: 'lastLoginAt'
+        type: Sequelize.INTEGER,
+    },
+    lastStatusCode: {
+        field: 'lastStatusCode'
+        type: Sequelize.ENUM,
+        values: ['GREEN', 'YELLOW', 'RED'],
+        defaultValue: 'GREEN'
+    }
+    accountStatus: {
+        field: 'accountStatus'
+        type: Sequelize.ENUM,
+        values: ['ACTIVE', 'INACTIVE'],
+        defaultValue: 'ACTIVE'
     }
 }, {
     timestamps: false,
-    tableName: 'login'
+    tableName: 'user'
 });
 
 module.exports = User;

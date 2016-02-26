@@ -1,6 +1,6 @@
 var router = require('express').Router();
-var User = require('../models/user.js');
-var Session = require('../models/Session.js');
+var User = require('../models/User');
+var Session = require('../models/Session');
 
 /* Register or Login API */
 router.post('/users/:userName', function(req, res){

@@ -2,7 +2,7 @@
  * Created by baishi on 2/8/16.
  */
 var api = require('express').Router();
-var User = require('../models/user');
+var User = require('../models/User');
 var Message = require('../models/message');
 
 api.get('/checklogin', function (req, res) {
