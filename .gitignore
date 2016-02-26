@@ -1,7 +1,7 @@
 .idea/
 src/db/
 *.db
-src/node_modules/
+node_modules/
 *.DS_Store
 *.njsproj
 *.sln
