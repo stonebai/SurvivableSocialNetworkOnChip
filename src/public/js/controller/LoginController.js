@@ -1,6 +1,6 @@
 ﻿MyApp.angular.controller('LoginController', 
-    ['$scope', '$http', '$window', 'BootService',
-    function ($scope, $http, $window, BootService) {
+    ['$scope', '$http', '$window', 'BootService', 'UserService',
+    function ($scope, $http, $window, BootService, UserService) {
 
         var fw7 = MyApp.fw7.app;
         
@@ -22,7 +22,7 @@
             }).success(function (data, status) {
                 if (data.login == 'success') {
                     //$window.location.href = '/';
-                    loginSuccess(user);
+                    loginSuccess(data.user);
                 }
                 else if (data.login == 'fail') {
                     fw7.alert('Wrong user name or password!', "App Alert");
@@ -35,7 +35,7 @@
                         }).success(function (data, status) {
                             if (data.register) {
                                 //$window.location.href = '/';
-                                loginSuccess(user);
+                                loginSuccess(data.user);
                             }
                             else {
                                 fw7.alert('Register failed, please try again later!',"App Alert");
@@ -47,8 +47,10 @@
         }
         
         function loginSuccess(user) {
+            //MyApp.socket = io(window.location.origin, {query: "uid=" + user.id});
             MyApp.socket = io();
-            MyApp.username = user.name;
+            console.log(user);
+            UserService.currentUser = user;
             MyApp.fw7.app.closeModal();
             BootService.trigger('login');
         }

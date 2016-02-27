@@ -1,6 +1,6 @@
 ﻿MyApp.angular.controller('PublicChatController',
-    ['$scope', '$http', '$window', '$location', '$anchorScroll', 'BootService', 
-    function ($scope, $http, $window, $location, $anchorScroll, BootService) {
+    ['$scope', '$http', '$window', '$location', '$anchorScroll', 'BootService', 'UserService',
+    function ($scope, $http, $window, $location, $anchorScroll, BootService, UserService) {
         
         $scope.messages = [];
         $scope.username = "";
@@ -10,7 +10,7 @@
         });
         
         function addMessageToLayout(post) {
-            var messageType = (post.author == MyApp.username) ? 'sent': 'received';
+            var messageType = (post.author == UserService.currentUser.username) ? 'sent': 'received';
             messageLayout.addMessage({
                 // Message text
                 text: post.content,
@@ -29,7 +29,7 @@
             var msgs = [];
             for(var i = 0; i < data.length; i++) {
                 var post = data[i];
-                var messageType = (post.author == MyApp.username) ? 'sent': 'received';
+                var messageType = (post.author == UserService.currentUser.username) ? 'sent': 'received';
                 msgs.push({
                     text: post.content,
                     type: messageType,
@@ -42,7 +42,7 @@
 
         $scope.sendMessage = function (message) {
             var post = {
-                author: MyApp.username,
+                author: UserService.currentUser.username,
                 content: message,
                 timestamp: new Date()
             }
@@ -53,7 +53,7 @@
         BootService.addEventListener('login', function () {
             
             socket = MyApp.socket;
-            $scope.username = MyApp.username;
+            $scope.username = UserService.currentUser.username;
             
             /*
             $http.get('/api/session').success(function (data, status) {

@@ -3,8 +3,8 @@
  */
 
 MyApp.angular.controller('SidePanelController',
-    ['$scope', '$http', 'BootService',
-        function ($scope, $http, BootService) {
+    ['$scope', '$http', 'BootService', 'UserService',
+        function ($scope, $http, BootService, UserService) {
 
             var fw7 = MyApp.fw7.app;
             var $$ = Dom7;
@@ -14,7 +14,7 @@ MyApp.angular.controller('SidePanelController',
 
             $scope.openPrivateChat = function(user) {
                 fw7.closePanel();
-                BootService.trigger('private_chat', user);
+                BootService.trigger('private_chat', user.id);
                 MyApp.fw7.mainView.router.load({
                     "pageName": 'private_chat',
                     "animatePages": false
@@ -35,6 +35,7 @@ MyApp.angular.controller('SidePanelController',
                 $scope.username = MyApp.username;
                 $http.get("/api/users").success(function(users){
                     $scope.users = users;
+                    UserService.addUsers(users);
                 });
             });
 

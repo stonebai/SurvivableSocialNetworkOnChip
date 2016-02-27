@@ -20,6 +20,4 @@ MyApp.fw7 = {
 
 MyApp.fw7.app.loginScreen();
 MyApp.socket = null;
-MyApp.username = null;
-
 

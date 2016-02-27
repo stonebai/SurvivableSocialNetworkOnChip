@@ -34,15 +34,63 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 io.use(sharedsession(session));
 
+
+var User = require('./models/user.js');
+var UserDict = require('./UserDict.js');
+
 io.on('connection', function(socket) {
-    socket.on('public chat', function(post) {
-        var Message = require('./models/message');
-        Message.create({
-            author: post.author,
-            content: post.content,
-            timestamp: post.timestamp
+
+    //var uid = socket.handshake.session.uid;
+    console.log("SESSION:");
+    console.log(socket.handshake.session.uid);
+    var uid = socket.handshake.session.uid;
+
+    if(!uid) {
+        socket.disconnect();
+        return;
+    }
+
+    User.findOne({
+        attributes: ['id', 'username'],
+        where: {
+            id : uid,
+        }
+    }).then(function (user) {
+        if(user == null) {
+            socket.disconnect();
+            return;
+        }
+
+        UserDict.add(user, socket);
+
+        socket.on('public chat', function(post) {
+            var Message = require('./models/message');
+            Message.create({
+                author: post.author,
+                content: post.content,
+                timestamp: post.timestamp
+            });
+            io.emit('public chat', post);
         });
-        io.emit('public chat', post);
+
+        socket.on('disconnect', function(){
+            console.log("a user disconnect : " + user.id);
+            UserDict.remove(user.id, socket);
+        });
+
+        socket.on('private message', function(post){
+            var receiver = UserDict.getUser(post.receiver_id);
+            if(!receiver)
+                return;
+            var o = {
+                sender: user,
+                receiver: receiver,
+                content : post.content,
+                timestamp: post.timestamp
+            };
+            UserDict.sendTo(post.receiver_id, "private message", o);
+            UserDict.sendTo(user.id, "private message", o);
+        });
     });
 });
 

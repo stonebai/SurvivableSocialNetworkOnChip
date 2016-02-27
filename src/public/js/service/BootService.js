@@ -1,4 +1,4 @@
-﻿MyApp.angular.factory('BootService', ['$document', '$http', function ($document, $http) {
+﻿MyApp.angular.factory('BootService', ['$document', '$http', 'UserService', function ($document, $http, UserService) {
         var pub = {},
             eventListeners = {
                 'ready' : []
@@ -26,9 +26,10 @@
             $http.get('/api/checklogin').success(function (data) {
                 // if the user has logined into the system, then go to the chat room
                 if (data.logined) {
+                    //MyApp.socket = io(window.location.origin, {query: "uid=" + data.user.id});
                     MyApp.socket = io();
-                    MyApp.username = data.username;
-                    console.log(data.username);
+                    console.log(data.user);
+                    UserService.currentUser = data.user;
                     fw7.app.closeModal();
                     MyApp.fw7.mainView.router.load({
                         "pageName": "public_chat"
@@ -44,10 +45,6 @@
                 eventListeners.ready[i]();
             }
 
-            Dom7(document).on('pageInit', '.page[data-page="private"]', function (e) {
-                console.log("private loadede!");
-                // Do something here when page with data-page="about" attribute loaded and initialized
-            })
         }
 
         function logout() {
