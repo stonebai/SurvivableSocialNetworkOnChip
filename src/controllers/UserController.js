@@ -3,7 +3,7 @@ var User = require('../models/User');
 var Session = require('../models/Session');
 
 /* Register or Login API */
-router.post('/users/:userName', function(req, res){
+router.post('/:userName', function(req, res){
     //validate the request body
     if( typeof req.body.password === 'undefined' ||
         typeof req.body.createdAt === 'undefined'){
@@ -42,8 +42,8 @@ router.post('/users/:userName', function(req, res){
 });
 
 /* Retireve all users */
-router.get('/users', Session.loginRequired);
-router.get('/users', function(req, res){
+router.get('/', Session.loginRequired);
+router.get('/', function(req, res){
     User.findAll({
         attributes: ['id', 'username'],
         where: {}
@@ -54,8 +54,8 @@ router.get('/users', function(req, res){
 
 
 /* Retrieve a user's record */
-router.get('/users/:userName', Session.loginRequired);
-router.get('/users/:userName', function(req, res){
+router.get('/:userName', Session.loginRequired);
+router.get('/:userName', function(req, res){
     User.findOne({
         where: {
             username: userName
