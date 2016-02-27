@@ -68,3 +68,5 @@ router.get('/users/:userName', function(req, res){
         }
     });
 });
+
+module.exports = router

@@ -7,22 +7,33 @@ var sequelize = new Sequelize('messages', '', '', {
     storage: __dirname + '/../db/all.db'
 });
 
+
 var Message = sequelize.define('message', {
-    author: {
-        type: Sequelize.STRING,
-        field: 'author'
-    },
     content: {
-        type: Sequelize.STRING,
-        field: 'content'
+        field: 'content',
+        type: Sequelize.STRING
     },
-    timestamp: {
-        type: Sequelize.DATE,
-        field: 'timestamp'
+    author: {
+        field: 'author',
+        type: Sequelize.STRING
+    },
+    messageType: {
+        field: 'messageType',
+        type: Sequelize.ENUM,
+        values: ['CHAT', 'WALL']
+    },
+    target: {
+        field: 'target',
+        type: Sequelize.STRING,
+    },
+    postedAt: {
+        field: 'postAt',
+        type: Sequelize.INTEGER,
     }
 }, {
     timestamps: false,
-    tableName: 'publicmessages'
+    tableName: 'message'
 });
+
 
 module.exports = Message;
