@@ -33,7 +33,7 @@
                 msgs.push({
                     text: post.content,
                     type: messageType,
-                    name: post.author,
+                    name: post.author
                 });
             }
             messageLayout.addMessages(msgs, 'append', false);

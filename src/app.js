@@ -92,6 +92,17 @@ io.on('connection', function(socket) {
             UserDict.sendTo(user.id, "private message", o);
         });
     });
+
+    socket.on('post annoucement', function(post) {
+        var Annoucement = require('./models/announcement');
+        Annoucement.create({
+            author: post.author,
+            content: post.content,
+            timestamp: post.timestamp,
+            location: post.location
+        });
+        io.emit('post annoucement', post);
+    });
 });
 
 var port = process.argv.length > 2 ? Number(process.argv[2]) : 3000;

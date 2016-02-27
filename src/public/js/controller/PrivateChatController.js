@@ -76,4 +76,5 @@ MyApp.angular.controller('PrivateChatController',
 
         }
 
-    ]);
+    ]
+);

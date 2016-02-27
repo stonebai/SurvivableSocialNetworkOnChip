@@ -21,6 +21,15 @@ MyApp.angular.controller('SidePanelController',
                 });
             }
 
+            $scope.openAnnouncement = function() {
+                fw7.closePanel();
+                BootService.trigger('announcements');
+                MyApp.fw7.mainView.router.load({
+                    "pageName": 'Announcements',
+                    "animatePages": false
+                });
+            }
+
             $scope.logout = function() {
 
                 MyApp.fw7.app.confirm("Do you want to logout?", "App Alert", function(){
