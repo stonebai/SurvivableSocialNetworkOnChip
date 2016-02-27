@@ -4,6 +4,7 @@
 var api = require('express').Router();
 var User = require('../models/user');
 var Message = require('../models/message');
+var Announcement = require('../models/announcement');
 
 api.get('/checklogin', function (req, res) {
     if (!req.session || !req.session.username) {
@@ -79,6 +80,12 @@ api.get('/session', function(req, res) {
 api.get('/messages', function(req, res) {
     Message.findAll().then(function(messages) {
         res.json(messages);
+    });
+});
+
+api.get('/announcements', function(req, res) {
+    Announcement.findAll().then(function(announcements) {
+        res.json(announcements);
     });
 });
 

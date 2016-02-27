@@ -25,6 +25,7 @@
             <p><a href="#public_chat" class="close-panel">Public Chat</a></p>
             <p><a href="#" ng-click="logout()">Logout</a></p>
             <p><a href="#about" class="close-panel" >About</a></p>
+            <p><a href="#announcements" class="close-panel" ng-click="openAnnouncement()">Announcements</a></p>
 
             <div class="content-block-title">All Users</div>
             <div class="list-block">
@@ -160,6 +161,23 @@
                     </div>
                 </div>
 
+                <div data-page="announcements" class="page cached" ng-controller="AnnouncementController">
+                    <!-- messagebar -->
+                    <div class="toolbar messagebar">
+                        <div class="toolbar-inner">
+                            <textarea placeholder="Announcement" ng-model="newAnnouncement"></textarea>
+                            <a href="#" class="link" ng-click="postAnnouncement(newAnnouncement)" ng-disabled="post.trim()==''">Send</a>
+                        </div>
+                    </div>
+                    <div class="page-content">
+                        <div class="card" ng-repeat="announcement in announcements">
+                            <div class="card-header">{{announcement.author}}</div>
+                            <div class="card-content" style="word-wrap: break-word;"><div class="card-content-inner">{{announcement.content}}</div></div>
+                            <div class="card-footer">{{announcement.timestamp}}</div>
+                        </div>
+                    </div>
+                </div>
+
 
 
             </div>
@@ -180,6 +198,7 @@
     <script type="text/javascript" src="/public/js/controller/PublicChatController.js"></script>
     <script type="text/javascript" src="/public/js/controller/SidePanelController.js"></script>
     <script type="text/javascript" src="/public/js/controller/PrivateChatController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/AnnouncementController.js"></script>
 </body>
 </html>
 

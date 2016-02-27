@@ -12,7 +12,7 @@ MyApp.angular.controller('PrivateChatController',
                 dest_user = data;
                 $$('.navbar').find('.center').text("Chat With " + dest_user.username);
             });
-
         }
 
-    ]);
+    ]
+);
