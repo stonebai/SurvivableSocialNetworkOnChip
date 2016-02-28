@@ -12,13 +12,13 @@ MyApp.angular.controller('StatusPopoverController',
         	fw7.closeModal();
         	fw7.alert("Your status: " + status, "Status Changed");
         }
-
-        BootService.addEventListener('login', function() {
-            $scope.username = MyApp.username;
-            $http.get("/api/users").success(function(users) {
-                $scope.users = users;
-                UserService.addUsers(users);
-            });
-        });
+        
+        // BootService.addEventListener('login', function() {
+        //     $scope.username = MyApp.username;
+        //     $http.post("/api/users").success(function(users) {
+        //         $scope.users = users;
+        //         UserService.addUsers(users);
+        //     });
+        // });
     }
 ]);
