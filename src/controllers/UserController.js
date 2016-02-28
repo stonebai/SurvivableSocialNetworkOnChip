@@ -22,7 +22,8 @@ router.post('/:userName', function(req, res){
             if(!user){
                 User.create({
                     username: username,
-                    password: password
+                    password: password,
+                    createdAt: parseInt(req.body.createdAt)
                 }).then(function(user){
                     Session.login(req, user);
                     user.password = undefined;
@@ -35,19 +36,27 @@ router.post('/:userName', function(req, res){
                         if(!user){
                             res.status(404).end();
                         }else{
+                            Session.login(req, user);
+                            user.password = undefined;
                             res.status(201).json(user);
                         }
                     });
                 });
             }else{
-                if(user.password == password){
-                    Session.login(req, user);
-                    user.password = undefined;
-                    //if user exists, status code = 200
-                    res.status(200).json(user);
-                }else{
-                    res.status(401).end();
-                }
+                User.findOne({
+                    where: {
+                        id: user.id
+                    }
+                }).then(function(user){
+                    if(user.password == password){
+                        Session.login(req, user);
+                        user.password = undefined;
+                        //if user exists, status code = 200
+                        res.status(200).json(user);
+                    }else{
+                        res.status(401).end();
+                    }
+                });
             }
         });
     }
