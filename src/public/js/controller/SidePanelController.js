@@ -12,26 +12,22 @@ MyApp.angular.controller('SidePanelController',
             $scope.users = [];
             $scope.username = "";
 
+            $scope.openPage = function(pageName) {
+                BootService.openPage(pageName);
+            }
+
             $scope.openPrivateChat = function(user) {
                 fw7.closePanel();
-                BootService.trigger('private_chat', user.id);
-                MyApp.fw7.mainView.router.load({
-                    "pageName": 'private_chat',
-                    "animatePages": false
-                });
+                BootService.openPage('private_chat', user.id);
             }
 
             $scope.openAnnouncement = function() {
                 fw7.closePanel();
                 BootService.trigger('announcements');
-                MyApp.fw7.mainView.router.load({
-                    "pageName": 'Announcements',
-                    "animatePages": false
-                });
+                BootService.openPage('Announcements');
             }
 
             $scope.logout = function() {
-
                 MyApp.fw7.app.confirm("Do you want to logout?", "App Alert", function(){
                     $http.post("/api/logout", {}).success(function(data){
                         fw7.closePanel();

@@ -52,6 +52,7 @@
             console.log(user);
             UserService.currentUser = user;
             MyApp.fw7.app.closeModal();
+            BootService.openPage('public_chat');
             BootService.trigger('login');
         }
     

@@ -79,17 +79,26 @@ io.on('connection', function(socket) {
         });
 
         socket.on('private message', function(post){
-            var receiver = UserDict.getUser(post.receiver_id);
-            if(!receiver)
-                return;
-            var o = {
-                sender: user,
-                receiver: receiver,
-                content : post.content,
-                timestamp: post.timestamp
-            };
-            UserDict.sendTo(post.receiver_id, "private message", o);
-            UserDict.sendTo(user.id, "private message", o);
+            //var receiver = UserDict.getUser(post.receiver_id);
+            User.findOne({
+                attributes: ['id', 'username'],
+                where: {
+                    id: post.receiver_id,
+                }
+            }).then(function(receiver){
+                if(!receiver)
+                    return;
+
+                var o = {
+                    sender: user,
+                    receiver: receiver,
+                    content : post.content,
+                    timestamp: post.timestamp
+                };
+
+                UserDict.sendTo(post.receiver_id, "private message", o);
+                UserDict.sendTo(user.id, "private message", o);
+            });
         });
     });
 

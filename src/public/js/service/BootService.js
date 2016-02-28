@@ -3,6 +3,8 @@
             eventListeners = {
                 'ready' : []
             };
+
+        var $$ = Dom7;
         
         pub.addEventListener = function (eventName, listener) {
             if (!eventListeners[eventName])
@@ -20,6 +22,24 @@
             }
         };
 
+        var currentPage = "login";
+        pub.openPage = function(pageName, data) {
+            pub.trigger('close_' + currentPage);
+            MyApp.fw7.mainView.router.load({
+                "pageName": pageName,
+            });
+            currentPage = pageName;
+            pub.trigger('open_' + currentPage, data);
+        }
+
+        pub.getCurrentPage = function() {
+            return currentPage;
+        }
+
+        pub.setNavbarTitle = function(title) {
+            $$('.navbar').find('.center').text(title);
+        }
+
         function onReady() {
             var fw7 = MyApp.fw7;
             
@@ -31,9 +51,7 @@
                     console.log(data.user);
                     UserService.currentUser = data.user;
                     fw7.app.closeModal();
-                    MyApp.fw7.mainView.router.load({
-                        "pageName": "public_chat"
-                    });
+                    pub.openPage('public_chat');
                     pub.trigger('login');
                 }
             });    

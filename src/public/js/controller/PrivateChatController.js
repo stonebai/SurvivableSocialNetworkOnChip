@@ -39,12 +39,12 @@ MyApp.angular.controller('PrivateChatController',
                 messageLayout.scrollMessages();
             }
 
-            BootService.addEventListener('private_chat', function(uid){
+            BootService.addEventListener('open_private_chat', function(uid){
                 dest_user = UserService.getById(uid);
                 if(!dest_user)
                     return;
 
-                $$('.navbar').find('.center').text("Chat With " + dest_user.username);
+                BootService.setNavbarTitle(dest_user.username);
                 messageLayout.clean();
                 MessageService.getMessages(dest_user.id).then(function(msgs){
                     addMessages(msgs);
@@ -55,13 +55,48 @@ MyApp.angular.controller('PrivateChatController',
                 socket = MyApp.socket;
 
                 socket.on('private message', function(msg){
+
+                    MessageService.add(msg);
+
                     if(msg.sender.id == dest_user.id
                         || msg.receiver.id == dest_user.id) {
                         addMessageToLayout(msg);
                     }
+                    else if(msg.sender.id != UserService.currentUser.id) {
+                        // notify the user.
+                        var notifyContent = msg.content;
+                        if(notifyContent.length > 140) {
+                            notifyContent = notifyContent.substr(0, 140);
+                            notifyContent += "...";
+                        }
 
-                    MessageService.add(msg);
+                        MyApp.fw7.app.addNotification({
+                            title: 'Received Private Message',
+                            subtitle: 'From ' + msg.sender.username,
+                            message: notifyContent,
+                            hold : 10000,
+                            media: '<i class="icon icon-f7"></i>',
+                            closeOnClick : true,
+                            onClick : function() {
+                                openPrivateChat(msg.sender.id);
+                            }
+                        });
+                    }
                 });
+            });
+
+            $scope.keyUp = function(event, message) {
+                if(event.keyCode == 13 && message.trim() != '') {
+                    $scope.sendMessage(message);
+                }
+            }
+
+            function openPrivateChat(uid) {
+                BootService.openPage('private_chat', uid);
+            }
+
+            BootService.addEventListener('close_private_chat', function(){
+                dest_user = {};
             });
 
             $scope.sendMessage = function(content) {

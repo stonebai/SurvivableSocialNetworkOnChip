@@ -1,6 +1,6 @@
 ﻿MyApp.angular.controller('PublicChatController',
-    ['$scope', '$http', '$window', '$location', '$anchorScroll', 'BootService', 'UserService',
-    function ($scope, $http, $window, $location, $anchorScroll, BootService, UserService) {
+    ['$scope', '$http', '$rootScope', 'BootService', 'UserService',
+    function ($scope, $http, $rootScope, BootService, UserService) {
         
         $scope.messages = [];
         $scope.username = "";
@@ -50,6 +50,12 @@
             $scope.post = "";
         };
 
+        $scope.keyUp = function(event, message) {
+            if(event.keyCode == 13 && message.trim() != '') {
+                $scope.sendMessage(message);
+            }
+        }
+
         BootService.addEventListener('login', function () {
             
             socket = MyApp.socket;
@@ -79,6 +85,10 @@
             });
             
         });
-        
+
+        BootService.addEventListener('open_public_chat', function(){
+            BootService.setNavbarTitle("Public Chat");
+        });
+
 }]);
 
