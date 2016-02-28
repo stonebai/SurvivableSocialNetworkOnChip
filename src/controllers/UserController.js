@@ -8,7 +8,7 @@ router.post('/:userName', function(req, res){
     if( typeof req.body.password === 'undefined' ||
         typeof req.body.createdAt === 'undefined'){
         //Unprocessable Entity -- used for validation errors
-        res.status(422).json({});
+        res.status(422).end();
     }else{
         var username = req.params.userName;
         var password = req.body.password;
@@ -27,7 +27,17 @@ router.post('/:userName', function(req, res){
                     Session.login(req, user);
                     user.password = undefined;
                     //if new user is created, status code = 201
-                    res.status(201).json(user);
+                    User.findOne({
+                        where: {
+                            id: user.id
+                        }
+                    }).then(function(user){
+                        if(!user){
+                            res.status(404).end();
+                        }else{
+                            res.status(201).json(user);
+                        }
+                    });
                 });
             }else{
                 if(user.password == password){
@@ -36,7 +46,7 @@ router.post('/:userName', function(req, res){
                     //if user exists, status code = 200
                     res.status(200).json(user);
                 }else{
-                    res.status(401).json({});
+                    res.status(401).end();
                 }
             }
         });
@@ -48,7 +58,7 @@ router.post('/:userName', function(req, res){
 router.delete('/logout', Session.loginRequired);
 router.delete('/logout', function(req, res){
     Session.logout(req, Session.user);
-    res.status(200).json({});
+    res.status(204).end();
 });
 
 
@@ -76,7 +86,7 @@ router.get('/:userName', function(req, res){
         }
     }).then(function(user){
         if (!user) {
-            res.status(404).json({});
+            res.status(404).end();
         } else {
             res.status(200).json(user);
         }
