@@ -16,34 +16,24 @@
                 return;
             }
 
-            $http.post('/api/login', {
-                loginUsername: user.name,
-                loginPassword: user.password
+            $http.post('/users/' + user.name, {
+                createdAt : 123,
+                password : user.password,
             }).success(function (data, status) {
-                if (data.login == 'success') {
-                    //$window.location.href = '/';
-                    loginSuccess(data.user);
+                // if new user is created, status code = 201
+                if (status == 201) {
+                    fw7.alert('A new user (' + user.name + ') is created!', "App Alert", function(){
+                        loginSuccess(data);
+                    });
                 }
-                else if (data.login == 'fail') {
-                    fw7.alert('Wrong user name or password!', "App Alert");
+                else if (status == 200) {
+                    //if user exists, status code = 200
+                    loginSuccess(data);
                 }
-                else {
-                    fw7.confirm('You want to create a new user: ' + user.name + '?', 'Register New User', function(){
-                        $http.post('/api/register', {
-                            registerUsername: user.name,
-                            registerPassword: user.password
-                        }).success(function (data, status) {
-                            if (data.register) {
-                                //$window.location.href = '/';
-                                loginSuccess(data.user);
-                            }
-                            else {
-                                fw7.alert('Register failed, please try again later!',"App Alert");
-                            }
-                        });
-                    })
-                }
+            }).error(function(data){
+                fw7.alert('Wrong user name or password!', "App Alert");
             });
+
         }
         
         function loginSuccess(user) {

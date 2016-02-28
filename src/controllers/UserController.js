@@ -5,6 +5,8 @@ var Session = require('../models/Session');
 /* Register or Login API */
 router.post('/:userName', function(req, res){
     //validate the request body
+    var userName = req.params.userName;
+
     if( typeof req.body.password === 'undefined' ||
         typeof req.body.createdAt === 'undefined'){
         //Unprocessable Entity -- used for validation errors
@@ -12,6 +14,7 @@ router.post('/:userName', function(req, res){
     }else{
         var username = userName;
         var password = req.body.password;
+        var createdAt = req.body.createdAt;
         //todo timestamp
 
         User.findOne({
@@ -22,19 +25,22 @@ router.post('/:userName', function(req, res){
             if(!user){
                 User.create({
                     username: username,
-                    password: passowrd
+                    password: password,
+                    createdAt : createdAt,
+                    updatedAt : createdAt,
+                    lastLoginAt : createdAt,
                 }).then(function(user){
                     Session.login(req, user);
                     //if new user is created, status code = 201
-                    res.status(201).json({});
+                    res.status(201).json(user);
                 });
             }else{
-                if(user.password == passowrd){
+                if(user.password == password){
                     Session.login(req, user);
                     //if user exists, status code = 200
-                    res.status(200).json({});
+                    res.status(200).json(user);
                 }else{
-                    res.status(401).json({});
+                    res.status(401).json();
                 }
             }
         });
