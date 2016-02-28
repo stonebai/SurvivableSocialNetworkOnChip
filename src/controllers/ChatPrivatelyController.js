@@ -60,6 +60,23 @@ router.get('/private/:userName1/:userName2', function(req, res){
                 isValid = false;
             } else {
                 user2Id = user.id;
+                Message.findAll({
+                    where: {
+                        $or: [
+                            {
+                                author: user1Id,
+                                target: user2Id
+                            },
+                            {
+                                author: user2Id,
+                                target: user1Id
+                            }
+                        ]
+                    },
+                    order: 'postedAt ASC'
+                }).then(function(messages){
+                    res.status(200).json(messages);
+                });
             }
         });
     } else if (userName2 == request.session.user.username) {
@@ -73,33 +90,26 @@ router.get('/private/:userName1/:userName2', function(req, res){
                 res.status(404).json({});
                 isValid = false;
             } else {
-                user2Id = user.id;
+                Message.findAll({
+                    where: {
+                        $or: [
+                            {
+                                author: user1Id,
+                                target: user2Id
+                            },
+                            {
+                                author: user2Id,
+                                target: user1Id
+                            }
+                        ]
+                    },
+                    order: 'postedAt ASC'
+                }).then(function(messages){
+                    res.status(200).json(messages);
+                });
             }
         });
-
     }
-
-    if (!isValid) {
-        return;
-    }
-
-    Message.findAll({
-        where: {
-            $or: [
-                {
-                    author: user1Id,
-                    target: user2Id
-                },
-                {
-                    author: user2Id,
-                    target: user1Id
-                }
-            ]
-        },
-        order: 'postedAt ASC'
-    }).then(function(messages){
-        res.status(200).json(messages);
-    });
 });
 
 module.exports = router;

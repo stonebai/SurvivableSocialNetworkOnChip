@@ -28,7 +28,7 @@ Session.login = function(req, user){
 
 
 Session.logout = function(req){
-    delete Session.onlineUser[req.session.user.username];
+    delete Session.onlineUser[req.session.user.id];
     req.session.user = null;
 };
 

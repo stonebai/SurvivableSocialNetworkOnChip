@@ -10,7 +10,7 @@ router.post('/:userName', function(req, res){
         //Unprocessable Entity -- used for validation errors
         res.status(422).json({});
     }else{
-        var username = userName;
+        var username = req.params.userName;
         var password = req.body.password;
         //todo timestamp
 
@@ -22,17 +22,19 @@ router.post('/:userName', function(req, res){
             if(!user){
                 User.create({
                     username: username,
-                    password: passowrd
+                    password: password
                 }).then(function(user){
                     Session.login(req, user);
+                    user.password = undefined;
                     //if new user is created, status code = 201
-                    res.status(201).json({});
+                    res.status(201).json(user);
                 });
             }else{
-                if(user.password == passowrd){
+                if(user.password == password){
                     Session.login(req, user);
+                    user.password = undefined;
                     //if user exists, status code = 200
-                    res.status(200).json({});
+                    res.status(200).json(user);
                 }else{
                     res.status(401).json({});
                 }
@@ -41,11 +43,21 @@ router.post('/:userName', function(req, res){
     }
 });
 
+
+/* Logout */
+router.delete('/logout', Session.loginRequired);
+router.delete('/logout', function(req, res){
+    Session.logout(req, Session.user);
+    res.status(200).json({});
+});
+
+
 /* Retireve all users */
 router.get('/', Session.loginRequired);
 router.get('/', function(req, res){
     User.findAll({
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
+            'lastStatusCode', 'accountStatus'],
         where: {}
     }).then(function(users){
         res.status(200).json(users);
@@ -57,8 +69,10 @@ router.get('/', function(req, res){
 router.get('/:userName', Session.loginRequired);
 router.get('/:userName', function(req, res){
     User.findOne({
+        attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
+            'lastStatusCode', 'accountStatus'],
         where: {
-            username: userName
+            username: req.params.userName
         }
     }).then(function(user){
         if (!user) {
