@@ -2,9 +2,9 @@
  * Created by baishi on 2/8/16.
  */
 var api = require('express').Router();
-var User = require('../models/user');
-var Message = require('../models/message');
 var Announcement = require('../models/announcement');
+var User = require('../models/User');
+var Message = require('../models/Message');
 
 api.get('/checklogin', function (req, res) {
     if (!req.session || !req.session.username) {
