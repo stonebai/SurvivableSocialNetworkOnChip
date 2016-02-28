@@ -16,12 +16,13 @@ Session.loginRequired = function(req, res, next){
 
 Session.login = function(req, user){
     req.session.user = {
-        username: user.username
+        id: user.id,
+        name: user.username
     };
 
-    Session.onlineUser[req.session.user.username] = {
+    Session.onlineUser[req.session.user.id] = {
         //used for the socket.io
-        count: 0,
+        count: 0
     };
 };
 

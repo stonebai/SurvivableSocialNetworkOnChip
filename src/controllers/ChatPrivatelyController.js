@@ -28,8 +28,8 @@ router.post('/private/:fromUserName/:toUserName', function(req, res){
         }else{
             Message.create({
                 content: req.body.content,
-                author: fromUserName,
-                target: toUserName,
+                author: req.session.user.id,
+                target: user.id,
                 messageType: 'CHAT',
                 postedAt: parseInt(postedAt)
             }).then(function(message){
@@ -45,7 +45,11 @@ router.get('/private/:userName1/:userName2', Session.loginRequired);
 router.get('/private/:userName1/:userName2', function(req, res){
     //validate the current login user is the sender or receiver
     var isValid = true;
+    var user1Id;
+    var user2Id;
+
     if (userName1 == request.session.user.username) {
+        user1Id = request.session.user.id;
         User.findOne({
             where: {
                 username: userName2
@@ -54,9 +58,12 @@ router.get('/private/:userName1/:userName2', function(req, res){
             if (!user) {
                 res.status(404).json({});
                 isValid = false;
+            } else {
+                user2Id = user.id;
             }
         });
-    } else if (userName2 == request.session.user.username){
+    } else if (userName2 == request.session.user.username) {
+        user2Id = request.session.user.id;
         User.findOne({
             where: {
                 username: userName1
@@ -65,6 +72,8 @@ router.get('/private/:userName1/:userName2', function(req, res){
             if (!user) {
                 res.status(404).json({});
                 isValid = false;
+            } else {
+                user2Id = user.id;
             }
         });
 
@@ -76,26 +85,20 @@ router.get('/private/:userName1/:userName2', function(req, res){
 
     Message.findAll({
         where: {
-            author: userName1,
-            target: userName2
-        }
-    }).then(function(messages1){
-        Message.findAll({
-            where: {
-                author: userName2,
-                target: userName1
-            }
-        }).then(function(messages2){
-            messages = messages1.concat(messages2);
-
-
-            messages.sort(function(a, b) {
-                return a.postedAt - b.postedAt;
-            });
-
-            res.status(200).json(messages);
-
-        });
+            $or: [
+                {
+                    author: user1Id,
+                    target: user2Id
+                },
+                {
+                    author: user2Id,
+                    target: user1Id
+                }
+            ]
+        },
+        order: 'postedAt ASC'
+    }).then(function(messages){
+        res.status(200).json(messages);
     });
 });
 

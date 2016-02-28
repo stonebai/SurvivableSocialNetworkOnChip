@@ -15,7 +15,7 @@ var Message = sequelize.define('message', {
     },
     author: {
         field: 'author',
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
     },
     messageType: {
         field: 'messageType',
@@ -24,7 +24,7 @@ var Message = sequelize.define('message', {
     },
     target: {
         field: 'target',
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
     },
     postedAt: {
         field: 'postAt',
