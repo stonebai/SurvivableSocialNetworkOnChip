@@ -18,6 +18,9 @@ var sharedsession = require('express-socket.io-session');
 var route = require('./routes/route');
 var api = require('./controllers/api');
 
+var chatPrivatelyController = require('./controllers/ChatPrivatelyController');
+var userCcontroller = require('./controllers/UserController');
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -28,6 +31,12 @@ app.use('/', route);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/controllers', express.static(path.join(__dirname, 'controllers')));
 app.use('/api', api);
+
+//new user controller, by Yang and Yuanyuan
+app.use('/users', userCcontroller);
+
+//private chate
+app.use('/messages', chatPrivatelyController);
 
 var server = http.createServer(app);
 
