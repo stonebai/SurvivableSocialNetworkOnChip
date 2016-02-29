@@ -19,6 +19,7 @@ var route = require('./routes/route');
 var api = require('./controllers/api');
 
 var chatPrivatelyController = require('./controllers/ChatPrivatelyController');
+var chatPublicController = require('./controllers/ChatPublicController');
 var userCcontroller = require('./controllers/UserController');
 
 var app = express();
@@ -32,11 +33,13 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/controllers', express.static(path.join(__dirname, 'controllers')));
 app.use('/api', api);
 
+
 //new user controller, by Yang and Yuanyuan
 app.use('/users', userCcontroller);
 
 //private chate
-app.use('/messages', chatPrivatelyController);
+app.use('/messages/private', chatPrivatelyController);
+app.use('/messages/public', chatPublicController);
 
 var server = http.createServer(app);
 
@@ -45,14 +48,25 @@ io.use(sharedsession(session));
 
 
 var User = require('./models/user.js');
+var PublicMessage = require('./models/PublicMessage.js');
+var PrivateMessage = require('./models/PrivateMessage.js');
+
 var UserDict = require('./UserDict.js');
+
 
 io.on('connection', function(socket) {
 
     //var uid = socket.handshake.session.uid;
     console.log("SESSION:");
-    console.log(socket.handshake.session.uid);
-    var uid = socket.handshake.session.uid;
+    var uid = socket.handshake.session.user.id;
+    console.log(uid);
+    if(!socket.handshake.session.user || !socket.handshake.session.user.id) {
+        socket.disconnect();
+        return;
+    }
+
+    var uid = socket.handshake.session.user.id;
+    console.log(uid);
 
     if(!uid) {
         socket.disconnect();
@@ -73,32 +87,51 @@ io.on('connection', function(socket) {
         UserDict.add(user, socket);
 
         socket.on('public chat', function(post) {
-            var Message = require('./models/message');
-            Message.create({
-                author: post.author,
+
+            PublicMessage.create({
+                author: user.id,
                 content: post.content,
-                timestamp: post.timestamp
+                postedAt: post.timestamp
             });
+
+            post.author = user.username;
             io.emit('public chat', post);
         });
 
         socket.on('disconnect', function(){
             console.log("a user disconnect : " + user.id);
+            socket.disconnect();
             UserDict.remove(user.id, socket);
         });
 
         socket.on('private message', function(post){
-            var receiver = UserDict.getUser(post.receiver_id);
-            if(!receiver)
-                return;
-            var o = {
-                sender: user,
-                receiver: receiver,
-                content : post.content,
-                timestamp: post.timestamp
-            };
-            UserDict.sendTo(post.receiver_id, "private message", o);
-            UserDict.sendTo(user.id, "private message", o);
+            //var receiver = UserDict.getUser(post.receiver_id);
+            User.findOne({
+                attributes: ['id', 'username'],
+                where: {
+                    id: post.receiver_id,
+                }
+            }).then(function(receiver){
+                if(!receiver)
+                    return;
+
+                PrivateMessage.create({
+                    content : post.content,
+                    author : user.id,
+                    target: receiver.id,
+                    postedAt : post.timestamp
+                });
+
+                var o = {
+                    author : user.id,
+                    target: receiver.id,
+                    content : post.content,
+                    postedAt : post.timestamp,
+                };
+
+                UserDict.sendTo(post.receiver_id, "private message", o);
+                UserDict.sendTo(user.id, "private message", o);
+            });
         });
     });
 

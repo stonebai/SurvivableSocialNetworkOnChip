@@ -12,42 +12,45 @@ MyApp.angular.controller('SidePanelController',
             $scope.users = [];
             $scope.username = "";
 
+            $scope.openPage = function(pageName) {
+                BootService.openPage(pageName);
+            }
+
             $scope.openPrivateChat = function(user) {
                 fw7.closePanel();
-                BootService.trigger('private_chat', user.id);
-                MyApp.fw7.mainView.router.load({
-                    "pageName": 'private_chat',
-                    "animatePages": false
-                });
+                BootService.openPage('private_chat', user.id);
             }
 
             $scope.openAnnouncement = function() {
                 fw7.closePanel();
                 BootService.trigger('announcements');
-                MyApp.fw7.mainView.router.load({
-                    "pageName": 'Announcements',
-                    "animatePages": false
-                });
+                BootService.openPage('Announcements');
             }
 
             $scope.logout = function() {
-
                 MyApp.fw7.app.confirm("Do you want to logout?", "App Alert", function(){
-                    $http.post("/api/logout", {}).success(function(data){
-                        fw7.closePanel();
-                        BootService.trigger('logout');
+                    $http.delete("/users/logout", {}).success(function(data, status){
+                        if(status == 204) {
+                            fw7.closePanel();
+                            BootService.trigger('logout');
+                        }
                     });
                 });
             }
 
             BootService.addEventListener('login', function(){
-                $scope.username = MyApp.username;
-                $http.get("/api/users").success(function(users){
-                    $scope.users = users;
-                    UserService.addUsers(users);
-                });
-            });
+                $scope.username = UserService.currentUser.username;
 
+                var users = UserService.getAll();
+                $scope.users = [];
+                for(var i in users) {
+                    if(users[i].id != UserService.currentUser.id) {
+                        $scope.users.push(users[i]);
+                    }
+                }
+                UserService.addUsers(users);
+
+            });
 
         }
     ]);

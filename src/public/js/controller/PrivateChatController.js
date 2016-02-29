@@ -16,11 +16,12 @@ MyApp.angular.controller('PrivateChatController',
             });
 
             function addMessageToLayout(msg) {
-                var messageType = (msg.sender.id == UserService.currentUser.id) ? 'sent': 'received';
+                var messageType = (msg.author == UserService.currentUser.id) ? 'sent': 'received';
+                var authorName = UserService.getById(msg.author).username;
                 messageLayout.addMessage({
                     text: msg.content,
                     type: messageType,
-                    name: msg.sender.username,
+                    name: authorName,
                 });
             }
 
@@ -28,23 +29,24 @@ MyApp.angular.controller('PrivateChatController',
                 var msgs = [];
                 for(var i = 0; i < data.length; i++) {
                     var msg = data[i];
-                    var messageType = (msg.sender.id == UserService.currentUser.id) ? 'sent': 'received';
+                    var messageType = (msg.author == UserService.currentUser.id) ? 'sent': 'received';
+                    var authorName = UserService.getById(msg.author).username;
                     msgs.push({
                         text: msg.content,
                         type: messageType,
-                        name: msg.sender.username,
+                        name: authorName,
                     });
                 }
                 messageLayout.addMessages(msgs, 'append', false);
                 messageLayout.scrollMessages();
             }
 
-            BootService.addEventListener('private_chat', function(uid){
+            BootService.addEventListener('open_private_chat', function(uid){
                 dest_user = UserService.getById(uid);
                 if(!dest_user)
                     return;
 
-                $$('.navbar').find('.center').text("Chat With " + dest_user.username);
+                BootService.setNavbarTitle(dest_user.username);
                 messageLayout.clean();
                 MessageService.getMessages(dest_user.id).then(function(msgs){
                     addMessages(msgs);
@@ -55,13 +57,48 @@ MyApp.angular.controller('PrivateChatController',
                 socket = MyApp.socket;
 
                 socket.on('private message', function(msg){
-                    if(msg.sender.id == dest_user.id
-                        || msg.receiver.id == dest_user.id) {
-                        addMessageToLayout(msg);
-                    }
 
                     MessageService.add(msg);
+
+                    if(msg.author == dest_user.id
+                        || msg.target == dest_user.id) {
+                        addMessageToLayout(msg);
+                    }
+                    else if(msg.author != UserService.currentUser.id) {
+                        // notify the user.
+                        var notifyContent = msg.content;
+                        if(notifyContent.length > 140) {
+                            notifyContent = notifyContent.substr(0, 140);
+                            notifyContent += "...";
+                        }
+                        var authorName = UserService.getById(msg.author).username;
+                        MyApp.fw7.app.addNotification({
+                            title: 'Received Private Message',
+                            subtitle: 'From ' + authorName,
+                            message: notifyContent,
+                            hold : 10000,
+                            media: '<i class="icon icon-f7"></i>',
+                            closeOnClick : true,
+                            onClick : function() {
+                                openPrivateChat(msg.author);
+                            }
+                        });
+                    }
                 });
+            });
+
+            $scope.keyUp = function(event, message) {
+                if(event.keyCode == 13 && message.trim() != '') {
+                    $scope.sendMessage(message);
+                }
+            }
+
+            function openPrivateChat(uid) {
+                BootService.openPage('private_chat', uid);
+            }
+
+            BootService.addEventListener('close_private_chat', function(){
+                dest_user = {};
             });
 
             $scope.sendMessage = function(content) {

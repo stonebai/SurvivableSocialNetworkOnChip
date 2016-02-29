@@ -1,11 +1,11 @@
 var router = require('express').Router();
 var User = require('../models/User');
 var Session = require('../models/Session');
-var Message = require('../models/Message');
+var Message = require('../models/PrivateMessage');
 
 /* Send a chat message to another user */
-router.post('/private/:fromUserName/:toUserName', Session.loginRequired);
-router.post('/private/:fromUserName/:toUserName', function(req, res){
+router.post('/:fromUserName/:toUserName', Session.loginRequired);
+router.post('/:fromUserName/:toUserName', function(req, res){
     //validate the request body
     if( typeof req.body.content === 'undefined' ||
         typeof req.body.postedAt === 'undefined'){
@@ -24,7 +24,7 @@ router.post('/private/:fromUserName/:toUserName', function(req, res){
 
     User.findOne({
         where: {
-            username: req.params.toUserName
+            username: req.params.toUserName,
         }
     }).then(function(user){
         if(!user){
@@ -34,7 +34,6 @@ router.post('/private/:fromUserName/:toUserName', function(req, res){
                 content: req.body.content,
                 author: req.session.user.id,
                 target: user.id,
-                messageType: 'CHAT',
                 postedAt: parseInt(req.body.postedAt)
             }).then(function(message){
                 res.status(201).json(message);
@@ -43,10 +42,9 @@ router.post('/private/:fromUserName/:toUserName', function(req, res){
     });
 });
 
-
 /* Retrieve all private chat messages between two users	*/
-router.get('/private/:userName1/:userName2', Session.loginRequired);
-router.get('/private/:userName1/:userName2', function(req, res){
+router.get('/:userName1/:userName2', Session.loginRequired);
+router.get('/:userName1/:userName2', function(req, res){
     //validate the current login user is the sender or receiver
     var user1Id;
     var user2Id;

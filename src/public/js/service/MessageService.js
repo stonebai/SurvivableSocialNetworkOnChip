@@ -14,7 +14,8 @@ MyApp.angular.factory('MessageService', ['$document', '$http', '$q', 'UserServic
             return defer.promise;
         }
         else {
-            var q = $http.get("/api/messages/private/" + UserService.currentUser.id + "/" + uid)
+            var targetUserName = UserService.getById(uid).username;
+            var q = $http.get("/messages/private/" + UserService.currentUser.username + "/" + targetUserName)
                 .then(function(data){
                 messageStorage[uid] = data.data;
                 return messageStorage[uid];
@@ -26,7 +27,7 @@ MyApp.angular.factory('MessageService', ['$document', '$http', '$q', 'UserServic
 
     pub.add = function(msg) {
         var myid = UserService.currentUser.id;
-        var uid = (msg.sender.id == myid) ? msg.receiver.id : msg.sender.id;
+        var uid = (msg.author == myid) ? msg.target : msg.author;
         pub.getMessages(uid).then(function(messages){
             if(messages != null)
                messages.push(msg);

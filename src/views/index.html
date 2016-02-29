@@ -22,9 +22,9 @@
         <div class="content-block">
             <p>Current User: <span ng-bind="username"></span></p>
             <!-- Click on link with "close-panel" class will close panel -->
-            <p><a href="#public_chat" class="close-panel">Public Chat</a></p>
+            <p><a href="#" class="close-panel" ng-click="openPage('public_chat')">Public Chat</a></p>
             <p><a href="#" ng-click="logout()">Logout</a></p>
-            <p><a href="#about" class="close-panel" >About</a></p>
+            <p><a href="#" ng-click="openPage('about')" class="close-panel" >About</a></p>
             <p><a href="#announcements" class="close-panel" ng-click="openAnnouncement()">Announcements</a></p>
 
             <div class="content-block-title">All Users</div>
@@ -87,19 +87,19 @@
     </div>
 
     <!-- Status selection list -->
-    <div class="statusbar-overlay"></div>
-    <div class="popover popover-menu modal-in" style="display: block; top: 312px; left: 130px;">
-        <div class="popover-angle on-bottom" style="left: 201px;"></div>
-        <div class="popover-inner">
-            <div class="list-block">
-                <ul>
-                    <li><a href="#" class="list-button item-link">RED</a></li>
-                    <li><a href="#" class="list-button item-link">GREEN</a></li>
-                    <li><a href="#" class="list-button item-link">YELLO</a></li>
-                </ul>
-            </div>
-        </div>
+    <!-- Status selection list -->
+    <div class="popover popover-links">
+    <div class="popover-angle"></div>
+    <div class="popover-inner" ng-controller="StatusPopoverController">
+      <div class="list-block">
+        <ul>
+          <li><a href="#" class="list-button item-link" ng-click="select('GREEN')">GREEN</a></li>
+          <li><a href="#" class="list-button item-link" ng-click="select('YELLO')">YELLO</a></li>
+          <li><a href="#" class="list-button item-link" ng-click="select('RED')">RED</a></li>
+        </ul>
+      </div>
     </div>
+  </div>
 
     <!-- Status bar overlay for full screen mode (PhoneGap) -->
     <!-- Views -->
@@ -117,23 +117,21 @@
                         </a>
                     </div>
                     <div class="center sliding">Public Chat</div>
-                    <div class="right">
-                        <a href="#" data-popover=".popover-menu" class="open-popover link">
-                            status
-                        </a>
+                    <div class="right" data-page="users">
+                        <a href="#" data-popover=".popover-links" class="link open-popover">GREEN</a>
                     </div>
                 </div>
             </div>
 
 
             <!-- Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes-->
-            <div class="pages">
+            <div class="pages navbar-through toolbar-through">
                 <!-- Page, "data-page" contains page name -->
                 <div data-page="public_chat" class="page" ng-controller="PublicChatController">
                     <!-- messagebar -->
                     <div class="toolbar messagebar">
                         <div class="toolbar-inner">
-                            <textarea placeholder="Message" ng-model="post"></textarea>
+                            <textarea placeholder="Message" ng-model="post" ng-keyup="keyUp($event, post)"></textarea>
                             <a href="#" class="link" ng-click="sendMessage(post)" ng-disabled="post.trim()==''">Send</a>
                         </div>
                     </div>
@@ -148,7 +146,7 @@
                     <!-- messagebar -->
                     <div class="toolbar messagebar">
                         <div class="toolbar-inner">
-                            <textarea placeholder="Message" ng-model="post"></textarea>
+                            <textarea placeholder="Message" ng-model="post" ng-keyup="keyUp($event, post)"></textarea>
                             <a href="#" class="link" ng-click="sendMessage(post)" ng-disabled="post.trim()==''">Send</a>
                         </div>
                     </div>
@@ -209,6 +207,7 @@
     <script type="text/javascript" src="/public/js/controller/PublicChatController.js"></script>
     <script type="text/javascript" src="/public/js/controller/SidePanelController.js"></script>
     <script type="text/javascript" src="/public/js/controller/PrivateChatController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/StatusPopoverController.js"></script>
     <script type="text/javascript" src="/public/js/controller/AnnouncementController.js"></script>
 </body>
 </html>

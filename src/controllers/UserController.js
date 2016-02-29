@@ -66,7 +66,7 @@ router.post('/:userName', function(req, res){
 /* Logout */
 router.delete('/logout', Session.loginRequired);
 router.delete('/logout', function(req, res){
-    Session.logout(req, Session.user);
+    Session.logout(req);
     res.status(204).end();
 });
 
