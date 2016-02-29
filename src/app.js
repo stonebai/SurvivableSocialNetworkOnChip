@@ -42,8 +42,10 @@ app.use('/messages/private', chatPrivatelyController);
 app.use('/messages/public', chatPublicController);
 
 var server = http.createServer(app);
+var socketIO = require('./socket.js');
+socketIO.init(server);
+var io = socketIO.io();
 
-var io = require('socket.io').listen(server);
 io.use(sharedsession(session));
 
 
@@ -58,8 +60,8 @@ io.on('connection', function(socket) {
 
     //var uid = socket.handshake.session.uid;
     console.log("SESSION:");
-    var uid = socket.handshake.session.user.id;
-    console.log(uid);
+    //var uid = socket.handshake.session.user.id;
+    //console.log(uid);
     if(!socket.handshake.session.user || !socket.handshake.session.user.id) {
         socket.disconnect();
         return;

@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var User = require('../models/User');
 var Session = require('../models/Session');
+var io = require('../socket.js');
 
 /* Register or Login API */
 router.post('/:userName', function(req, res){
@@ -62,6 +63,38 @@ router.post('/:userName', function(req, res){
     }
 });
 
+/*update*/
+router.put('/current', Session.loginRequired);
+router.put('/current', function(req, res) {
+    if( typeof req.body.lastStatusCode === 'undefined'){
+        res.status(422).end();
+        return;
+    }
+
+    var userID = req.session.user.id;
+    User.findOne({
+        attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
+            'lastStatusCode', 'accountStatus'],
+        where: {
+            id: userID
+        }
+    }).then(function(user) {
+        if (!user) {
+            res.status(404).end();
+        } else {
+            user.update({
+                lastStatusCode: req.body.lastStatusCode
+            }).then(function(x){
+                console.log(x);
+                user.password = undefined;
+                io.io().emit('status change', user);
+                res.status(200).json(x);
+            }, function(){
+                res.status(404).end();
+            });
+        }
+    });
+});
 
 /* Logout */
 router.delete('/logout', Session.loginRequired);
@@ -102,4 +135,6 @@ router.get('/:userName', function(req, res){
     });
 });
 
-module.exports = router
+
+
+module.exports = router;

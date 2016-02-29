@@ -49,6 +49,14 @@ MyApp.angular.controller('SidePanelController',
                     }
                 }
                 UserService.addUsers(users);
+                
+                
+                var socket = MyApp.socket;
+                socket.on('status change', function(u){
+                    var user = UserService.getById(u.id);
+                    user.lastStatusCode = u.lastStatusCode;
+                    $scope.$apply();
+                });
 
             });
 
