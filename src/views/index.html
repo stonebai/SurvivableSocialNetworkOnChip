@@ -11,9 +11,12 @@
     <!-- Path to Framework7 Library CSS, iOS Theme -->
     <link rel="stylesheet" href="/public/framework7/css/framework7.ios.min.css">
     <!-- Path to Framework7 color related styles, iOS Theme -->
-    <link rel="stylesheet" href="/public/framework7/css/framework7.ios.colors.min.css">
+    <!--<link rel="stylesheet" href="/public/framework7/css/framework7.ios.colors.min.css">-->
     <!-- Path to your custom app styles-->
-    <link rel="stylesheet" href="/public/framework7/css/my-app.css">
+    <!--<link rel="stylesheet" href="/public/framework7/css/my-app.css">-->
+    <!--<link rel="stylesheet" href="/public/framework7/css/framework7.material.min.css">-->
+    <!-- It should be included After main Framework7 styles -->
+    <link rel="stylesheet" href="/public/framework7/css/framework7.material.colors.min.css">
 </head>
 <body>
 
@@ -32,7 +35,11 @@
                 <ul style="background: #111">
                     <a ng-repeat="u in users" href="#" class="item-link close-panel" ng-click="openPrivateChat(u)">
                         <li class="item-content">
-                            <div class="item-media"><i class="icon icon-f7"></i></div>
+                            <div class="item-media"><i class="icon icon-bars" ng-class="{
+                                'color-green': u.lastStatusCode=='GREEN',
+                                'color-red': u.lastStatusCode=='RED',
+                                'color-orange': u.lastStatusCode=='YELLOW'
+                            }" ></i></div>
                             <div class="item-inner">
                                 <div class="item-title" ng-bind="u.username">Item title</div>
                             </div>
@@ -94,7 +101,7 @@
       <div class="list-block">
         <ul>
           <li><a href="#" class="list-button item-link" ng-click="select('GREEN')">GREEN</a></li>
-          <li><a href="#" class="list-button item-link" ng-click="select('YELLO')">YELLO</a></li>
+          <li><a href="#" class="list-button item-link" ng-click="select('YELLOW')">YELLOW</a></li>
           <li><a href="#" class="list-button item-link" ng-click="select('RED')">RED</a></li>
         </ul>
       </div>
@@ -118,7 +125,7 @@
                     </div>
                     <div class="center sliding">Public Chat</div>
                     <div class="right" data-page="users">
-                        <a href="#" data-popover=".popover-links" class="link open-popover">GREEN</a>
+                        <a href="#" data-popover=".popover-links" class="link open-popover" ng-bind="currentStatus"></a>
                     </div>
                 </div>
             </div>
