@@ -3,16 +3,15 @@
  */
 
 MyApp.angular.controller('AnnouncementController',
-    ['$scope', '$http', 'BootService',
-        function($scope, $http, BootService) {
+    ['$scope', '$http', 'BootService', 'UserService',
+        function($scope, $http, BootService, UserService) {
 
             var socket = null;
-            $scope.announcements = [];
             var $$ = Dom7;
 
             $scope.postAnnouncement = function(newAnnouncement) {
                 var post = {
-                    author: MyApp.username,
+                    author: UserService.currentUser.username,
                     content: newAnnouncement,
                     timestamp: new Date(),
                     location: null
@@ -22,6 +21,7 @@ MyApp.angular.controller('AnnouncementController',
             };
 
             function loadAnnouncements(data) {
+                $scope.announcements = [];
                 for (var i = 0; i<data.length; i++) {
                     $scope.announcements.unshift(data[i]);
                 }
