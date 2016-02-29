@@ -4,16 +4,27 @@
 var api = require('express').Router();
 var Announcement = require('../models/announcement');
 var User = require('../models/User');
-var Message = require('../models/Message');
+var Message = require('../models/PublicMessage');
+var Session = require('../models/Session');
+
 
 api.get('/checklogin', function (req, res) {
-    if (!req.session || !req.session.username) {
-        res.json({ 'logined': false });
+    if (!req.session.user) {
+        res.status(201).json({});
     }
     else {
-        res.json({
-            'logined': true,
-            'user': {'id' : req.session.uid, "username": req.session.username}
+        User.findOne({
+            attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
+                'lastStatusCode', 'accountStatus'],
+            where: {
+                id: req.session.user.id
+            }
+        }).then(function(user){
+            if (!user) {
+                res.status(404).end();
+            } else {
+                res.status(200).json(user);
+            }
         });
     }
 });

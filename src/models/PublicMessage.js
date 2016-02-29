@@ -2,13 +2,12 @@
  * Created by baishi on 2/11/16.
  */
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize('messages', '', '', {
+var sequelize = new Sequelize('public_messages', '', '', {
     dialect: 'sqlite',
     storage: __dirname + '/../db/all.db'
 });
 
-
-var Message = sequelize.define('message', {
+var PublicMessage = sequelize.define('public_message', {
     content: {
         field: 'content',
         type: Sequelize.STRING
@@ -17,23 +16,14 @@ var Message = sequelize.define('message', {
         field: 'author',
         type: Sequelize.INTEGER
     },
-    messageType: {
-        field: 'messageType',
-        type: Sequelize.ENUM,
-        values: ['CHAT', 'WALL']
-    },
-    target: {
-        field: 'target',
-        type: Sequelize.INTEGER,
-    },
     postedAt: {
         field: 'postAt',
-        type: Sequelize.INTEGER,
+        type: Sequelize.DATE,
     }
 }, {
     timestamps: false,
-    tableName: 'message'
+    tableName: 'public_message'
 });
 
 
-module.exports = Message;
+module.exports = PublicMessage;

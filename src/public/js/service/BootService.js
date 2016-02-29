@@ -40,21 +40,36 @@
             $$('.navbar').find('.center').text(title);
         }
 
+        pub.connect = function() {
+            //if(!MyApp.socket) {
+            //    MyApp.socket = io.connect(window.location.origin);
+            //}
+            //else {
+            //    MyApp.socket.connect();
+            //}
+            MyApp.socket = io.connect(window.location.origin, {'forceNew': true});
+        }
+
         function onReady() {
             var fw7 = MyApp.fw7;
-            
-            $http.get('/api/checklogin').success(function (data) {
+
+            $http.get('/api/checklogin').success(function (data, status) {
                 // if the user has logined into the system, then go to the chat room
-                if (data.logined) {
-                    //MyApp.socket = io(window.location.origin, {query: "uid=" + data.user.id});
-                    MyApp.socket = io();
-                    console.log(data.user);
-                    UserService.currentUser = data.user;
+                if(status == 200) {
+                    //MyApp.socket = io();
+                    pub.connect();
+                    console.log(data);
+                    UserService.currentUser = data;
                     fw7.app.closeModal();
                     pub.openPage('public_chat');
-                    pub.trigger('login');
+                    $http.get("/users").success(function(users, status){
+                        if(status == 200) {
+                            UserService.addUsers(users);
+                            pub.trigger('login');
+                        }
+                    });
                 }
-            });    
+            });
             
             fw7.views.push(fw7.app.addView('.view-main', fw7.options));
             MyApp.fw7.mainView = fw7.views[0];
@@ -67,7 +82,10 @@
 
         function logout() {
             MyApp.fw7.app.loginScreen();
-            MyApp.socket.close();
+            //MyApp.socket.close();
+            MyApp.socket.disconnect();
+            //MyApp.socket.conn.close()
+            //MyApp.socket = null;
         }
 
         pub.addEventListener('logout', logout);

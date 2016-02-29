@@ -49,4 +49,12 @@ var User = sequelize.define('user', {
     tableName: 'user'
 });
 
+User.delete = function(id){
+    this.destroy({
+        where: {
+            id: id
+        }
+    });
+}
+
 module.exports = User;

@@ -37,13 +37,19 @@
         }
         
         function loginSuccess(user) {
-            //MyApp.socket = io(window.location.origin, {query: "uid=" + user.id});
-            MyApp.socket = io();
+            BootService.connect();
+            //MyApp.socket = io();
             console.log(user);
             UserService.currentUser = user;
             MyApp.fw7.app.closeModal();
             BootService.openPage('public_chat');
-            BootService.trigger('login');
+            $http.get("/users").success(function(users, status){
+                if(status == 200) {
+                    UserService.addUsers(users);
+                    BootService.trigger('login');
+                }
+            });
+
         }
     
     }]

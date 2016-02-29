@@ -44,7 +44,7 @@
             var post = {
                 author: UserService.currentUser.username,
                 content: message,
-                timestamp: new Date()
+                timestamp: new Date(),
             }
             socket.emit('public chat', post);
             $scope.post = "";
@@ -60,22 +60,14 @@
             
             socket = MyApp.socket;
             $scope.username = UserService.currentUser.username;
-            
-            /*
-            $http.get('/api/session').success(function (data, status) {
-                $scope.session = data;
-                console.log(data);
-            }).success(function (data) {
-                $http.get('/api/messages').success(function (data, status) {
-                    for (var i = 0; i < data.length; i++) {
-                        addMessageToLayout(data[i]);
-                    }
-                });
-            });
-             */
-            $http.get('/api/messages').success(function (data, status) {
-                addMessages(data);
 
+            $http.get('/messages/public').success(function (data, status) {
+                if(status == 200) {
+                    for(var i = 0; i < data.length; i++) {
+                        data[i].author = UserService.getById(data[i].author).username;
+                    }
+                    addMessages(data);
+                }
             });
 
             socket.on('public chat', function (post) {

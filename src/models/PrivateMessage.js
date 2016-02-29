@@ -1,21 +1,31 @@
 /**
- * Created by Edison on 2016/2/26.
  */
-var Message = sequelize.define('message', {
-    author: {
-        type: Sequelize.STRING,
-        field: 'author'
-    },
-    content: {
-        type: Sequelize.STRING,
-        field: 'content'
-    },
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize('private_messages', '', '', {
+    dialect: 'sqlite',
+    storage: __dirname + '/../db/all.db'
+});
 
-    timestamp: {
-        type: Sequelize.DATE,
-        field: 'timestamp'
+var PrivateMessage = sequelize.define('private_message', {
+    content: {
+        field: 'content',
+        type: Sequelize.STRING
+    },
+    author: {
+        field: 'author',
+        type: Sequelize.INTEGER
+    },
+    target: {
+        field: 'target',
+        type: Sequelize.INTEGER,
+    },
+    postedAt: {
+        field: 'postAt',
+        type: Sequelize.INTEGER,
     }
 }, {
     timestamps: false,
-    tableName: 'publicmessages'
+    tableName: 'private_message'
 });
+
+module.exports = PrivateMessage;

@@ -29,21 +29,28 @@ MyApp.angular.controller('SidePanelController',
 
             $scope.logout = function() {
                 MyApp.fw7.app.confirm("Do you want to logout?", "App Alert", function(){
-                    $http.post("/api/logout", {}).success(function(data){
-                        fw7.closePanel();
-                        BootService.trigger('logout');
+                    $http.delete("/users/logout", {}).success(function(data, status){
+                        if(status == 204) {
+                            fw7.closePanel();
+                            BootService.trigger('logout');
+                        }
                     });
                 });
             }
 
             BootService.addEventListener('login', function(){
-                $scope.username = MyApp.username;
-                $http.get("/api/users").success(function(users){
-                    $scope.users = users;
-                    UserService.addUsers(users);
-                });
-            });
+                $scope.username = UserService.currentUser.username;
 
+                var users = UserService.getAll();
+                $scope.users = [];
+                for(var i in users) {
+                    if(users[i].id != UserService.currentUser.id) {
+                        $scope.users.push(users[i]);
+                    }
+                }
+                UserService.addUsers(users);
+
+            });
 
         }
     ]);

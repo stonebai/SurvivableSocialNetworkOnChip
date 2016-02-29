@@ -22,6 +22,10 @@ MyApp.angular.factory('UserService', ['$document', '$http', function ($document,
         users[id] = u;
     }
 
+    pub.getAll = function() {
+        return users;
+    }
+
     pub.currentUser = null;
 
     return pub;
