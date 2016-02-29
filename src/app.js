@@ -58,8 +58,8 @@ io.on('connection', function(socket) {
 
     //var uid = socket.handshake.session.uid;
     console.log("SESSION:");
-    var uid = socket.handshake.session.user.id;
-    console.log(uid);
+    //var uid = socket.handshake.session.user.id;
+    //console.log(uid);
     if(!socket.handshake.session.user || !socket.handshake.session.user.id) {
         socket.disconnect();
         return;

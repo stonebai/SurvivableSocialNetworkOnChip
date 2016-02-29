@@ -84,6 +84,26 @@ router.get('/', function(req, res){
 });
 
 
+/* Retrieve current login user */
+router.get('/current', Session.loginRequired);
+router.get('/current', function(req, res){
+    var currentId = req.session.user.id;
+    User.findOne({
+        atrributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
+            'lastStatusCode', 'accountStatus'],
+        where: {
+            id: currentId
+        }
+    }).then(function(user){
+        if(user){
+            user.password = undefined;
+            res.status(200).json(user);
+        }else{
+            res.status(404).end();
+        }
+    });
+});
+
 /* Retrieve a user's record */
 router.get('/:userName', Session.loginRequired);
 router.get('/:userName', function(req, res){
