@@ -87,19 +87,19 @@
     </div>
 
     <!-- Status selection list -->
-    <div class="statusbar-overlay"></div>
-    <div class="popover popover-menu modal-in" style="display: block; top: 312px; left: 130px;">
-        <div class="popover-angle on-bottom" style="left: 201px;"></div>
-        <div class="popover-inner">
-            <div class="list-block">
-                <ul>
-                    <li><a href="#" class="list-button item-link">RED</a></li>
-                    <li><a href="#" class="list-button item-link">GREEN</a></li>
-                    <li><a href="#" class="list-button item-link">YELLO</a></li>
-                </ul>
-            </div>
-        </div>
+    <!-- Status selection list -->
+    <div class="popover popover-links">
+    <div class="popover-angle"></div>
+    <div class="popover-inner" ng-controller="StatusPopoverController">
+      <div class="list-block">
+        <ul>
+          <li><a href="#" class="list-button item-link" ng-click="select('GREEN')">GREEN</a></li>
+          <li><a href="#" class="list-button item-link" ng-click="select('YELLO')">YELLO</a></li>
+          <li><a href="#" class="list-button item-link" ng-click="select('RED')">RED</a></li>
+        </ul>
+      </div>
     </div>
+  </div>
 
     <!-- Status bar overlay for full screen mode (PhoneGap) -->
     <!-- Views -->
@@ -116,11 +116,9 @@
                             <i class="icon icon-bars"></i>
                         </a>
                     </div>
-                    <div class="center sliding" ng-bind="navbarTitle">Public Chat</div>
-                    <div class="right">
-                        <a href="#" data-popover=".popover-menu" class="open-popover link">
-                            status
-                        </a>
+                    <div class="center sliding">Public Chat</div>
+                    <div class="right" data-page="users">
+                        <a href="#" data-popover=".popover-links" class="link open-popover">GREEN</a>
                     </div>
                 </div>
             </div>
@@ -209,6 +207,7 @@
     <script type="text/javascript" src="/public/js/controller/PublicChatController.js"></script>
     <script type="text/javascript" src="/public/js/controller/SidePanelController.js"></script>
     <script type="text/javascript" src="/public/js/controller/PrivateChatController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/StatusPopoverController.js"></script>
     <script type="text/javascript" src="/public/js/controller/AnnouncementController.js"></script>
 </body>
 </html>
