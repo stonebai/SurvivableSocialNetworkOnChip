@@ -3,6 +3,7 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('public_messages', '', '', {
+    logging: false,
     dialect: 'sqlite',
     storage: __dirname + '/../db/all.db'
 });

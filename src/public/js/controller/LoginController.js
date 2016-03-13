@@ -30,10 +30,9 @@
                     //if user exists, status code = 200
                     loginSuccess(data);
                 }
-            }).error(function(data){
-                fw7.alert('Wrong user name or password!', "App Alert");
+            }).error(function(data, status){
+                fw7.alert('Wrong user name or password!', "" + status);
             });
-
         }
         
         function loginSuccess(user) {

@@ -38,9 +38,7 @@ MyApp.angular.controller('SidePanelController',
                 });
             }
 
-            BootService.addEventListener('login', function(){
-                $scope.username = UserService.currentUser.username;
-
+            function updateUserList() {
                 var users = UserService.getAll();
                 $scope.users = [];
                 for(var i in users) {
@@ -48,13 +46,52 @@ MyApp.angular.controller('SidePanelController',
                         $scope.users.push(users[i]);
                     }
                 }
-                UserService.addUsers(users);
-                
-                
+
+                $scope.users.sort(function(a, b){
+                    return a.online < b.online;
+                })
+            }
+
+            BootService.addEventListener('login', function(){
+                $scope.username = UserService.currentUser.username;
+                updateUserList();
+
                 var socket = MyApp.socket;
                 socket.on('status change', function(u){
                     var user = UserService.getById(u.id);
                     user.lastStatusCode = u.lastStatusCode;
+                    $scope.$apply();
+
+                    MyApp.fw7.app.addNotification({
+                        title: 'Status Change',
+                        subtitle: u.username + "changed status to <strong>" + user.lastStatusCode + "</strong>",
+                        hold : 10000,
+                        media: '<i class="icon icon-f7"></i>',
+                        closeOnClick : true,
+                    });
+
+                });
+
+                socket.on("user enter", function(u){
+                    if(UserService.getById(u.id) == null || UserService.getById(u.id).online == false) {
+                        u.online = true;
+                        UserService.add(u);
+                        updateUserList();
+                        $scope.$apply();
+                        MyApp.fw7.app.addNotification({
+                            title: 'New User Joined in',
+                            subtitle: u.username,
+                            hold : 10000,
+                            media: '<i class="icon icon-f7"></i>',
+                            closeOnClick : true,
+                        });
+                    }
+                });
+
+                socket.on("user leave", function(u){
+                    var user = UserService.getById(u.id);
+                    user.online = false;
+                    updateUserList();
                     $scope.$apply();
                 });
 

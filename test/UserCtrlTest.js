@@ -3,127 +3,130 @@
  */
 var supertest = require("supertest");
 var should = require("should");
-var User = require("../src/models/user");
+var User = require("../src/models/User");
 
-var server = supertest.agent("http://localhost:3000");
+var server = supertest.agent("http://localhost:4000");
 
-// UNIT test begin
-
-suite('SAMPLE unit test',function() {
-
-    // #1 User Register Test
-
-    test("User Register Test",function(done){
+// User Controller Test
+describe('User Register Test', function() {
+    before(function (done) {
         // delete the user if exists
         User.findOne({
             where: {
-                username: 'Just4Test'
+                username: 'User4Test'
             }
-        }).then(function(user) {
+        }).then(function (user) {
             if (user) {
-                User.delete(user.id);
+                User.destroy({
+                    where: {
+                        id: user.id
+                    }
+                }).then(function () {
+                    done();
+                });
             }
+            else done();
         });
+    });
+
+    // #1 User Register Test
+
+    it("User Register Test", function (done) {
 
         // calling Register
         server
             .post("/users/User4Test")
             .send({password: '1234', createdAt: 1234})
-            .expect("Content-type",/json/)
-            .expect(201) // THis is HTTP response
-            .end(function(err,res){
-                // HTTP status should be 200
-                res.status.should.equal(201);
-                // Error key should be false.
-                res.body.username.should.equal('User4Test');
-                User.findOne({
-                    where: {
-                        username: 'Just4Test'
-                    }
-                }).then(function(user) {
-                    if (user) {
-                        User.delete(user.id);
-                    }
-                });
+            .expect("Content-type", /json/)
+            .expect(201, {
+                username: 'User4Test'
+            })
+            .end(function (err, res) {
+                done();
             });
+    });
 
-        // delete the user
+    after(function(done) {
         User.findOne({
             where: {
-                username: 'Just4Test'
+                username: 'User4Test'
             }
         }).then(function(user) {
             if (user) {
-                User.delete(user.id);
+                User.destroy({
+                    where: {
+                        id: user.id
+                    }
+                }).then(function() {
+                    done();
+                })
             }
+            else done();
         });
-
-        done();
     });
+});
 
-    // #2 User Login Test
-
-    test("User Login Test",function(done){
+describe('User Register Test',function() {
+    before(function(done) {
         // create the user if not exists
         User.findOne({
             where: {
-                username: 'Just4Test'
+                username: 'User4Test'
             }
         }).then(function(user) {
             if (!user) {
                 User.create({
-                    username: 'Just4Test',
+                    username: 'User4Test',
                     password: '1234',
                     createdAt: 1234
+                }).then(function() {
+                    done();
                 });
             }
+            else done();
         });
+    });
+
+    // #2 User Login Test
+
+    it("User Login Test",function(done){
 
         // calling Login
         server
             .post("/users/User4Test")
             .send({password: '1234', createdAt: 1234})
             .expect("Content-type",/json/)
-            .expect(200) // THis is HTTP response
+            .expect(200, {
+                username: 'User4Test'
+            })
             .end(function(err,res){
-                // HTTP status should be 200
-                res.status.should.equal(200);
-                // Error key should be false.
-                res.body.username.should.equal('User4Test');
-                User.findOne({
-                    where: {
-                        username: 'Just4Test'
-                    }
-                }).then(function(user) {
-                    if (user) {
-                        User.delete(user.id);
-                    }
-                });
+                done();
             });
-
-        // delete the user
-        User.findOne({
-            where: {
-                username: 'Just4Test'
-            }
-        }).then(function(user) {
-            if (user) {
-                User.delete(user.id);
-            }
-        });
-
-        done();
     });
 
-    //// #3 Session Control Test
-    //test("Session Control Test",function(done){
-    //    server
-    //        .get("/users")
-    //        .expect("Content-type",/json/)
-    //        .expect(401) // THis is HTTP response
-    //        .end(function(err,res){
-    //            // HTTP status should be 401
-    //            res.status.should.equal(401);
-    //        });
-    //});
+    after(function(done) {
+        server
+            .delete("/users/logout")
+            .end(function(err,res) {
+                User.destroy({
+                    where: {
+                        username: 'User4Test'
+                    }
+                }).then(function() {
+                    done();
+                });
+            });
+    });
 });
+
+//// #3 Session Control Test
+//test("Session Control Test",function(done){
+//    server
+//        .get("/users")
+//        .expect("Content-type",/json/)
+//        .expect(401) // THis is HTTP response
+//        .end(function(err,res){
+//            // HTTP status should be 401
+//            res.status.should.equal(401);
+//        });
+//});

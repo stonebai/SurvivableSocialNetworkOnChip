@@ -1,7 +1,7 @@
 var router = require('express').Router();
 var User = require('../models/User');
 var Session = require('../models/Session');
-var Message = require('../models/PrivateMessage');
+router.Message = Message = require('../models/PrivateMessage');
 
 /* Send a chat message to another user */
 router.post('/:fromUserName/:toUserName', Session.loginRequired);
@@ -30,7 +30,7 @@ router.post('/:fromUserName/:toUserName', function(req, res){
         if(!user){
             res.status(404).end();
         }else{
-            Message.create({
+            router.Message.create({
                 content: req.body.content,
                 author: req.session.user.id,
                 target: user.id,
@@ -60,7 +60,7 @@ router.get('/:userName1/:userName2', function(req, res){
                 res.status(404).end();
             } else {
                 user2Id = user.id;
-                Message.findAll({
+                router.Message.findAll({
                     where: {
                         $or: [
                             {
@@ -90,7 +90,7 @@ router.get('/:userName1/:userName2', function(req, res){
                 res.status(404).end();
             } else {
                 user1Id = user.id;
-                Message.findAll({
+                router.Message.findAll({
                     where: {
                         $or: [
                             {

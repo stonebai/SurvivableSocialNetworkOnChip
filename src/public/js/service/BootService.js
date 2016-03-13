@@ -1,4 +1,5 @@
-﻿MyApp.angular.factory('BootService', ['$document', '$http', 'UserService', function ($document, $http, UserService) {
+﻿MyApp.angular.factory('BootService', ['$document', '$http', '$rootScope', 'UserService',
+    function ($document, $http, $rootScope, UserService) {
         var pub = {},
             eventListeners = {
                 'ready' : []
@@ -22,18 +23,20 @@
             }
         };
 
-        var currentPage = "login";
+        MyApp.fw7.pages = ['login'];
         pub.openPage = function(pageName, data) {
+            var currentPage = MyApp.fw7.pages[0];
             pub.trigger('close_' + currentPage);
             MyApp.fw7.mainView.router.load({
                 "pageName": pageName,
             });
             currentPage = pageName;
+            MyApp.fw7.pages = [currentPage];
             pub.trigger('open_' + currentPage, data);
         }
 
         pub.getCurrentPage = function() {
-            return currentPage;
+            return MyApp.fw7.pages[0];
         }
 
         pub.setNavbarTitle = function(title) {
@@ -48,6 +51,42 @@
             //    MyApp.socket.connect();
             //}
             MyApp.socket = io.connect(window.location.origin, {'forceNew': true});
+        }
+
+        pub.pushPage = function(pageName, data) {
+            var pages = MyApp.fw7.pages
+            MyApp.fw7.mainView.router.load({
+                "pageName": pageName,
+            });
+            pages.push(pageName);
+            $rootScope.isPagePushed = true;
+            pub.trigger('open_' + pageName, data);
+        }
+
+        pub.popPage = function() {
+            var pages = MyApp.fw7.pages
+            pages.pop();
+            var pageName = pages[pages.length - 1];
+            MyApp.fw7.mainView.router.back();
+
+            if(pages.length == 1)
+                $rootScope.isPagePushed = false;
+
+            pub.trigger('open_' + pageName);
+        }
+
+        function add0(m) {
+            return m < 10 ? '0' + m : m
+        }
+
+        pub.formatDate = function(date) {
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            var d = date.getDate() + 1;
+            var h = date.getHours() + 1;
+            var mm = date.getMinutes() + 1;
+            var s = date.getSeconds() + 1;
+            return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
         }
 
         function onReady() {

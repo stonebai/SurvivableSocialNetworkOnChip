@@ -4,7 +4,7 @@
   "description": "a team project in 18652(fse) course in CMU",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --ui tdd test/*.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "sqlite3": "^3.1.1"
   },
   "devDependencies": {
+    "expect": "^1.15.2",
     "grunt": "^0.4.5",
     "grunt-mocha-istanbul": "^3.0.1",
     "grunt-mocha-test": "^0.12.7",

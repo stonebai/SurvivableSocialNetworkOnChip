@@ -16,13 +16,14 @@ MyApp.angular.controller('AnnouncementController',
                     timestamp: new Date(),
                     location: null
                 };
-                socket.emit('post annoucement', post);
+                $http.post('/announcements', post);
                 $scope.newAnnouncement = '';
             };
 
             function loadAnnouncements(data) {
                 $scope.announcements = [];
                 for (var i = 0; i<data.length; i++) {
+                    data[i].dateFormat = dateFormat(data[i].timestamp);
                     $scope.announcements.unshift(data[i]);
                 }
             }
@@ -37,10 +38,17 @@ MyApp.angular.controller('AnnouncementController',
                 });
 
                 socket.on('post annoucement', function (post) {
+                    post.dateFormat = dateFormat(post.timestamp);
                     $scope.announcements.unshift(post);
                     $scope.$apply();
                 });
             });
+
+            function dateFormat(unformatedDate) {
+                var date = new Date(unformatedDate);
+                return date.getFullYear()+'-'+date.getMonth()+'-'+date.getDay()+'\t'
+                    +date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+            }
         }
     ]
 );

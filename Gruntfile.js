@@ -11,7 +11,7 @@ module.exports = function(grunt) {
                     reporter: 'spec',
                     quiet: false,
                     clearRequireCache: false,
-                    ui: 'tdd'
+                    ui: 'bdd'
                 },
                 src: ['test/**/*.js']
             },
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                     reporterOptions: {
                         mochaFile: 'shippable/testresults/results.xml'
                     },
-                    ui: 'tdd'
+                    ui: 'bdd'
                 },
                 src: ['test/**/*.js']
             }
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
             coverage: {
                 src: 'test',
                 options: {
-                    mochaOptions: ['--ui', 'tdd']
+                    mochaOptions: ['--ui', 'bdd']
                 }
             }
         }

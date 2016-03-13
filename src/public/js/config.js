@@ -16,6 +16,7 @@ MyApp.fw7 = {
         domCache: true
     },
     views : [],
+    pages : [],
 };
 
 MyApp.fw7.app.loginScreen();

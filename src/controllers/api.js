@@ -2,7 +2,7 @@
  * Created by baishi on 2/8/16.
  */
 var api = require('express').Router();
-var Announcement = require('../models/announcement');
+var Announcement = require('../models/Announcement');
 var User = require('../models/User');
 var Message = require('../models/PublicMessage');
 var Session = require('../models/Session');

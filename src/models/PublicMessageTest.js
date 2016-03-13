@@ -1,13 +1,14 @@
-/**4
+/**
+ * Created by baishi on 3/11/16.
  */
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize('private_messages', '', '', {
+var sequelize = new Sequelize('public_messages', '', '', {
     logging: false,
     dialect: 'sqlite',
-    storage: __dirname + '/../db/all.db'
+    storage: __dirname + '/../db/test.db'
 });
 
-var PrivateMessage = sequelize.define('private_message', {
+var PublicMessage = sequelize.define('public_message', {
     content: {
         field: 'content',
         type: Sequelize.STRING
@@ -16,17 +17,14 @@ var PrivateMessage = sequelize.define('private_message', {
         field: 'author',
         type: Sequelize.INTEGER
     },
-    target: {
-        field: 'target',
-        type: Sequelize.INTEGER,
-    },
     postedAt: {
         field: 'postAt',
         type: Sequelize.DATE,
     }
 }, {
     timestamps: false,
-    tableName: 'private_message'
+    tableName: 'public_message'
 });
 
-module.exports = PrivateMessage;
+
+module.exports = PublicMessage;

@@ -6,6 +6,7 @@ var User = require('../models/User');
 var Session = require('../models/Session');
 var Message = require('../models/PublicMessage');
 
+router.get('/', Session.loginRequired);
 router.get('/', function(req, res) {
     Message.findAll({
         order: 'postedAt ASC'

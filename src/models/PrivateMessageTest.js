@@ -1,10 +1,11 @@
-/**4
+/**
  */
+
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('private_messages', '', '', {
     logging: false,
     dialect: 'sqlite',
-    storage: __dirname + '/../db/all.db'
+    storage: __dirname + '/../db/test.db'
 });
 
 var PrivateMessage = sequelize.define('private_message', {
@@ -21,12 +22,12 @@ var PrivateMessage = sequelize.define('private_message', {
         type: Sequelize.INTEGER,
     },
     postedAt: {
-        field: 'postAt',
-        type: Sequelize.DATE,
+        field: 'postedAt',
+        type: Sequelize.INTEGER,
     }
 }, {
     timestamps: false,
-    tableName: 'private_message'
+    tableName: 'private_message_test'
 });
 
 module.exports = PrivateMessage;

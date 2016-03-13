@@ -1,11 +1,11 @@
 /**
- * Created by baishi on 2/24/16.
+ * Created by baishi on 3/12/16.
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('announcements', '', '', {
     logging: false,
     dialect: 'sqlite',
-    storage: __dirname + '/../db/all.db'
+    storage: __dirname + '/../db/test.db'
 });
 
 var Announcement = sequelize.define('announcement', {

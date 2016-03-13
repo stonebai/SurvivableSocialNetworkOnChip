@@ -1,11 +1,11 @@
 /**
- * Created by baishi on 2/6/16.
+ * Created by baishi on 3/12/16.
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('users', '', '', {
     logging: false,
     dialect: 'sqlite',
-    storage: __dirname + '/../db/all.db'
+    storage: __dirname + '/../db/test.db'
 });
 
 /**

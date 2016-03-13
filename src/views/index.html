@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- Your app title -->
-    <title>My App</title>
+    <title>SSNOC Team A2</title>
     <!-- Path to Framework7 Library CSS, iOS Theme -->
     <link rel="stylesheet" href="/public/framework7/css/framework7.ios.min.css">
     <!-- Path to Framework7 color related styles, iOS Theme -->
@@ -23,13 +23,13 @@
     <!-- Right panel -->
     <div class="panel panel-left panel-reveal" ng-controller="SidePanelController">
         <div class="content-block">
-            <p>Current User: <span ng-bind="username"></span></p>
+            <p>Current User: <span ng-bind="username" id="current_username"></span></p>
             <!-- Click on link with "close-panel" class will close panel -->
             <p><a href="#" class="close-panel" ng-click="openPage('public_chat')">Public Chat</a></p>
             <p><a href="#" ng-click="logout()">Logout</a></p>
             <p><a href="#" ng-click="openPage('about')" class="close-panel" >About</a></p>
             <p><a href="#announcements" class="close-panel" ng-click="openAnnouncement()">Announcements</a></p>
-
+            <p><a href="#" class="close-panel" ng-click="openPage('search')">Search</a></p>
             <div class="content-block-title">All Users</div>
             <div class="list-block">
                 <ul style="background: #111">
@@ -41,7 +41,8 @@
                                 'color-orange': u.lastStatusCode=='YELLOW'
                             }" ></i></div>
                             <div class="item-inner">
-                                <div class="item-title" ng-bind="u.username">Item title</div>
+                                <div class="item-title" ng-bind="u.username"
+                                     ng-class="{'color-white':u.online, 'color-gray':!u.online}">Item title</div>
                             </div>
                         </li>
                     </a>
@@ -119,8 +120,11 @@
                 <div class="navbar-inner">
                     <!-- We need cool sliding animation on title element, so we have additional "sliding" class -->
                     <div class="left">
-                        <a href="#" class="open-panel link icon-only" ng-click="clickNav()">
+                        <a href="#" ng-if="!isPagePushed" class="open-panel link icon-only" ng-click="clickNav()">
                             <i class="icon icon-bars"></i>
+                        </a>
+                        <a href="#" ng-if="isPagePushed" class="link icon-only" ng-click="clickBack()">
+                            <i class="icon icon-back"></i>
                         </a>
                     </div>
                     <div class="center sliding">Public Chat</div>
@@ -190,12 +194,112 @@
                         <div class="card" ng-repeat="announcement in announcements">
                             <div class="card-header">{{announcement.author}}</div>
                             <div class="card-content" style="word-wrap: break-word;"><div class="card-content-inner">{{announcement.content}}</div></div>
-                            <div class="card-footer">{{announcement.timestamp}}</div>
+                            <div class="card-footer">{{announcement.dateFormat}}</div>
                         </div>
                     </div>
                 </div>
 
 
+                <div data-page="search" class="page cached" ng-controller="SearchController">
+                    <div class="page-content">
+                        <div class="content-block-title">Labels and inputs</div>
+                        <div class="list-block">
+                            <ul>
+                                <li id="search_keyword_li">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Keyword:</div>
+                                            <div class="item-input">
+                                                <input type="text" ng-model="keyword" placeholder="Search Criteria">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li id="search_status_li">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Status:</div>
+                                            <div class="item-input">
+                                                <a href="#" id="status_for_search">GREEN</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Context:</div>
+                                            <div class="item-input">
+                                                <a href="#" id="search_context">UserName</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <!-- Select -->
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Display</div>
+                                            <div class="item-input">
+                                                <a href="#" id="search_display_num">10</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a href="#" class="button button-big button-fill"
+                           ng-click="onClickSearchButton()">Search Now!</a>
+                    </div>
+                </div>
+
+                <div data-page="search_results" class="page cached" ng-controller="SearchResultsController">
+                    <div class="page-content">
+                        <div class="content-block-title">Search Results ({{ results.length }} items) </div>
+                        <div class="list-block media-list" ng-if="isMediaList">
+                            <ul>
+                                <li ng-repeat="m in results">
+                                    <a href="#" class="item-link item-content" ng-click="showDetailMesssage(m)">
+                                        <div class="item-inner">
+                                            <div class="item-title-row">
+                                                <div class="item-title" ng-bind="m.sender"></div>
+                                                <div class="item-after" ng-bind="m.time"></div>
+                                            </div>
+                                            <div class="item-text" ng-bind="m.content"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="list-block" ng-if="!isMediaList">
+                            <ul>
+                                <li class="item-content" ng-repeat="u in results">
+                                    <div class="item-media"><i class="icon icon-bars" ng-class="{
+                                        'color-green': u.lastStatusCode=='GREEN',
+                                        'color-red': u.lastStatusCode=='RED',
+                                        'color-orange': u.lastStatusCode=='YELLOW'}"></i>
+                                    </div>
+                                    <div class="item-inner">
+                                        <div class="item-title"
+                                             ng-class="{'color-black': u.online,
+                                                        'color-gray': !u.online}"
+                                             ng-bind="u.username"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About Popup -->
+                <div class="popup popup-search-msg">
+                    <div class="content-block">
+                        <p><a href="#" class="close-popup">Close popup</a></p>
+                        <p class="full-search-msg"></p>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -216,6 +320,8 @@
     <script type="text/javascript" src="/public/js/controller/PrivateChatController.js"></script>
     <script type="text/javascript" src="/public/js/controller/StatusPopoverController.js"></script>
     <script type="text/javascript" src="/public/js/controller/AnnouncementController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/SearchController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/SearchResultsController.js"></script>
 </body>
 </html>
 

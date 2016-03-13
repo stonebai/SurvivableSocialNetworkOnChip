@@ -1,7 +1,9 @@
 var router = require('express').Router();
-var User = require('../models/User');
 var Session = require('../models/Session');
 var io = require('../socket.js');
+var UserDict = require('../UserDict.js');
+
+router.User = User = require('../models/User');
 
 /* Register or Login API */
 router.post('/:userName', function(req, res){
@@ -15,13 +17,13 @@ router.post('/:userName', function(req, res){
         var password = req.body.password;
         //todo timestamp
 
-        User.findOne({
+        router.User.findOne({
             where: {
                 username: username
             }
         }).then(function(user){
             if(!user){
-                User.create({
+                router.User.create({
                     username: username,
                     password: password,
                     createdAt: parseInt(req.body.createdAt)
@@ -29,7 +31,7 @@ router.post('/:userName', function(req, res){
                     Session.login(req, user);
                     user.password = undefined;
                     //if new user is created, status code = 201
-                    User.findOne({
+                    router.User.findOne({
                         where: {
                             id: user.id
                         }
@@ -44,7 +46,7 @@ router.post('/:userName', function(req, res){
                     });
                 });
             }else{
-                User.findOne({
+                router.User.findOne({
                     where: {
                         id: user.id
                     }
@@ -72,7 +74,7 @@ router.put('/current', function(req, res) {
     }
 
     var userID = req.session.user.id;
-    User.findOne({
+    router.User.findOne({
         attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
             'lastStatusCode', 'accountStatus'],
         where: {
@@ -107,11 +109,14 @@ router.delete('/logout', function(req, res){
 /* Retireve all users */
 router.get('/', Session.loginRequired);
 router.get('/', function(req, res){
-    User.findAll({
+    router.User.findAll({
         attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
             'lastStatusCode', 'accountStatus'],
         where: {}
     }).then(function(users){
+        for(var i = 0; i < users.length; i++) {
+            users[i].dataValues.online = UserDict.isOnline(users[i].id);
+        }
         res.status(200).json(users);
     });
 });
@@ -120,7 +125,7 @@ router.get('/', function(req, res){
 /* Retrieve a user's record */
 router.get('/:userName', Session.loginRequired);
 router.get('/:userName', function(req, res){
-    User.findOne({
+    router.User.findOne({
         attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
             'lastStatusCode', 'accountStatus'],
         where: {

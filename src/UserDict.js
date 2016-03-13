@@ -52,6 +52,12 @@ pub.sendTo = function(uid, event, o) {
     }
 }
 
+pub.isOnline = function(uid) {
+    if(dict[uid]) {
+        return true;
+    }
+    return false;
+}
 
 module.exports = pub;
 

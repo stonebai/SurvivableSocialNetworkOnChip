@@ -21,6 +21,8 @@ var api = require('./controllers/api');
 var chatPrivatelyController = require('./controllers/ChatPrivatelyController');
 var chatPublicController = require('./controllers/ChatPublicController');
 var userCcontroller = require('./controllers/UserController');
+var announcementController = require('./controllers/AnnouncementController');
+var searchController = require('./controllers/SearchController');
 
 var app = express();
 
@@ -41,6 +43,10 @@ app.use('/users', userCcontroller);
 app.use('/messages/private', chatPrivatelyController);
 app.use('/messages/public', chatPublicController);
 
+//announcement controller
+app.use('/announcements', announcementController);
+app.use('/search', searchController);
+
 var server = http.createServer(app);
 var socketIO = require('./socket.js');
 socketIO.init(server);
@@ -49,7 +55,7 @@ var io = socketIO.io();
 io.use(sharedsession(session));
 
 
-var User = require('./models/user.js');
+var User = require('./models/User.js');
 var PublicMessage = require('./models/PublicMessage.js');
 var PrivateMessage = require('./models/PrivateMessage.js');
 
@@ -76,7 +82,8 @@ io.on('connection', function(socket) {
     }
 
     User.findOne({
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
+            'lastStatusCode', 'accountStatus'],
         where: {
             id : uid,
         }
@@ -87,6 +94,8 @@ io.on('connection', function(socket) {
         }
 
         UserDict.add(user, socket);
+        // tell other users I'm entering
+        io.emit('user enter', user);
 
         socket.on('public chat', function(post) {
 
@@ -104,6 +113,10 @@ io.on('connection', function(socket) {
             console.log("a user disconnect : " + user.id);
             socket.disconnect();
             UserDict.remove(user.id, socket);
+            if(!UserDict.isOnline(user.id)) {
+                // tell other users I'm leaving.
+                io.emit('user leave', user);
+            }
         });
 
         socket.on('private message', function(post){
@@ -136,20 +149,9 @@ io.on('connection', function(socket) {
             });
         });
     });
-
-    socket.on('post annoucement', function(post) {
-        var Annoucement = require('./models/announcement');
-        Annoucement.create({
-            author: post.author,
-            content: post.content,
-            timestamp: post.timestamp,
-            location: post.location
-        });
-        io.emit('post annoucement', post);
-    });
 });
 
-var port = process.argv.length > 2 ? Number(process.argv[2]) : 3000;
+var port = process.argv.length > 2 ? Number(process.argv[2]) : 4000;
 server.listen(port, function() {
     console.log('listening on port:', port);
 });
