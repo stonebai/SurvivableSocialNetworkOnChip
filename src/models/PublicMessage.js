@@ -18,7 +18,7 @@ var PublicMessage = sequelize.define('public_message', {
         type: Sequelize.INTEGER
     },
     postedAt: {
-        field: 'postAt',
+        field: 'postedAt',
         type: Sequelize.DATE,
     }
 }, {

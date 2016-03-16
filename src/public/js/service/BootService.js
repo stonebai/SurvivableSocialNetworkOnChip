@@ -89,6 +89,20 @@
             return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
         }
 
+        pub.formatDay = function(date) {
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            var d = date.getDate() + 1;
+            return y + '-' + add0(m) + '-' + add0(d);
+        }
+
+        pub.formatTime = function(date) {
+            var h = date.getHours() + 1;
+            var mm = date.getMinutes() + 1;
+            var s = date.getSeconds() + 1;
+            return add0(h) + ':' + add0(mm) + ':' + add0(s);
+        }
+
         function onReady() {
             var fw7 = MyApp.fw7;
 

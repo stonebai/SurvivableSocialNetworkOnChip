@@ -8,9 +8,11 @@
         var messageLayout = MyApp.fw7.app.messages('#public_messages', {
             autoLayout: true
         });
+
         
         function addMessageToLayout(post) {
             var messageType = (post.author == UserService.currentUser.username) ? 'sent': 'received';
+            var date = new Date(post.timestamp || post.postedAt);
             messageLayout.addMessage({
                 // Message text
                 text: post.content,
@@ -20,8 +22,9 @@
                 //avatar: avatar,
                 name: post.author,
                 // Day
-                //day: !conversationStarted ? 'Today' : false,
-                //time: !conversationStarted ? (new Date()).getHours() + ':' + (new Date()).getMinutes() : false
+                day: BootService.formatDay(date),
+                time: BootService.formatTime(date),
+
             });
         }
 
@@ -29,11 +32,14 @@
             var msgs = [];
             for(var i = 0; i < data.length; i++) {
                 var post = data[i];
+                var date = new Date(post.timestamp || post.postedAt);
                 var messageType = (post.author == UserService.currentUser.username) ? 'sent': 'received';
                 msgs.push({
                     text: post.content,
                     type: messageType,
-                    name: post.author
+                    name: post.author,
+                    day: BootService.formatDay(date),
+                    time: BootService.formatTime(date),
                 });
             }
             messageLayout.addMessages(msgs, 'append', false);

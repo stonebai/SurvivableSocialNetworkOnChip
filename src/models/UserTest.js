@@ -1,5 +1,4 @@
 /**
- * Created by baishi on 3/12/16.
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('users', '', '', {

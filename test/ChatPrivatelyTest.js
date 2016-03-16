@@ -1,10 +1,10 @@
 var should = require('should');
-var suptertest = require('supertest');
+var supertest = require('supertest');
 
 var privatelyMessageController = require('../src/controllers/ChatPrivatelyController');
 var User = require('../src/models/User');
 
-var agent = suptertest.agent('http://localhost:3000');
+var agent = supertest.agent('http://localhost:4000');
 
 
 /**
@@ -13,12 +13,13 @@ var agent = suptertest.agent('http://localhost:3000');
 describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', function(){
     var user1Id;
     var user2Id;
-    var userCookie;
+    var userCookie1;
+    var userCookie2;
 
     before(function(done){
         privatelyMessageController.Message = require('../src/models/PrivateMessageTest');
         agent.post('/users/UnitTestUser1')
-        .send({password: 'unittestpass', createdAt: '10000'})
+        .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.000Z'})
         .end(function(err, res){
             if(err){
                 console.log(err);
@@ -26,14 +27,14 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
             }
             user1Id = res.body.id;
             agent.post('/users/UnitTestUser2')
-            .send({password: 'unittestpass', createdAt: '10001'})
+            .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.001Z'})
             .end(function(err, res){
                 if(err){
                     console.log(err);
                     return done(err);
                 }
                 user2Id = res.body.id;
-                userCookie = res.headers['set-cookie'];
+                user2Cookie = res.headers['set-cookie'];
                 done();
             });
         });
@@ -41,7 +42,7 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
 
     it("should return status 422 when request body is not correct", function(done){
         agent.post('/messages/private/UnitTestUser2/UnitTestUser1')
-        .set('cookie', userCookie)
+        .set('cookie', user2Cookie)
         .send({})
         .end(function(err, res){
             res.status.should.equal(422);
@@ -52,8 +53,8 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
     it("should return status 401 when doesn't use current login user to send a message",
     function(done){
         agent.post('/messages/private/UnitTestUser1/UnitTestUser2')
-        .set('cookie', userCookie)
-        .send({content: "test message", postedAt: 10000})
+        .set('cookie', user2Cookie)
+        .send({content: "test message", postedAt: "1970-01-01T00:01:40.000Z"})
         .end(function(err, res){
             res.status.should.equal(401);
             done();
@@ -64,8 +65,8 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
     it("should return status 404 when the toUserName doesn't exist",
     function(done){
         agent.post('/messages/private/UnitTestUser2/UnitTestUser3')
-        .set('Cookie', userCookie)
-        .send({content: "test message", postedAt: 100001})
+        .set('Cookie', user2Cookie)
+        .send({content: "test message", postedAt: "1970-01-01T00:01:40.002Z"})
         .end(function(err, res){
             res.status.should.equal(404);
             done();
@@ -75,14 +76,14 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
     it("should return status 201 when success",
     function(done){
         agent.post('/messages/private/UnitTestUser2/UnitTestUser1')
-        .set('Cookie', userCookie)
+        .set('Cookie', user2Cookie)
         .send({content: "test message", postedAt: 100002})
         .end(function(err, res){
             res.status.should.equal(201);
             res.body.content.should.equal('test message');
             res.body.author.should.equal(user2Id);
             res.body.target.should.equal(user1Id);
-            res.body.postedAt.should.equal(100002);
+            res.body.postedAt.should.equal("1970-01-01T00:01:40.002Z");
             done();
         });
     });
@@ -118,7 +119,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
     before(function(done){
         privatelyMessageController.Message = require('../src/models/PrivateMessageTest');
         agent.post('/users/UnitTestUser1')
-        .send({password: 'unittestpass', createdAt: '10000'})
+        .send({password: 'unittestpass', createdAt: 100002})
         .end(function(err, res){
             if(err){
                 console.log(err);
@@ -128,7 +129,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
             user1Cookie = res.headers['set-cookie'];
 
             agent.post('/users/UnitTestUser2')
-            .send({password: 'unittestpass', createdAt: '10001'})
+            .send({password: 'unittestpass', createdAt: 100003})
             .end(function(err, res){
                 if(err){
                     console.log(err);
@@ -145,10 +146,10 @@ describe('Test retrieving all private chat messages between two users: GET /:use
                     res.body.content.should.equal('Hello World');
                     res.body.author.should.equal(user2Id);
                     res.body.target.should.equal(user1Id);
-                    res.body.postedAt.should.equal(100005);
+                    res.body.postedAt.should.equal("1970-01-01T00:01:40.005Z");
 
                     agent.post('/users/UnitTestUser1')
-                    .send({password: 'unittestpass', createdAt: '10000'})
+                    .send({password: 'unittestpass', createdAt: 100005})
                     .end(function(err, res){
                         if(err){
                             console.log(err);
@@ -165,7 +166,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
                             res.body.content.should.equal('Bye World');
                             res.body.author.should.equal(user1Id);
                             res.body.target.should.equal(user2Id);
-                            res.body.postedAt.should.equal(100006);
+                            res.body.postedAt.should.equal("1970-01-01T00:01:40.006Z");
 
                             done();
                         });
@@ -196,12 +197,12 @@ describe('Test retrieving all private chat messages between two users: GET /:use
             res.body[0].content.should.equal('Hello World');
             res.body[0].author.should.equal(user2Id);
             res.body[0].target.should.equal(user1Id);
-            res.body[0].postedAt.should.equal(100005);
+            res.body[0].postedAt.should.equal("1970-01-01T00:01:40.005Z");
 
             res.body[1].content.should.equal('Bye World');
             res.body[1].author.should.equal(user1Id);
             res.body[1].target.should.equal(user2Id);
-            res.body[1].postedAt.should.equal(100006);
+            res.body[1].postedAt.should.equal("1970-01-01T00:01:40.006Z");
 
             done();
         });
@@ -210,7 +211,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
     it("should return error status 404 when the receiver doesn't exist",
     function(done){
         agent.post('/users/UnitTestUser2')
-        .send({password: 'unittestpass', createdAt: '10001'})
+        .send({password: 'unittestpass', createdAt: 100002})
         .end(function(err, res){
             if(err){
                 console.log(err);

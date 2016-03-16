@@ -49,7 +49,7 @@ MyApp.angular.controller('SearchResultsController',
             function filterMessages(results) {
                 for (var i = 0; i < results.length; i++) {
                     var user = UserService.getById(results[i].author);
-                    var username = user.username;
+                    var username = user? user.username : "";
                     results[i].sender = username
                     var date = new Date(results[i].postedAt);
                     results[i].time = BootService.formatDate(date);

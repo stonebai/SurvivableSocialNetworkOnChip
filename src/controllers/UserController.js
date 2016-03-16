@@ -2,6 +2,7 @@ var router = require('express').Router();
 var Session = require('../models/Session');
 var io = require('../socket.js');
 var UserDict = require('../UserDict.js');
+var illegalUsername = require('../models/IllegalUsername');
 
 router.User = User = require('../models/User');
 
@@ -17,6 +18,14 @@ router.post('/:userName', function(req, res){
         var password = req.body.password;
         //todo timestamp
 
+        //check the illegal userName
+        for(i = 0; i < illegalUsername.length; i++){
+            if(illegalUsername[i] == req.params.userName){
+                res.status(403).end();
+                return;
+            }
+        }
+
         router.User.findOne({
             where: {
                 username: username
@@ -28,8 +37,8 @@ router.post('/:userName', function(req, res){
                     password: password,
                     createdAt: parseInt(req.body.createdAt)
                 }).then(function(user){
-                    Session.login(req, user);
-                    user.password = undefined;
+                    //Session.login(req, user);
+                    //user.password = undefined;
                     //if new user is created, status code = 201
                     router.User.findOne({
                         where: {

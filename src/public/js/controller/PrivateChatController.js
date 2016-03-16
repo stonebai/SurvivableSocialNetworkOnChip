@@ -18,10 +18,13 @@ MyApp.angular.controller('PrivateChatController',
             function addMessageToLayout(msg) {
                 var messageType = (msg.author == UserService.currentUser.id) ? 'sent': 'received';
                 var authorName = UserService.getById(msg.author).username;
+                var date = new Date(msg.timestamp || msg.postedAt);
                 messageLayout.addMessage({
                     text: msg.content,
                     type: messageType,
                     name: authorName,
+                    day: BootService.formatDay(date),
+                    time: BootService.formatTime(date),
                 });
             }
 
@@ -29,12 +32,15 @@ MyApp.angular.controller('PrivateChatController',
                 var msgs = [];
                 for(var i = 0; i < data.length; i++) {
                     var msg = data[i];
+                    var date = new Date(msg.timestamp || msg.postedAt);
                     var messageType = (msg.author == UserService.currentUser.id) ? 'sent': 'received';
                     var authorName = UserService.getById(msg.author).username;
                     msgs.push({
                         text: msg.content,
                         type: messageType,
                         name: authorName,
+                        day: BootService.formatDay(date),
+                        time: BootService.formatTime(date),
                     });
                 }
                 messageLayout.addMessages(msgs, 'append', false);

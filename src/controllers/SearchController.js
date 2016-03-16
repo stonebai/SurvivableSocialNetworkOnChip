@@ -60,6 +60,10 @@ router.get('/:keyword/:context/:count', function(req, res){
         res.status(422).end();
     }
     else {
+        if(!searchContexts[context]) {
+            return res.status(422).end();
+        }
+
         var M = searchContexts[context].model;
         var field = searchContexts[context].field;
         var order = searchContexts[context].order;

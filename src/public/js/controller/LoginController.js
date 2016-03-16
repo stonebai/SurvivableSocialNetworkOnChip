@@ -41,7 +41,7 @@
             console.log(user);
             UserService.currentUser = user;
             MyApp.fw7.app.closeModal();
-            BootService.openPage('public_chat');
+            BootService.openPage('about');
             $http.get("/users").success(function(users, status){
                 if(status == 200) {
                     UserService.addUsers(users);
