@@ -31,30 +31,35 @@ router.post('/:userName', function(req, res){
                 username: username
             }
         }).then(function(user){
-            if(!user){
-                router.User.create({
-                    username: username,
-                    password: password,
-                    createdAt: parseInt(req.body.createdAt)
-                }).then(function(user){
-                    //Session.login(req, user);
-                    //user.password = undefined;
-                    //if new user is created, status code = 201
-                    router.User.findOne({
-                        where: {
-                            id: user.id
-                        }
+            if(!user) {
+                if (req.body.force) {
+                    router.User.create({
+                        username: username,
+                        password: password,
+                        createdAt: parseInt(req.body.createdAt)
                     }).then(function(user){
-                        if(!user){
-                            res.status(404).end();
-                        }else{
-                            Session.login(req, user);
-                            user.password = undefined;
-                            res.status(201).json(user);
-                        }
+                        //Session.login(req, user);
+                        //user.password = undefined;
+                        //if new user is created, status code = 201
+                        router.User.findOne({
+                            where: {
+                                id: user.id
+                            }
+                        }).then(function(user){
+                            if(!user){
+                                res.status(404).end();
+                            }else{
+                                Session.login(req, user);
+                                user.password = undefined;
+                                res.status(201).json(user);
+                            }
+                        });
                     });
-                });
-            }else{
+                }
+                else {
+                    res.status(205).end();
+                }
+            } else{
                 router.User.findOne({
                     where: {
                         id: user.id

@@ -16,14 +16,21 @@
                 return;
             }
 
-            $http.post('/users/' + user.name, {
-                createdAt : 123,
-                password : user.password,
-            }).success(function (data, status) {
+            var loginRequest = {
+                createdAt: new Date().getTime(),
+                password: user.password,
+                force: false
+            };
+
+            $http.post('/users/' + user.name, loginRequest).success(function (data, status) {
                 // if new user is created, status code = 201
-                if (status == 201) {
-                    fw7.alert('A new user (' + user.name + ') is created!', "App Alert", function(){
-                        loginSuccess(data);
+                if (status == 205) {
+                    fw7.confirm('Are you going to create a new user: ' + user.name, 'Create New User?',
+                    function() {
+                        loginRequest.force = true;
+                        $http.post('/users/' + user.name, loginRequest).success(function (data, status) {
+                            if (status == 201) loginSuccess(data);
+                        });
                     });
                 }
                 else if (status == 200) {

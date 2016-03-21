@@ -41,15 +41,28 @@ MyApp.angular.controller('SidePanelController',
             function updateUserList() {
                 var users = UserService.getAll();
                 $scope.users = [];
+                var offlineUsers = [];
                 for(var i in users) {
                     if(users[i].id != UserService.currentUser.id) {
-                        $scope.users.push(users[i]);
+                        if (users[i].online) {
+                            $scope.users.push(users[i]);
+                        } else {
+                            offlineUsers.push(users[i]);
+                        }
                     }
                 }
 
                 $scope.users.sort(function(a, b){
-                    return a.online < b.online;
-                })
+                    return a.username > b.username;
+                });
+                
+                offlineUsers.sort(function(a,b ){
+                    return a.username > b.username;
+                });
+
+                for(var i in offlineUsers) {
+                    $scope.users.push(offlineUsers[i]);
+                }
             }
 
             BootService.addEventListener('login', function(){
