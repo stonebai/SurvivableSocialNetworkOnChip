@@ -1,11 +1,18 @@
 language: node_js
 node_js:
-  - "4.0"
-  - "iojs"
+  - "4"
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 before_install:
   - mkdir src/db
 install:
-  - sudo npm install
+  - npm install
 before_script:
   - node src/initdb.js
   - node src/app.js
