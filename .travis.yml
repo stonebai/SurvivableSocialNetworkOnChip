@@ -5,7 +5,7 @@ node_js:
 before_install:
   - mkdir src/db
 install:
-  - npm install
+  - sudo npm install
 before_script:
   - node src/initdb.js
   - node src/app.js
