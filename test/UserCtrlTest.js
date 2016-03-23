@@ -36,7 +36,7 @@ describe('User Register Test', function() {
         // calling Register
         server
             .post("/users/User4Test")
-            .send({password: '1234', createdAt: 1234})
+            .send({password: '1234', createdAt: 1234, force: true})
             .expect("Content-type", /json/)
             .expect(201, {
                 username: 'User4Test'
@@ -94,7 +94,7 @@ describe('User Register Test',function() {
         // calling Login
         server
             .post("/users/User4Test")
-            .send({password: '1234', createdAt: 1234})
+            .send({password: '1234', createdAt: 1234, force: true})
             .expect("Content-type",/json/)
             .expect(200, {
                 username: 'User4Test'

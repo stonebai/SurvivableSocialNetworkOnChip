@@ -18,7 +18,7 @@ describe('Test changeStatus RESTful APIs: put /current', function() {
     before(function(done) {
         UserController.User = require('../src/models/UserTest');
         agent.post('/users/UnitTestUser')
-        .send({password: 'unittestpass', createdAt: '10000'})
+        .send({password: 'unittestpass', createdAt: '10000', force:true})
         .end(function(err, res) {
             if(err) {
                 console.log(err);

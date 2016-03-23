@@ -70,7 +70,7 @@ router.get('/:keyword/:context/:count', function(req, res){
 
         var clause = {
             where : {
-                $or : []
+                $and : []
             },
         };
 
@@ -80,11 +80,11 @@ router.get('/:keyword/:context/:count', function(req, res){
             if(!isStopWord(keys[i])) {
                 var condition = {};
                 condition[field] = {$like: '%' + keys[i] + '%'};
-                clause.where.$or.push(condition);
+                clause.where.$and.push(condition);
             }
         }
 
-        if(clause.where.$or.length == 0) {
+        if(clause.where.$and.length == 0) {
             return res.status(200).json([]);
         }
 

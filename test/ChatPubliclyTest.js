@@ -16,7 +16,7 @@ describe('Test chat publicly RESTful APIs: POST /:fromUserName', function(){
     before(function(done){
         chatPubliclyController.Message = require('../src/models/PublicMessageTest');
         agent.post('/users/UnitTestUser')
-        .send({password: 'unittestpass', createdAt: 100002})
+        .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
             if(err){
                 console.log(err);
@@ -93,7 +93,7 @@ describe('Test retrieving all public chat messages: GET /:', function(){
     before(function(done){
         chatPubliclyController.Message = require('../src/models/PublicMessageTest');
         agent.post('/users/UnitTestUser')
-        .send({password: 'unittestpass', createdAt: 100002})
+        .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
             if(err){
                 console.log(err);

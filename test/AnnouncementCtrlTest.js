@@ -3,7 +3,7 @@
  */
 var supertest = require("supertest");
 var should = require('should');
-var User = require("../src/models/UserTest");
+var User = require("../src/models/User");
 var Announcement = require("../src/models/Announcement");
 var server = supertest.agent("http://localhost:4000");
 
@@ -64,7 +64,7 @@ describe('Test Announcement RESTful APIs: GET /announcements', function() {
             }).then(function() {
                 server
                     .post("/users/User4Test")
-                    .send({password: '1234', createdAt: 1234})
+                    .send({password: '1234', createdAt: 1234, force: true})
                     .end(function(err,res) {
                         if(err) done(err);
                         else done();
@@ -122,7 +122,7 @@ describe('Test Announcement RESTful APIs: POST /announcements', function() {
         }).then(function(user) {
             server
                 .post("/users/User4Test")
-                .send({password: '1234', createdAt: 1234})
+                .send({password: '1234', createdAt: 1234, force: true})
                 .end(function(err,res) {
                     if(err) done(err);
                     else done();

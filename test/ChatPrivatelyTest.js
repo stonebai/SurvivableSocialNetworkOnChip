@@ -19,7 +19,7 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
     before(function(done){
         privatelyMessageController.Message = require('../src/models/PrivateMessageTest');
         agent.post('/users/UnitTestUser1')
-        .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.000Z'})
+        .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.000Z', force: true})
         .end(function(err, res){
             if(err){
                 console.log(err);
@@ -27,7 +27,7 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
             }
             user1Id = res.body.id;
             agent.post('/users/UnitTestUser2')
-            .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.001Z'})
+            .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.001Z', force: true})
             .end(function(err, res){
                 if(err){
                     console.log(err);
@@ -119,7 +119,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
     before(function(done){
         privatelyMessageController.Message = require('../src/models/PrivateMessageTest');
         agent.post('/users/UnitTestUser1')
-        .send({password: 'unittestpass', createdAt: 100002})
+        .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
             if(err){
                 console.log(err);
@@ -129,7 +129,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
             user1Cookie = res.headers['set-cookie'];
 
             agent.post('/users/UnitTestUser2')
-            .send({password: 'unittestpass', createdAt: 100003})
+            .send({password: 'unittestpass', createdAt: 100003, force: true})
             .end(function(err, res){
                 if(err){
                     console.log(err);
@@ -149,7 +149,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
                     res.body.postedAt.should.equal("1970-01-01T00:01:40.005Z");
 
                     agent.post('/users/UnitTestUser1')
-                    .send({password: 'unittestpass', createdAt: 100005})
+                    .send({password: 'unittestpass', createdAt: 100005, force: true})
                     .end(function(err, res){
                         if(err){
                             console.log(err);
@@ -211,7 +211,7 @@ describe('Test retrieving all private chat messages between two users: GET /:use
     it("should return error status 404 when the receiver doesn't exist",
     function(done){
         agent.post('/users/UnitTestUser2')
-        .send({password: 'unittestpass', createdAt: 100002})
+        .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
             if(err){
                 console.log(err);
