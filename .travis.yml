@@ -1,4 +1,13 @@
 language: node_js
 node_js:
-  - "node"
+  - "4.0"
   - "iojs"
+before_install:
+  - mkdir src/db
+install:
+  - npm install
+before_script:
+  - node src/initdb.js
+  - node src/app.js
+script:
+  - grunt test
