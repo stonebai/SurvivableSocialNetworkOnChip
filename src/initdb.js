@@ -17,7 +17,7 @@ Room.sync({force: true});
 Member.sync({force: true});
 RoomMessage.sync({force: true});
 
-var PrivateMessageTest = require('./models/PrivatemessageTest');
+var PrivateMessageTest = require('./models/PrivateMessageTest');
 var PublicMessageTest = require('./models/PublicMessageTest');
 var AnnoouncementTest = require('./models/AnnouncementTest');
 var UserTest = require('./models/UserTest');
