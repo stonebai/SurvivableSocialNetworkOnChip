@@ -14,7 +14,9 @@ before_install:
 install:
   - npm install
 before_script:
-  - node src/initdb.js
-  - node src/app.js
+  - cd src
+  - node initdb.js
+  - node app.js
+  - cd ..
 script:
   - grunt test
