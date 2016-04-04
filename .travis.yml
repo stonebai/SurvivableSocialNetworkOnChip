@@ -15,6 +15,7 @@ install:
   - npm install
 before_script:
   - cd src
+  - ls ./models
   - node initdb.js
   - node app.js
   - cd ..
