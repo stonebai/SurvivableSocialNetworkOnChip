@@ -13,8 +13,8 @@ router.post('/:fromUserName/:toUserName', function(req, res){
         return;
     }
 
-    console.log(req.params.fromUserName);
-    console.log(req.session.user.name);
+    //console.log(req.params.fromUserName);
+    //console.log(req.session.user.name);
 
     //validate the current login user is the sender or not
     if(req.params.fromUserName != req.session.user.name){

@@ -13,6 +13,7 @@ before_install:
   - mkdir src/db
 install:
   - npm install
+  - npm install grunt-cli -g
 before_script:
   - node src/initdb.js
   - node src/app.js

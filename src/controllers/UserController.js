@@ -9,7 +9,7 @@ router.User = User = require('../models/User');
 /* Register or Login API */
 router.post('/:userName', function(req, res){
     //validate the request body
-    console.log(req.body);
+    //console.log(req.body);
     if( typeof req.body.password === 'undefined' ||
         typeof req.body.createdAt === 'undefined'){
         //Unprocessable Entity -- used for validation errors
@@ -102,7 +102,7 @@ router.put('/current', function(req, res) {
             user.update({
                 lastStatusCode: req.body.lastStatusCode
             }).then(function(x){
-                console.log(x);
+                //console.log(x);
                 user.password = undefined;
                 io.io().emit('status change', user);
                 res.status(200).json(x);

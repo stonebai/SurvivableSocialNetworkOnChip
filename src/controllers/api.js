@@ -81,7 +81,7 @@ api.post('/register', function(req, res) {
 });
 
 api.get('/users', function(req, res) {
-    console.log("session id " + req.session.id)
+    //console.log("session id " + req.session.id)
     User.findAll({
         attributes: ['id', 'username'],
         where: {
@@ -118,7 +118,7 @@ api.post('/logout', function(req, res) {
 api.get('/messages/private/:uid1/:uid2', function(req, res){
     var uid1 = req.params.uid1;
     var uid2 = req.params.uid2;
-    console.log("uid1: " + uid1 + "  uid2: " + uid2);
+    //console.log("uid1: " + uid1 + "  uid2: " + uid2);
     res.json([]);
 });
 
