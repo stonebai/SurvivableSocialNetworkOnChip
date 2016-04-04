@@ -56,6 +56,6 @@ User.delete = function(id){
             id: id
         }
     });
-}
+};
 
 module.exports = User;

@@ -23,6 +23,9 @@ var chatPublicController = require('./controllers/ChatPublicController');
 var userCcontroller = require('./controllers/UserController');
 var announcementController = require('./controllers/AnnouncementController');
 var searchController = require('./controllers/SearchController');
+var roomController = require('./controllers/RoomController');
+var memberController = require('./controllers/MemberController');
+var roommessageController = require('./controllers/RoomMessageController');
 
 var app = express();
 
@@ -46,6 +49,10 @@ app.use('/messages/public', chatPublicController);
 //announcement controller
 app.use('/announcements', announcementController);
 app.use('/search', searchController);
+
+app.use('/room', roomController);
+app.use('/member', memberController);
+app.use('/roommessage', roommessageController);
 
 var server = http.createServer(app);
 var socketIO = require('./socket.js');

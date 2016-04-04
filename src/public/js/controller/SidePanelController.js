@@ -3,29 +3,28 @@
  */
 
 MyApp.angular.controller('SidePanelController',
-    ['$scope', '$http', 'BootService', 'UserService',
-        function ($scope, $http, BootService, UserService) {
+    ['$scope', '$http', 'BootService', 'UserService', 'RoomService',
+        function ($scope, $http, BootService, UserService, RoomService) {
 
             var fw7 = MyApp.fw7.app;
             var $$ = Dom7;
 
             $scope.users = [];
             $scope.username = "";
+            $scope.rooms = [];
 
             $scope.openPage = function(pageName) {
                 BootService.openPage(pageName);
-            }
+            };
 
             $scope.openPrivateChat = function(user) {
                 fw7.closePanel();
                 BootService.openPage('private_chat', user.id);
-            }
+            };
 
-            $scope.openAnnouncement = function() {
-                fw7.closePanel();
-                BootService.trigger('announcements');
-                BootService.openPage('Announcements');
-            }
+            $scope.openRoom = function(room) {
+                BootService.openPage('room_chat', room);
+            };
 
             $scope.logout = function() {
                 MyApp.fw7.app.confirm("Do you want to logout?", "App Alert", function(){
@@ -65,9 +64,25 @@ MyApp.angular.controller('SidePanelController',
                 }
             }
 
+            function updateRoomList() {
+                var rooms = RoomService.getAll();
+                rooms.sort(function(a, b) {
+                    if(a.isCreator && b.isCreator) return a.roomname - b.roomname;
+                    if(a.isMember && b.isMember) return a.roomname - b.roomname;
+                    if(a.isCreator) return -1;
+                    if(b.isCreator) return 1;
+                    return a.roomname - b.roomname;
+                });
+                $scope.rooms = [];
+                for(var i=0;i<rooms.length;i++) {
+                    $scope.rooms.push(rooms[i]);
+                }
+            }
+
             BootService.addEventListener('login', function(){
                 $scope.username = UserService.currentUser.username;
                 updateUserList();
+                updateRoomList();
 
                 var socket = MyApp.socket;
                 socket.on('status change', function(u){
@@ -108,8 +123,50 @@ MyApp.angular.controller('SidePanelController',
                     $scope.$apply();
                 });
 
-            });
+                socket.on("room_create", function(r) {
+                    if(r.creatorname==UserService.currentUser.username) {
+                        $scope.rooms.push({
+                            roomname: r.roomname,
+                            isCreator: true,
+                            isMember: false
+                        });
+                    }
+                });
+                
+                socket.on("room_destroy", function(r) {
+                    for(var i=0;i<$scope.rooms.length;i++) {
+                        if(r.roomname==$scope.rooms[i].roomname) {
+                            $scope.rooms.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    $scope.$apply();
+                });
 
+                socket.on("add_member", function(m) {
+                    if(m.username==UserService.currentUser.username) {
+                        $scope.rooms.push({
+                            roomname: m.roomname,
+                            isCreator: false,
+                            isMember: true
+                        });
+                    }
+                });
+                
+                socket.on("remove_member", function(m) {
+                    if(m.username==UserService.currentUser.username) {
+                        for(var i=0;i<$scope.rooms.length;i++) {
+                            if(m.roomname==$scope.rooms[i].roomname) {
+                                $scope.rooms.splice(i, 1);
+                                i--;
+                            }
+                        }
+                        console.log($scope.rooms);
+                        $scope.$apply();
+                    }
+                });
+            });
         }
-    ]);
+    ]
+);
 

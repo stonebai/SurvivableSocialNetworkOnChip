@@ -18,7 +18,7 @@
     <!-- It should be included After main Framework7 styles -->
     <link rel="stylesheet" href="/public/framework7/css/framework7.material.colors.min.css">
 </head>
-<body>
+<body ng-controller="RoomController">
 
     <!-- Right panel -->
     <div class="panel panel-left panel-reveal" ng-controller="SidePanelController">
@@ -28,8 +28,26 @@
             <p><a href="#" class="close-panel" ng-click="openPage('public_chat')">Public Chat</a></p>
             <p><a href="#" ng-click="logout()">Logout</a></p>
             <p><a href="#" ng-click="openPage('about')" class="close-panel" >About</a></p>
-            <p><a href="#announcements" class="close-panel" ng-click="openAnnouncement()">Announcements</a></p>
+            <p><a href="#" class="close-panel" ng-click="openPage('announcements')">Announcements</a></p>
             <p><a href="#" class="close-panel" ng-click="openPage('search')">Search</a></p>
+            <p><a href="#" class="close-panel" ng-click="openPage('createRoom')">Create Room</a></p>
+            <div class="content-block-title">All Rooms</div>
+            <div class="list-block">
+                <ul style="backgroud: #222">
+                    <a ng-repeat="room in rooms" href="#" class="item-link close-panel" ng-click="openRoom(room)">
+                        <li class="item-content">
+                            <div class="item-media"><i class="icon icon-bars" ng-class="{
+                                'color-green': room.isMember,
+                                'color-orange': room.isAdmin,
+                                'color-red': room.isCreator
+                                }"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title" ng-bind="room.roomname"></div>
+                            </div>
+                        </li>
+                    </a>
+                </ul>
+            </div>
             <div class="content-block-title">All Users</div>
             <div class="list-block">
                 <ul style="background: #111">
@@ -187,13 +205,16 @@
                     <div class="toolbar messagebar">
                         <div class="toolbar-inner">
                             <textarea placeholder="Announcement" ng-model="newAnnouncement"></textarea>
-                            <a href="#" class="link" ng-click="postAnnouncement(newAnnouncement)" ng-disabled="post.trim()==''">Send</a>
+                            <a href="#" class="link" ng-click="postAnnouncement(newAnnouncement)"
+                               ng-disabled="post.trim()==''">Send</a>
                         </div>
                     </div>
                     <div class="page-content">
                         <div class="card" ng-repeat="announcement in announcements">
                             <div class="card-header">{{announcement.author}}</div>
-                            <div class="card-content" style="word-wrap: break-word;"><div class="card-content-inner">{{announcement.content}}</div></div>
+                            <div class="card-content" style="word-wrap: break-word;">
+                                <div class="card-content-inner">{{announcement.content}}</div>
+                            </div>
                             <div class="card-footer">{{announcement.dateFormat}}</div>
                         </div>
                     </div>
@@ -254,6 +275,69 @@
                     </div>
                 </div>
 
+                <div data-page="createRoom" class="page cached" ng-controller="CreateRoomController">
+                    <div class="page-content">
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">Room Name:</div>
+                                            <div class="item-input">
+                                                <input type="text" ng-model="roomname" placeholder="Room name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="content-block">
+                            <a href="#" class="button" ng-click="createRoom(roomname)">Create!</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-page="room_chat" class="page cached">
+                    <!-- messagebar -->
+                    <div class="toolbar messagebar">
+                        <div class="toolbar-inner">
+                            <textarea placeholder="Message" ng-model="rmsg" ng-keyup="rKeyUp($event, rmsg)"></textarea>
+                            <a href="#" class="link" ng-click="rmsgPost(rmsg)" ng-disabled="rmsg.trim()==''">Send</a>
+                        </div>
+                    </div>
+                    <!-- Scrollable page content -->
+                    <div class="page-content row">
+                        <div class="list-block col-30">
+                            <ul>
+                                <li class="item-content open-popup" ng-if="currentRoom.isCreator"
+                                    data-popup=".popup-addUsers" ng-click="updateUserList()">
+                                    <div class="item-inner">
+                                        <div class="item-title">Add User</div>
+                                    </div>
+                                </li>
+                                <li class="item-content" ng-if="currentRoom.isCreator" ng-click="close()">
+                                    <div class="item-inner">
+                                        <div class="item-title">Close</div>
+                                    </div>
+                                </li>
+                                <li class="item-content" ng-if="currentRoom.isMember" ng-click="leave()">
+                                    <div class="item-inner">
+                                        <div class="item-title">Leave</div>
+                                    </div>
+                                </li>
+                                <li class="item-content" ng-repeat="mem in members">
+                                    <div class="item-inner" ng-click="remove(mem)">
+                                        <div class="item-title" ng-bind="mem.username"></div>
+                                        <div class="item-after" ng-if="mem.isCreator">Administrator</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="messages col-70" id="room_messages">
+                        </div>
+                    </div>
+                </div>
+
                 <div data-page="search_results" class="page cached" ng-controller="SearchResultsController">
                     <div class="page-content">
                         <div class="content-block-title">Search Results ({{ results.length }} items) </div>
@@ -304,6 +388,14 @@
             </div>
         </div>
     </div>
+    <div class="popup popup-addUsers">
+        <div class="content-block">
+            <p>Choose the user you want to add:</p>
+            <p ng-repeat="usr in allUsers">
+                <a href="#" class="close-popup" ng-click="addUser(usr)">{{usr.username}}</a>
+            </p>
+        </div>
+    </div>
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="/public/framework7/js/framework7.min.js"></script>
     <!-- Path to your app js-->
@@ -313,6 +405,7 @@
     <script type="text/javascript" src="/public/js/service/BootService.js"></script>
     <script type="text/javascript" src="/public/js/service/UserService.js"></script>
     <script type="text/javascript" src="/public/js/service/MessageService.js"></script>
+    <script type="text/javascript" src="/public/js/service/RoomService.js"></script>
     <script type="text/javascript" src="/public/js/controller/LoginController.js"></script>
     <script type="text/javascript" src="/public/js/controller/NavbarController.js"></script>
     <script type="text/javascript" src="/public/js/controller/PublicChatController.js"></script>
@@ -322,6 +415,8 @@
     <script type="text/javascript" src="/public/js/controller/AnnouncementController.js"></script>
     <script type="text/javascript" src="/public/js/controller/SearchController.js"></script>
     <script type="text/javascript" src="/public/js/controller/SearchResultsController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/CreateRoomController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/RoomController.js"></script>
 </body>
 </html>
 

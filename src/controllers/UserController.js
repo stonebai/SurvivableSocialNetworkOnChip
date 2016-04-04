@@ -9,6 +9,7 @@ router.User = User = require('../models/User');
 /* Register or Login API */
 router.post('/:userName', function(req, res){
     //validate the request body
+    console.log(req.body);
     if( typeof req.body.password === 'undefined' ||
         typeof req.body.createdAt === 'undefined'){
         //Unprocessable Entity -- used for validation errors

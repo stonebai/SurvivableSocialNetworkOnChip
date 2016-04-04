@@ -28,7 +28,7 @@ MyApp.angular.controller('AnnouncementController',
                 }
             }
 
-            BootService.addEventListener('announcements', function() {
+            BootService.addEventListener('open_announcements', function() {
 
                 socket = MyApp.socket;
                 $$('.navbar').find('.center').text("Announcement Board");
@@ -46,8 +46,7 @@ MyApp.angular.controller('AnnouncementController',
 
             function dateFormat(unformatedDate) {
                 var date = new Date(unformatedDate);
-                return date.getFullYear()+'-'+date.getMonth()+'-'+date.getDay()+'\t'
-                    +date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+                return BootService.formatDay(date) +'\t' + BootService.formatTime(date);
             }
         }
     ]
