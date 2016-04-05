@@ -16,6 +16,6 @@ install:
   - npm install grunt-cli -g
 before_script:
   - node src/initdb.js
-  - node src/app.js
+  - node src/app.js &
 script:
   - grunt test

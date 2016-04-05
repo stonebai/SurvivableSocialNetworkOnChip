@@ -35,7 +35,7 @@ MyApp.angular.controller('SidePanelController',
                         }
                     });
                 });
-            }
+            };
 
             function updateUserList() {
                 var users = UserService.getAll();
@@ -150,6 +150,7 @@ MyApp.angular.controller('SidePanelController',
                             isCreator: false,
                             isMember: true
                         });
+                        $scope.$apply();
                     }
                 });
                 

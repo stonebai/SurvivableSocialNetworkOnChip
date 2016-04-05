@@ -29,7 +29,7 @@ router.post('/:username/:roomname', function(req, res) {
         roomname: req.params.roomname,
         postedAt: req.body.postedAt
     }).then(function(message) {
-        io.emit(message.roomname + '_message', message);
+        io.emit('room_message', message);
         res.status(201).end();
     });
 });

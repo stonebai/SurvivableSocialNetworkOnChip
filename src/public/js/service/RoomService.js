@@ -38,8 +38,28 @@ MyApp.angular.factory('RoomService', ['$document', '$http', function($document, 
         return roomList;
     };
 
+    roomObject.clear = function() {
+        roomList = [];
+    };
+
     roomObject.getMessages = function(roomname, callback) {
         $http.get('/roommessage/' + roomname).success(function(data, status) {
+            if(status==200) {
+                callback(data);
+            }
+        });
+    };
+
+    roomObject.getCreator = function(roomname, callback) {
+        $http.get('/room/' + roomname).success(function(data, status) {
+            if(status==200) {
+                callback(data);
+            }
+        });
+    };
+
+    roomObject.getMembers = function(roomname, callback) {
+        $http.get('/member/' + roomname).success(function(data, status) {
             if(status==200) {
                 callback(data);
             }

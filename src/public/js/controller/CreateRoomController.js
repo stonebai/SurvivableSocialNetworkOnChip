@@ -17,12 +17,13 @@ MyApp.angular.controller('CreateRoomController',
                     roomname: roomname,
                     creatorname: UserService.currentUser.username
                 }).success(function(data, status) {
-                    if(status==409) {
-                        fw7.alert('Duplicate Name', 'This room name has already been taken');
-                    }
-                    else if(status==201) {
+                    if(status==201) {
                         data.isCreator = true;
                         BootService.openPage('room_chat', data);
+                    }
+                }).error(function(data, status) {
+                    if(status==409) {
+                        fw7.alert('This room name has already been taken', 'Duplicate Name');
                     }
                 });
             }

@@ -33,7 +33,10 @@ router.post('/:roomname', function(req, res) {
         }
     }).then(function(room) {
         if(room) {
-            if(room.creatorname==req.body.creatorname) {
+            if (room.creatorname==req.body.username) {
+                res.status(204).end();
+            }
+            else if(room.creatorname==req.body.creatorname) {
                 router.Member.findOne({
                     where: {
                         roomname: req.params.roomname,

@@ -1,5 +1,5 @@
-﻿MyApp.angular.factory('BootService', ['$document', '$http', '$rootScope', 'UserService',
-    function ($document, $http, $rootScope, UserService) {
+﻿MyApp.angular.factory('BootService', ['$document', '$http', '$rootScope', 'UserService', 'RoomService',
+    function ($document, $http, $rootScope, UserService, RoomService) {
         var pub = {},
             eventListeners = {
                 'ready' : []
@@ -118,7 +118,19 @@
                     $http.get("/users").success(function(users, status){
                         if(status == 200) {
                             UserService.addUsers(users);
-                            pub.trigger('login');
+                            $http.get("/room/rooms/" + UserService.currentUser.username)
+                                .success(function(crooms, status) {
+                                    if(status == 200) {
+                                        RoomService.addCreatorRooms(crooms);
+                                    }
+                                    $http.get("/member/rooms/" + UserService.currentUser.username)
+                                        .success(function(mrooms, status) {
+                                            if(status == 200) {
+                                                RoomService.addMemberRooms(mrooms);
+                                            }
+                                            pub.trigger('login');
+                                        });
+                                });
                         }
                     });
                 }
@@ -139,6 +151,7 @@
             MyApp.socket.disconnect();
             //MyApp.socket.conn.close()
             //MyApp.socket = null;
+            RoomService.clear();
         }
 
         pub.addEventListener('logout', logout);

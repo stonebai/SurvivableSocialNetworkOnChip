@@ -40,17 +40,13 @@ MyApp.angular.controller('RoomController',
                 }
             }
 
-            BootService.addEventListener('open_room_chat', function(room) {
+            BootService.addEventListener('login', function() {
                 socket = MyApp.socket;
-                $scope.currentRoom = room;
-                BootService.setNavbarTitle($scope.currentRoom.roomname);
-                messageLayout.clean();
-                RoomService.getMessages($scope.currentRoom.roomname, function(msgs) {
-                    addMessages(msgs);
-                });
 
-                socket.on($scope.currentRoom.roomname + '_message', function(msg) {
-                    addMessageToLayout(msg);
+                socket.on('room_message', function(msg) {
+                    if(msg.roomname == $scope.currentRoom.roomname) {
+                        addMessageToLayout(msg);
+                    }
                 });
 
                 socket.on('add_member', function(member) {
@@ -63,9 +59,10 @@ MyApp.angular.controller('RoomController',
                 socket.on('remove_member', function(member) {
                     console.log(member);
                     if(member.username==UserService.currentUser.username) {
+                        fw7.alert('You have been removed from this group!');
                         BootService.openPage('public_chat');
                     }
-                    if($scope.currentRoom.roomname==member.roomname) {
+                    else if($scope.currentRoom.roomname==member.roomname) {
                         for(var i=0;i<$scope.members.length;i++) {
                             if($scope.members[i].username==member.username) {
                                 $scope.members.splice(i, 1);
@@ -81,9 +78,31 @@ MyApp.angular.controller('RoomController',
                 });
             });
 
+            BootService.addEventListener('logout', function() {
+                socket = null;
+            });
+
+            BootService.addEventListener('open_room_chat', function(room) {
+                $scope.currentRoom = room;
+                BootService.setNavbarTitle($scope.currentRoom.roomname);
+                messageLayout.clean();
+                RoomService.getMessages($scope.currentRoom.roomname, function(msgs) {
+                    addMessages(msgs);
+                });
+                RoomService.getCreator($scope.currentRoom.roomname, function(crt) {
+                    $scope.members.push({
+                        username: crt.creatorname
+                    });
+                });
+                RoomService.getMembers($scope.currentRoom.roomname, function(mms) {
+                    for(var i=0;i<mms.length;i++) {
+                        $scope.members.push(mms[i]);
+                    }
+                });
+            });
+
             BootService.addEventListener('close_room_chat', function() {
                 $scope.members = [];
-                $scope.$apply();
             });
 
             $scope.close = function() {
@@ -111,6 +130,18 @@ MyApp.angular.controller('RoomController',
                 );
             };
 
+            $scope.remove = function(mem) {
+                fw7.confirm('Are you going to remove ' + mem.username + ' ?', 'Remove?',
+                    function() {
+                        $http.put('/member/' + $scope.currentRoom.roomname, {
+                            username: mem.username,
+                            creatorname: UserService.currentUser.username
+                        }).error(function() {
+                            fw7.alert('You cannot remove this user!');
+                        });
+                    });
+            };
+
             $scope.updateUserList = function() {
                 $scope.allUsers = [];
                 $http.get('/users').success(function(users) {
@@ -125,6 +156,9 @@ MyApp.angular.controller('RoomController',
                     creatorname: UserService.currentUser.username,
                     username: user.username
                 }).success(function(data, status) {
+                    if (status==204) {
+                        fw7.alert("You are already the creator of this room");
+                    }
                     if(status==205) {
                         fw7.alert("This user is already a member!");
                     }
@@ -135,7 +169,7 @@ MyApp.angular.controller('RoomController',
                 if(event.keyCode == 13 && message.trim() != '') {
                     $scope.rmsgPost(message);
                 }
-            }
+            };
 
             $scope.rmsgPost = function(rmsg) {
                 var post = {
