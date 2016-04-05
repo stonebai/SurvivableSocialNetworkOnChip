@@ -36,29 +36,31 @@ router.get('/:roomname', function(req, res) {
 // curl -i -H "Accept: application/json" -X POST -d "roomname=Room4Test&creatorname=User4APITest" http://localhost:4000/room/
 router.post('/', function(req, res) {
     if(req.body.roomname.trim()=='') res.status(400).end();
-    router.Room.findOne({
-        where: {
-            roomname: req.body.roomname
-        }
-    }).then(function(room) {
-        if(room) {
-            res.status(409).end();
-        }
-        else {
-            router.Room.create({
-                roomname: req.body.roomname,
-                creatorname: req.body.creatorname
-            }).then(function(room) {
-                if(room) {
-                    io.emit("room_create", room);
-                    res.status(201).json(room);
-                }
-                else {
-                    res.status(500).end();
-                }
-            });
-        }
-    });
+    else {
+        router.Room.findOne({
+            where: {
+                roomname: req.body.roomname
+            }
+        }).then(function(room) {
+            if(room) {
+                res.status(409).end();
+            }
+            else {
+                router.Room.create({
+                    roomname: req.body.roomname,
+                    creatorname: req.body.creatorname
+                }).then(function(room) {
+                    if(room) {
+                        io.emit("room_create", room);
+                        res.status(201).json(room);
+                    }
+                    else {
+                        res.status(500).end();
+                    }
+                });
+            }
+        });
+    }
 });
 
 // curl -i -H "Accept: application/json" -X PUT -d '{"roomname":"Room4Test", "creatorname":"User4APITest"}' http://localhost:4000/room/
