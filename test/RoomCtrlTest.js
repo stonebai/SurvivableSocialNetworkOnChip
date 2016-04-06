@@ -26,7 +26,7 @@ describe('Test Room RESTful APIs: GET /room/rooms/:username', function() {
         server
             .get("/room/rooms/User4Test")
             .expect("Content-type",/json/)
-            .expect(200)
+            .expect(400)
             .end(function(err,res) {
                 res.body.length.should.eql(1);
                 res.body[0].roomname.should.eql('Room4Test');
