@@ -131,15 +131,20 @@ MyApp.angular.controller('RoomController',
             };
 
             $scope.remove = function(mem) {
-                fw7.confirm('Are you going to remove ' + mem.username + ' ?', 'Remove?',
-                    function() {
-                        $http.put('/member/' + $scope.currentRoom.roomname, {
-                            username: mem.username,
-                            creatorname: UserService.currentUser.username
-                        }).error(function() {
-                            fw7.alert('You cannot remove this user!');
+                if(mem.username == UserService.currentUser.username) {
+                    fw7.alert('Why are you removing yourself?');
+                }
+                else {
+                    fw7.confirm('Are you going to remove ' + mem.username + ' ?', 'Remove?',
+                        function() {
+                            $http.put('/member/' + $scope.currentRoom.roomname, {
+                                username: mem.username,
+                                creatorname: UserService.currentUser.username
+                            }).error(function() {
+                                fw7.alert('You cannot remove this user!');
+                            });
                         });
-                    });
+                }
             };
 
             $scope.updateUserList = function() {
