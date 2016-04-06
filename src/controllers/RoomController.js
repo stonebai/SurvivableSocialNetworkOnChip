@@ -3,6 +3,7 @@
  */
 var router = require('express').Router();
 var io = require('../socket');
+var Session = require('../models/Session');
 router.Room = require('../models/Room');
 router.Member = require('../models/Member');
 
@@ -12,6 +13,7 @@ router.Member = require('../models/Member');
  */
 
 // curl http://localhost:4000/room/User4APITest
+router.get('/rooms/:username', Session.loginRequired);
 router.get('/rooms/:username', function(req, res) {
     router.Room.findAll({
         where: {
@@ -23,6 +25,7 @@ router.get('/rooms/:username', function(req, res) {
 });
 
 // curl http://localhost:4000/room/Room4Test
+router.get('/:roomname', Session.loginRequired);
 router.get('/:roomname', function(req, res) {
     router.Room.findOne({
         where: {
@@ -34,6 +37,7 @@ router.get('/:roomname', function(req, res) {
 });
 
 // curl -i -H "Accept: application/json" -X POST -d "roomname=Room4Test&creatorname=User4APITest" http://localhost:4000/room/
+router.post('/', Session.loginRequired);
 router.post('/', function(req, res) {
     if(req.body.roomname.trim()=='') res.status(400).end();
     else {
@@ -64,6 +68,7 @@ router.post('/', function(req, res) {
 });
 
 // curl -i -H "Accept: application/json" -X PUT -d '{"roomname":"Room4Test", "creatorname":"User4APITest"}' http://localhost:4000/room/
+router.put('/', Session.loginRequired);
 router.put('/', function(req, res) {
     router.Room.destroy({
         where: {

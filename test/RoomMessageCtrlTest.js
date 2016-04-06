@@ -31,7 +31,38 @@ describe('Test Room Message RESTful APIs: GET /roommessage/:roomname', function 
             .expect("Content-type",/json/)
             .expect(200)
             .end(function(err, res) {
-               done();
+                res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+                res.body[0].content.should.eql('Content4Test');
+                res.body[0].author.should.eql('User4Test');
+                res.body[0].roomname.should.eql('Room4Test');
+                done();
             });
-    })
+    });
+
+    it('should return status 200 with no messages', function(done) {
+        server
+            .get('/roommessage/Room5Test')
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err, res) {
+                res.body.should.be.instanceof(Array).and.have.lengthOf(0);
+                done();
+            });
+    });
+
+    after(function(done) {
+        User.destroy({
+            where:{
+                username: 'User4Test'
+            }
+        }).then(function() {
+            RoomMessage.destroy({
+                where: {
+                    content: 'Content4Test'
+                }
+            }).then(function() {
+                done();
+            });
+        });
+    });
 });

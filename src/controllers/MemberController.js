@@ -3,9 +3,11 @@
  */
 var router = require('express').Router();
 var io = require('../socket');
+var Session = require('../models/Session');
 router.Member = require('../models/Member');
 router.Room = require('../models/Room');
 
+router.get('/:roomname', Session.loginRequired);
 router.get('/:roomname', function(req, res) {
     router.Member.findAll({
         where: {
@@ -16,6 +18,7 @@ router.get('/:roomname', function(req, res) {
     });
 });
 
+router.get('/rooms/:username', Session.loginRequired);
 router.get('/rooms/:username', function(req, res) {
     router.Member.findAll({
         where: {
@@ -26,6 +29,7 @@ router.get('/rooms/:username', function(req, res) {
     });
 });
 
+router.post('/:roomname', Session.loginRequired);
 router.post('/:roomname', function(req, res) {
     router.Room.findOne({
         where: {
@@ -67,6 +71,7 @@ router.post('/:roomname', function(req, res) {
     });
 });
 
+router.put('/:roomname', Session.loginRequired);
 router.put('/:roomname', function(req, res) {
     router.Room.findOne({
         where: {

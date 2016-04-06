@@ -26,6 +26,8 @@ var searchController = require('./controllers/SearchController');
 var roomController = require('./controllers/RoomController');
 var memberController = require('./controllers/MemberController');
 var roommessageController = require('./controllers/RoomMessageController');
+var imageController = require('./controllers/ImageController');
+var profileController = require('./controllers/ProfileController');
 
 var app = express();
 
@@ -34,10 +36,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session);
 
 app.use('/', route);
+app.use(express.static(__dirname + '/img'));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/controllers', express.static(path.join(__dirname, 'controllers')));
 app.use('/api', api);
-
+app.use('/profile', profileController);
 
 //new user controller, by Yang and Yuanyuan
 app.use('/users', userCcontroller);
@@ -49,6 +52,7 @@ app.use('/messages/public', chatPublicController);
 //announcement controller
 app.use('/announcements', announcementController);
 app.use('/search', searchController);
+app.use('/image', imageController);
 
 app.use('/room', roomController);
 app.use('/member', memberController);

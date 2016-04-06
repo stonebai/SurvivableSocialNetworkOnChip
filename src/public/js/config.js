@@ -3,7 +3,7 @@
 MyApp.config = {
 };
 
-MyApp.angular = angular.module('MyApp', []);
+MyApp.angular = angular.module('MyApp', ['chart.js']);
 
 MyApp.fw7 = {
     app : new Framework7({
@@ -21,4 +21,3 @@ MyApp.fw7 = {
 
 MyApp.fw7.app.loginScreen();
 MyApp.socket = null;
-

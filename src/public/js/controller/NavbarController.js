@@ -22,6 +22,17 @@ MyApp.angular.controller('NavbarController',
         $scope.clickBack = function() {
             BootService.popPage();
         }
+
+        $scope.showProfileLink = function() {
+            var page = BootService.getCurrentPage();
+            return page === 'private_chat';
+        }
+
+        $scope.openProfilePage = function() {
+            var username = BootService.getNavbarTitle();
+            console.log("openProfilePage : " + username);
+            BootService.openPage('profile', username);
+        }
     }
 ]);
 

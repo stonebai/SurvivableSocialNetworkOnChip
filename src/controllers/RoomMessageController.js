@@ -3,8 +3,10 @@
  */
 var router = require('express').Router();
 var io = require('../socket');
+var Session = require('../models/Session');
 router.Message = require('../models/RoomMessage');
 
+router.get('/:roomname', Session.loginRequired);
 router.get('/:roomname', function(req, res) {
     router.Message.findAll({
         where: {
@@ -15,6 +17,7 @@ router.get('/:roomname', function(req, res) {
     });
 });
 
+router.post('/:username/:roomname', Session.loginRequired);
 router.post('/:username/:roomname', function(req, res) {
     if( typeof req.body.content === 'undefined' ||
         typeof req.body.postedAt === 'undefined' ||

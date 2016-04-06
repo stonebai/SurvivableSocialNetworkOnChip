@@ -43,6 +43,10 @@
             $$('.navbar').find('.center').text(title);
         }
 
+        pub.getNavbarTitle = function() {
+            return $$('.navbar').find('.center').text();
+        }
+
         pub.connect = function() {
             //if(!MyApp.socket) {
             //    MyApp.socket = io.connect(window.location.origin);

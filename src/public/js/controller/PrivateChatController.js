@@ -14,6 +14,50 @@ MyApp.angular.controller('PrivateChatController',
             var messageLayout = MyApp.fw7.app.messages('#private_messages', {
                 autoLayout: true
             });
+            
+                    // send image start
+        var $$ = Dom7;
+        $$('#cameraInput2').on('change', function(){
+            $scope.uploadImage();
+        });
+        
+        $scope.uploadImage = function () {
+            var data, xhr;
+            data = new FormData();
+            data.append( 'file', $$('#cameraInput2')[0].files[0]);
+            xhr = new XMLHttpRequest();
+            xhr.open('POST', '/image', true );
+            xhr.onreadystatechange = function ( response ) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                     var resObj = JSON.parse(xhr.responseText);
+                     console.log(resObj.url);
+                     $scope.sendMessage("<img src='/" + resObj.url + "' width=200>");
+                }
+            };
+            xhr.send( data );
+        }
+        
+        $scope.sendImage = function (imagesrc) {
+            document.querySelector('#cameraInput2').click();
+        }
+        
+        function addImageToLayout(post) {
+            var messageType = (post.author == UserService.currentUser.username) ? 'sent': 'received';
+            var date = new Date(post.timestamp || post.postedAt);
+            messageLayout.addMessage({
+                // Message text
+                text: post.content,
+                // Random message type
+                type: messageType,
+
+                name: post.author,
+                // Day
+                day: BootService.formatDay(date),
+                time: BootService.formatTime(date),
+
+            });
+        }
+        // send image end
 
             function addMessageToLayout(msg) {
                 var messageType = (msg.author == UserService.currentUser.id) ? 'sent': 'received';

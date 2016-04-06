@@ -44,7 +44,37 @@ var User = sequelize.define('user', {
         type: Sequelize.ENUM,
         values: ['ACTIVE', 'INACTIVE'],
         defaultValue: 'ACTIVE'
-    }
+    },
+    //username, age, status, location, gender, twiiter, phone, email, avatar image
+    avatar: {
+        field: 'avatar',
+        type: Sequelize.STRING,
+    },
+    age: {
+        field: 'age',
+        type: Sequelize.INTEGER,
+    },
+    company: {
+        field: 'company',
+        type: Sequelize.STRING,
+    },
+    gender: {
+        field: 'gender',
+        type: Sequelize.STRING,
+    },
+    twitter: {
+        field: 'twitter',
+        type: Sequelize.STRING,
+    },
+    phone: {
+        field: 'phone',
+        type: Sequelize.STRING,
+    },
+    email: {
+        field: 'email',
+        type: Sequelize.STRING,
+    },
+
 }, {
     timestamps: false,
     tableName: 'user'
