@@ -6,13 +6,21 @@ var io = require('../socket');
 var Session = require('../models/Session');
 router.Room = require('../models/Room');
 router.Member = require('../models/Member');
+router.Message = require('../models/RoomMessage');
 
 /**
  * Every rest api test start with:
  * curl -i -H "Accept: application/json" -X POST -d "password=1234&createdAt=1234&force=true" http://localhost:4000/users/User4APITest
+ * URL: http://localhost:4000/users/User4APITest
+ * Body:
+ {
+    "password":"1234",
+    "createdAt":1234,
+    "force":true
+ }
  */
 
-// curl http://localhost:4000/room/User4APITest
+// curl http://localhost:4000/room/rooms/User4APITest
 router.get('/rooms/:username', Session.loginRequired);
 router.get('/rooms/:username', function(req, res) {
     router.Room.findAll({
@@ -36,7 +44,16 @@ router.get('/:roomname', function(req, res) {
     });
 });
 
-// curl -i -H "Accept: application/json" -X POST -d "roomname=Room4Test&creatorname=User4APITest" http://localhost:4000/room/
+/**
+ * curl -i -H "Accept: application/json" -X POST -d "roomname=Room4Test&creatorname=User4APITest" http://localhost:4000/room/
+ * URL: http://localhost:4000/room/
+ * Body:
+ {
+    "roomname":"Room4Test",
+    "creatorname":"User4APITest"
+ }
+ */
+
 router.post('/', Session.loginRequired);
 router.post('/', function(req, res) {
     if(req.body.roomname.trim()=='') res.status(400).end();
@@ -67,7 +84,15 @@ router.post('/', function(req, res) {
     }
 });
 
-// curl -i -H "Accept: application/json" -X PUT -d '{"roomname":"Room4Test", "creatorname":"User4APITest"}' http://localhost:4000/room/
+/**
+ * curl -i -H "Accept: application/json" -X PUT -d '{"roomname":"Room4Test", "creatorname":"User4APITest"}' http://localhost:4000/room/
+ * URL: http://localhost:4000/room/
+ * Body:
+ {
+    "roomname":"Room4Test",
+    "creatorname":"User4APITest"
+ }
+ */
 router.put('/', Session.loginRequired);
 router.put('/', function(req, res) {
     router.Room.destroy({
@@ -76,13 +101,19 @@ router.put('/', function(req, res) {
             creatorname: req.body.creatorname
         }
     }).then(function(room) {
-        io.emit('room_destroy', {roomname: req.body.roomname, creatorname: req.body.creatorname});
         router.Member.destroy({
             where: {
                 roomname: req.body.roomname
             }
         }).then(function() {
-            res.status(200).end();
+            router.Message.destroy({
+                where: {
+                    roomname: req.body.roomname
+                }
+            }).then(function() {
+                io.emit('room_destroy', {roomname: req.body.roomname, creatorname: req.body.creatorname});
+                res.status(200).end();
+            });
         });
     });
 });

@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 var RequestRecord = {
-    recordDir: "./statistic/",
+    recordDir: __dirname + "/../../statistic/",
     recordExt: ".stat"
 }
 
@@ -46,7 +46,6 @@ RequestRecord.retrieve = function(){
         if(fs.existsSync(filename)){
             var str = fs.readFileSync(filename).toString();
             var obj = JSON.parse(str);
-            console.log(obj);
             ret[date] = obj;
         }
     }

@@ -5,10 +5,11 @@ var router = require('express').Router();
 var User = require('../models/User');
 var Session = require('../models/Session');
 var Message = require('../models/PublicMessage');
+var RequestRecord = require('../utils/RequestRecord');
 
 router.Message = require('../models/PublicMessage');
 
-
+router.post('/:fromUserName', RequestRecord.record);
 router.post('/:fromUserName', Session.loginRequired);
 router.post('/:fromUserName', function(req, res){
     if(typeof req.body.content === 'undefined' ||
@@ -41,6 +42,7 @@ router.post('/:fromUserName', function(req, res){
     });
 });
 
+router.get('/', RequestRecord.record);
 router.get('/', Session.loginRequired);
 router.get('/', function(req, res) {
     router.Message.findAll({
@@ -49,6 +51,7 @@ router.get('/', function(req, res) {
         res.status(200).json(messages);
     });
 });
+
 
 router.get('/:count', function(req, res){
 

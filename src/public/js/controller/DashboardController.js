@@ -1,7 +1,7 @@
 MyApp.angular.controller('DashboardController',
 ['$scope', '$http', '$window', 'BootService', 'UserService',
 function ($scope, $http, $window, BootService, UserService) {
-    $scope.type = "ALL";
+    $scope.type = "/users";
 
     $http.get('/dashboard/request').success(function(data, status){
         console.log(status);
@@ -54,7 +54,7 @@ function ($scope, $http, $window, BootService, UserService) {
             $scope.bar_data = [
                 [count['/users']],
                 [count['/messages/public']],
-                [count['/message/private']],
+                [count['/messages/private']],
                 [count['/announcements']],
                 [count['/search']],
             ];

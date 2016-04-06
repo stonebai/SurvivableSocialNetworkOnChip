@@ -7,6 +7,9 @@ var Session = require('../models/Session');
 router.Member = require('../models/Member');
 router.Room = require('../models/Room');
 
+/**
+ * URL: http://localhost:4000/member/Room4Test
+ */
 router.get('/:roomname', Session.loginRequired);
 router.get('/:roomname', function(req, res) {
     router.Member.findAll({
@@ -18,6 +21,9 @@ router.get('/:roomname', function(req, res) {
     });
 });
 
+/**
+ * URL: http://localhost:4000/member/rooms/Member4Test
+ */
 router.get('/rooms/:username', Session.loginRequired);
 router.get('/rooms/:username', function(req, res) {
     router.Member.findAll({
@@ -29,6 +35,14 @@ router.get('/rooms/:username', function(req, res) {
     });
 });
 
+/**
+ * URL: http://localhost:4000/member/Room4Test
+ * Body:
+ {
+    "username": "Member4Test",
+    "creatorname": "User4APITest"
+ }
+ */
 router.post('/:roomname', Session.loginRequired);
 router.post('/:roomname', function(req, res) {
     router.Room.findOne({
@@ -71,6 +85,14 @@ router.post('/:roomname', function(req, res) {
     });
 });
 
+/**
+ * URL: http://localhost:4000/member/Room4Test
+ * Body:
+ {
+    "creatorname": "User4APITest",
+    "username": "Member4Test"
+ }
+ */
 router.put('/:roomname', Session.loginRequired);
 router.put('/:roomname', function(req, res) {
     router.Room.findOne({

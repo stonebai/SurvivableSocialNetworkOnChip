@@ -6,6 +6,9 @@ var io = require('../socket');
 var Session = require('../models/Session');
 router.Message = require('../models/RoomMessage');
 
+/**
+ * URL: http://localhost:4000/roommessage/Room4Test
+ */
 router.get('/:roomname', Session.loginRequired);
 router.get('/:roomname', function(req, res) {
     router.Message.findAll({
@@ -17,6 +20,14 @@ router.get('/:roomname', function(req, res) {
     });
 });
 
+/**
+ * URL: http://localhost:4000/roommessage/User4APITest/Room4Test
+ * Body:
+ {
+    "content": "Content4Test",
+    "postedAt": 1234
+ }
+ */
 router.post('/:username/:roomname', Session.loginRequired);
 router.post('/:username/:roomname', function(req, res) {
     if( typeof req.body.content === 'undefined' ||

@@ -28,6 +28,8 @@ var memberController = require('./controllers/MemberController');
 var roommessageController = require('./controllers/RoomMessageController');
 var imageController = require('./controllers/ImageController');
 var profileController = require('./controllers/ProfileController');
+var agencyContactController = require('./controllers/AgencyContactController');
+var dashboardController = require('./controllers/DashboardController');
 
 var app = express();
 
@@ -58,6 +60,10 @@ app.use('/room', roomController);
 app.use('/member', memberController);
 app.use('/roommessage', roommessageController);
 
+//agencyContact controller
+app.use('/agencyContact',agencyContactController);
+
+app.use('/dashboard', dashboardController);
 var server = http.createServer(app);
 var socketIO = require('./socket.js');
 socketIO.init(server);

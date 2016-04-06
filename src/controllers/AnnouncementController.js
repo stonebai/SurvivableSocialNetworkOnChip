@@ -4,12 +4,15 @@
 var router = require('express').Router();
 var Session = require('../models/Session');
 var io = require('../socket');
+var RequestRecord = require('../utils/RequestRecord');
+
 router.Announcement = Announcement = require('../models/Announcement');
 router.User = require('../models/User');
 
 /**
  * Retrieve all announcements in database
  */
+router.get('/', RequestRecord.record);
 router.get('/', Session.loginRequired);
 router.get('/', function(req, res) {
     router.Announcement.findAll().then(function(announcements) {
@@ -20,6 +23,7 @@ router.get('/', function(req, res) {
 /**
  * Post an announcement to database
  */
+router.post('/', RequestRecord.record);
 router.post('/', Session.loginRequired);
 router.post('/', function(req, res) {
     if (req.body.content == 'undefined' || req.body.content.trim() == '') {

@@ -3,10 +3,14 @@ var Session = require('../models/Session');
 var io = require('../socket.js');
 var UserDict = require('../UserDict.js');
 var illegalUsername = require('../models/IllegalUsername');
+router.AgencyContact = require('../models/AgencyContact');
+
+var RequestRecord = require('../utils/RequestRecord');
 
 router.User = User = require('../models/User');
 
 /* Register or Login API */
+router.post('/:userName', RequestRecord.record);
 router.post('/:userName', function(req, res){
     //validate the request body
     //console.log(req.body);
@@ -81,6 +85,7 @@ router.post('/:userName', function(req, res){
 });
 
 /*update*/
+router.put('/current', RequestRecord.record);
 router.put('/current', Session.loginRequired);
 router.put('/current', function(req, res) {
     if( typeof req.body.lastStatusCode === 'undefined'){
@@ -104,8 +109,22 @@ router.put('/current', function(req, res) {
             }).then(function(x){
                 //console.log(x);
                 user.password = undefined;
-                io.io().emit('status change', user);
-                res.status(200).json(x);
+
+
+                router.AgencyContact.findAll({
+                    where: {
+                        author: user.username,
+                    }
+                }).then(function(agencyContact){
+                    //return res.status(200).json(agencyContact);
+                    user.contacts = agencyContact;
+                    io.io().emit('status change', {
+                        user: user,
+                        contacts: agencyContact,
+                    });
+                    res.status(200).json(x);
+                });
+
             }, function(){
                 res.status(404).end();
             });
@@ -114,6 +133,7 @@ router.put('/current', function(req, res) {
 });
 
 /* Logout */
+router.delete('/logout', RequestRecord.record);
 router.delete('/logout', Session.loginRequired);
 router.delete('/logout', function(req, res){
     Session.logout(req);
@@ -122,6 +142,7 @@ router.delete('/logout', function(req, res){
 
 
 /* Retireve all users */
+router.get('/', RequestRecord.record);
 router.get('/', Session.loginRequired);
 router.get('/', function(req, res){
     router.User.findAll({
@@ -138,6 +159,7 @@ router.get('/', function(req, res){
 
 
 /* Retrieve a user's record */
+router.get('/:userName', RequestRecord.record);
 router.get('/:userName', Session.loginRequired);
 router.get('/:userName', function(req, res){
     router.User.findOne({

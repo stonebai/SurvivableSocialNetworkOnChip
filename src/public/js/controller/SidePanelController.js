@@ -54,7 +54,7 @@ MyApp.angular.controller('SidePanelController',
                 $scope.users.sort(function(a, b){
                     return a.username > b.username;
                 });
-                
+
                 offlineUsers.sort(function(a,b ){
                     return a.username > b.username;
                 });
@@ -79,13 +79,28 @@ MyApp.angular.controller('SidePanelController',
                 }
             }
 
+            function isSelfContact(contacts) {
+                var username = UserService.currentUser.username;
+                //var contacts = user.contacts;
+                for(var i = 0; i < contacts.length; i++) {
+                    if(contacts[i].target == username || contacts[i].author == username) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
             BootService.addEventListener('login', function(){
                 $scope.username = UserService.currentUser.username;
                 updateUserList();
                 updateRoomList();
 
                 var socket = MyApp.socket;
-                socket.on('status change', function(u){
+                socket.on('status change', function(data){
+                    console.log("STATUS CHANGE");
+                    console.log(data);
+
+                    var u = data.user;
                     var user = UserService.getById(u.id);
                     user.lastStatusCode = u.lastStatusCode;
                     $scope.$apply();
@@ -97,6 +112,12 @@ MyApp.angular.controller('SidePanelController',
                         media: '<i class="icon icon-f7"></i>',
                         closeOnClick : true,
                     });
+
+                    if(isSelfContact(data.contacts)) {
+                        //sound.
+                        var audio = new Audio("/public/raw/1.wav");
+                        audio.play();
+                    }
 
                 });
 
@@ -170,4 +191,3 @@ MyApp.angular.controller('SidePanelController',
         }
     ]
 );
-

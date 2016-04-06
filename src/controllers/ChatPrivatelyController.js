@@ -1,9 +1,12 @@
 var router = require('express').Router();
 var User = require('../models/User');
 var Session = require('../models/Session');
+var RequestRecord = require('../utils/RequestRecord');
+
 router.Message = Message = require('../models/PrivateMessage');
 
 /* Send a chat message to another user */
+router.post('/:fromUserName/:toUserName', RequestRecord.record);
 router.post('/:fromUserName/:toUserName', Session.loginRequired);
 router.post('/:fromUserName/:toUserName', function(req, res){
     //validate the request body
@@ -43,6 +46,7 @@ router.post('/:fromUserName/:toUserName', function(req, res){
 });
 
 /* Retrieve all private chat messages between two users	*/
+router.get('/:userName1/:userName2', RequestRecord.record);
 router.get('/:userName1/:userName2', Session.loginRequired);
 router.get('/:userName1/:userName2', function(req, res){
     //validate the current login user is the sender or receiver

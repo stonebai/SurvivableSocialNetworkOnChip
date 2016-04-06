@@ -37,6 +37,8 @@
 	    <p><a href="#" class="close-panel" ng-click="openPage('map')">Map </a></p>
             <p><a href="#" class="close-panel" ng-click="openPage('createRoom')">Create Room</a></p>
             <p><a href="#" class="close-panel" ng-click="openPage('profile')">Profile</a></p>
+            <p><a href="#" class="close-panel" ng-click="openPage('agencyContact')">Agency Contact</a></p>
+
             <div class="content-block-title">All Rooms</div>
             <div class="list-block">
                 <ul style="backgroud: #222">
@@ -54,6 +56,7 @@
                     </a>
                 </ul>
             </div>
+
             <div class="content-block-title">All Users</div>
             <div class="list-block">
                 <ul style="background: #111">
@@ -215,7 +218,7 @@
                                 <div id="markerdiv"></div>
                             </a>
                       <!-- todo add map and scale
-                           figure out transform to map coordiantes 
+                           figure out transform to map coordiantes
                             -->
                         </div>
                 </div>
@@ -444,6 +447,7 @@
                     </div>
                 </div>
 
+
                 <!-- About Popup -->
                 <div class="popup popup-search-msg">
                     <div class="content-block">
@@ -477,6 +481,63 @@
                         <canvas id="pie" class="chart chart-pie"
                         chart-data="pie_data" chart-labels="pie_labels">
                         </canvas>
+                    </div>
+                </div>
+
+
+
+                <div data-page="agencyContact" class="page cached" ng-controller="AgencyContactController">
+                    <div class="page-content">
+                        <div class="content-block-title">Enter User Name</div>
+                        <div class="list-block">
+                            <ul>
+                                <li id="search_keyword_li">
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label">User Name:</div>
+                                            <div class="item-input">
+                                                <input type="text" ng-model="username" placeholder="User Name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a href="#" class="button button-big button-fill"
+                           ng-click="request()">Add!</a>
+
+                           <div class="list-block contacts-block" style='margin-top:14px;'>
+                               <div class="list-group">
+                                   <ul>
+                                       <li class="list-group-title">Agency Contact List</li>
+                                       <li ng-repeat="r in contents" class="item-content">
+                                           <div class="item-content">
+                                               <div class="item-inner">
+                                                   <div class="item-title" ng-bind="r.target"> </div>
+                                               </div>
+                                           </div>
+                                       </li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="content-block-title">Request</div>
+                        <div class="list-block">
+                            <ul>
+                                <li ng-repeat="r in requests" class="item-content" ng-click = "confirm(r)">
+                                    <div class="item-media"><i class="icon icon-f7"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title" ng-bind="r.author" </div>
+                                        <div class="item-after"> </div>
+                                    </div>
+                                </li>
+
+
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
 
@@ -624,6 +685,7 @@
             </p>
         </div>
     </div>
+
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="/public/framework7/js/framework7.min.js"></script>
     <!-- Path to your app js-->
@@ -653,5 +715,6 @@
     <script type="text/javascript" src="/public/js/controller/RoomController.js"></script>
     <script type="text/javascript" src="/public/js/controller/ProfileController.js"></script>
     <script type="text/javascript" src="/public/js/controller/EditProfileController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/AgencyContactController.js"></script>
 </body>
 </html>

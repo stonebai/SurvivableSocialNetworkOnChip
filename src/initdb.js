@@ -8,6 +8,8 @@ var Announcement = require('./models/Announcement');
 var Room = require('./models/Room');
 var Member = require('./models/Member');
 var RoomMessage = require('./models/RoomMessage');
+var AgencyContact = require('./models/AgencyContact');
+var AgencyContactRequest = require('./models/AgencyContactRequest');
 
 User.sync({force: true});
 PublicMessage.sync({force: true});
@@ -16,6 +18,8 @@ Announcement.sync({force: true});
 Room.sync({force: true});
 Member.sync({force: true});
 RoomMessage.sync({force: true});
+AgencyContact.sync({force: true});
+AgencyContactRequest.sync({force: true});
 
 var PrivateMessageTest = require('./models/PrivateMessageTest');
 var PublicMessageTest = require('./models/PublicMessageTest');

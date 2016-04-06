@@ -73,8 +73,13 @@ MyApp.angular.controller('RoomController',
                 });
 
                 socket.on('room_destroy', function(room) {
-                    fw7.alert('This group has been dismissed!');
-                    BootService.openPage('public_chat');
+                    if(room.roomname==$scope.currentRoom.roomname) {
+                        fw7.alert('This group has been dismissed!');
+                        BootService.openPage('public_chat');
+                    }
+                    else {
+                        fw7.alert('Room: ' + room.roomname + 'has been dismissed!');
+                    }
                 });
             });
 
@@ -102,6 +107,11 @@ MyApp.angular.controller('RoomController',
             });
 
             BootService.addEventListener('close_room_chat', function() {
+                $scope.currentRoom = {
+                    roomname : null,
+                    isCreator: false,
+                    isMember: false
+                };
                 $scope.members = [];
             });
 
