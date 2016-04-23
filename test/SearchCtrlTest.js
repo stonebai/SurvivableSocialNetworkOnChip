@@ -4,7 +4,6 @@
 var supertest = require("supertest");
 var should = require("should");
 var User = require("../src/models/User");
-var SearchController = require('../src/controllers/SearchController');
 var agent = supertest.agent('http://localhost:4000');
 
 describe('Test Search UserName', function(){
@@ -26,7 +25,7 @@ describe('Test Search UserName', function(){
 
     it("should return the users given a specific status code", function(done){
         var statusCode = "GREEN";
-        var url  = '/search/' + statusCode + '/Status/10'
+        var url  = '/search/' + statusCode + '/Status/10';
 
         agent.get(url).send({}).end(function(err, res){
             res.status.should.equal(200);

@@ -2,7 +2,7 @@
  * Created by baishi on 2/24/16.
  */
 var should = require('should');
-var User = require('../src/models/UserTest');
+var User = require('../src/models/User');
 
 describe('User Model Tests', function() {
     /**
@@ -228,7 +228,11 @@ describe('User Model Tests', function() {
     });
 
     after(function(done) {
-        User.sync({force: true}).then(function() {
+        User.destroy({
+            where : {
+                username: 'Just4Test'
+            }
+        }).then(function() {
             done();
         });
     });

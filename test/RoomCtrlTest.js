@@ -12,7 +12,7 @@ describe('Test Room RESTful APIs: GET /room/rooms/:username', function() {
         server
             .post("/users/User4Test")
             .send({password:'1234', createdAt:1234, force: true})
-            .end(function(err, res) {
+            .end(function() {
                 Room.create({
                     roomname: 'Room4Test',
                     creatorname: 'User4Test'
@@ -33,7 +33,7 @@ describe('Test Room RESTful APIs: GET /room/rooms/:username', function() {
                 res.body[0].creatorname.should.eql('User4Test');
                 done();
             });
-    });
+    }).timeout(5000);
 
     it('should return status 200 with no rooms', function(done) {
         server
@@ -44,7 +44,7 @@ describe('Test Room RESTful APIs: GET /room/rooms/:username', function() {
                 res.body.length.should.eql(0);
                 done();
             });
-    });
+    }).timeout(5000);
 
     after(function(done) {
         Room.destroy({
@@ -69,7 +69,7 @@ describe('Test Room RESTful APIs: GET /room/:roomname', function() {
         server
             .post("/users/User4Test")
             .send({password:'1234', createdAt:1234, force: true})
-            .end(function(err, res) {
+            .end(function() {
                 Room.create({
                     roomname: 'Room4Test',
                     creatorname: 'User4Test'
@@ -97,7 +97,7 @@ describe('Test Room RESTful APIs: GET /room/:roomname', function() {
             .expect("Content-type",/json/)
             .expect(200)
             .end(function (err, res) {
-                (res.body==null).should.be.true;
+                should.not.exist(res.body);
                 done();
             });
     });
@@ -125,7 +125,7 @@ describe('Test Room RESTful APIs: POST /room', function() {
         server
             .post("/users/User4Test")
             .send({password:'1234', createdAt:1234, force: true})
-            .end(function(err, res) {
+            .end(function() {
                 done();
             });
     });
@@ -139,7 +139,7 @@ describe('Test Room RESTful APIs: POST /room', function() {
             })
             .expect("Content-type",/json/)
             .expect(400)
-            .end(function(err, res) {
+            .end(function() {
                 done();
             });
     });
@@ -169,7 +169,7 @@ describe('Test Room RESTful APIs: POST /room', function() {
             })
             .expect("Content-type",/json/)
             .expect(409)
-            .end(function(err, res) {
+            .end(function() {
                 done();
             });
     });
@@ -197,7 +197,7 @@ describe('Test Room RESTful APIs: PUT /room', function() {
         server
             .post("/users/User4Test")
             .send({password:'1234', createdAt:1234, force: true})
-            .end(function(err, res) {
+            .end(function() {
                 Room.create({
                     roomname: 'Room4Test',
                     creatorname: 'User4Test'
@@ -216,13 +216,13 @@ describe('Test Room RESTful APIs: PUT /room', function() {
             })
             .expect("Content-type",/json/)
             .expect(200)
-            .end(function (err, res) {
+            .end(function () {
                 Room.findOne({
                     where:{
                         roomname: 'Room4Test'
                     }
                 }).then(function(room) {
-                    (room==null).should.be.true;
+                    should.not.exist(room);
                     done();
                 });
             });
@@ -234,7 +234,7 @@ describe('Test Room RESTful APIs: PUT /room', function() {
             .expect("Content-type",/json/)
             .expect(200)
             .end(function (err, res) {
-                (res.body==null).should.be.true;
+                should.not.exist(res.body);
                 done();
             });
     });

@@ -1,8 +1,9 @@
 var should = require('should');
 var supertest = require('supertest');
 
-var privatelyMessageController = require('../src/controllers/ChatPrivatelyController');
 var User = require('../src/models/User');
+
+var testMessage  = require('../src/models/PrivateMessage.js');
 
 var agent = supertest.agent('http://localhost:4000');
 
@@ -13,11 +14,8 @@ var agent = supertest.agent('http://localhost:4000');
 describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', function(){
     var user1Id;
     var user2Id;
-    var userCookie1;
-    var userCookie2;
 
     before(function(done){
-        privatelyMessageController.Message = require('../src/models/PrivateMessageTest');
         agent.post('/users/UnitTestUser1')
         .send({password: 'unittestpass', createdAt: '1970-01-01T00:01:40.000Z', force: true})
         .end(function(err, res){
@@ -46,7 +44,15 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
         .send({})
         .end(function(err, res){
             res.status.should.equal(422);
-            done();
+            testMessage.findOne({
+                where: {
+                    author: user2Id,
+                    target: user1Id
+                }
+            }).then(function(message){
+                should.not.exist(message);
+                done();
+            });
         });
     });
 
@@ -57,7 +63,15 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
         .send({content: "test message", postedAt: "1970-01-01T00:01:40.000Z"})
         .end(function(err, res){
             res.status.should.equal(401);
-            done();
+            testMessage.findOne({
+                where: {
+                    author: user1Id,
+                    target: user2Id
+                }
+            }).then(function(message){
+                should.not.exist(message);
+                done();
+            });
         });
 
     });
@@ -69,7 +83,15 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
         .send({content: "test message", postedAt: "1970-01-01T00:01:40.002Z"})
         .end(function(err, res){
             res.status.should.equal(404);
-            done();
+            testMessage.findOne({
+                where: {
+                    author: user2Id,
+                    target: user1Id
+                }
+            }).then(function(message){
+                should.not.exist(message);
+                done();
+            });
         });
     });
 
@@ -84,13 +106,25 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
             res.body.author.should.equal(user2Id);
             res.body.target.should.equal(user1Id);
             res.body.postedAt.should.equal("1970-01-01T00:01:40.002Z");
-            done();
+
+            testMessage.findOne({
+                where: {
+                    author: user2Id,
+                    target: user1Id
+                }
+            }).then(function(message){
+                should.exist(message);
+
+                message.author.should.equal(user2Id);
+                message.target.should.equal(user1Id);
+                message.content.should.equal("test message");
+                done();
+            });
         });
     });
 
     after(function(done){
         console.log("test after");
-        privatelyMessageController.Message = require('../src/models/PrivateMessage');
         User.destroy({
             where: {
                 username: 'UnitTestUser1'
@@ -101,6 +135,7 @@ describe('Test chatPrivately RESTful APIs: POST /:fromUserName/:toUserName', fun
                     username: 'UnitTestUser2'
                 }
             }).then(function(){
+
                 done();
             });
         });
@@ -117,24 +152,15 @@ describe('Test retrieving all private chat messages between two users: GET /:use
     var user2Cookie;
 
     before(function(done){
-        privatelyMessageController.Message = require('../src/models/PrivateMessageTest');
         agent.post('/users/UnitTestUser1')
         .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
-            if(err){
-                console.log(err);
-                return done(err);
-            }
             user1Id = res.body.id;
             user1Cookie = res.headers['set-cookie'];
 
             agent.post('/users/UnitTestUser2')
             .send({password: 'unittestpass', createdAt: 100003, force: true})
             .end(function(err, res){
-                if(err){
-                    console.log(err);
-                    return done(err);
-                }
                 user2Id = res.body.id;
                 user2Cookie = res.headers['set-cookie'];
 
@@ -151,10 +177,6 @@ describe('Test retrieving all private chat messages between two users: GET /:use
                     agent.post('/users/UnitTestUser1')
                     .send({password: 'unittestpass', createdAt: 100005, force: true})
                     .end(function(err, res){
-                        if(err){
-                            console.log(err);
-                            return done(err);
-                        }
                         user1Id = res.body.id;
                         user1Cookie = res.headers['set-cookie'];
 
@@ -213,10 +235,6 @@ describe('Test retrieving all private chat messages between two users: GET /:use
         agent.post('/users/UnitTestUser2')
         .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
-            if(err){
-                console.log(err);
-                return done(err);
-            }
             user2Id = res.body.id;
             user2Cookie = res.headers['set-cookie'];
 
@@ -230,7 +248,6 @@ describe('Test retrieving all private chat messages between two users: GET /:use
     });
 
     after(function(done){
-        privatelyMessageController.Message = require('../src/models/PrivateMessage');
         User.destroy({
             where: {
                 username: 'UnitTestUser1'

@@ -22,8 +22,46 @@ MyApp.angular.factory('UserService', ['$document', '$http', function ($document,
         users[id] = u;
     }
 
+    pub.update = function(u) {
+        var id = u.id;
+        users[id] = u;
+        if(id === this.currentUser.id) {
+            this.currentUser = u;
+        }
+    }
+
     pub.getAll = function() {
         return users;
+    }
+
+    pub.getActiveUsers = function() {
+        var activeUsers = [];
+        for(var i in users) {
+            var u = users[i];
+            if(u.accountStatus === 'ACTIVE') {
+                activeUsers.push(u);
+            }
+        }
+        return activeUsers;
+    }
+
+    pub.isAdmin = function() {
+        if(!this.currentUser)
+            return false;
+
+        return this.currentUser.privilege === 'Administrator';
+    }
+
+    pub.isCoordinator = function() {
+        if(!this.currentUser)
+            return false;
+        return this.currentUser.privilege === 'Coordinator' || this.currentUser.privilege === 'Administrator';
+    }
+
+    pub.isMonitor = function() {
+        if(!this.currentUser)
+            return false;
+        return this.currentUser.privilege === 'Monitor' || this.currentUser.privilege === 'Administrator';
     }
 
     pub.currentUser = null;

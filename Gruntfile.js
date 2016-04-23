@@ -1,6 +1,7 @@
 /**
  * Created by baishi on 2/24/16.
  */
+ var coverageFolder = process.env.CIRCLE_TEST_REPORTS == undefined ? 'coverage' : process.env.CIRCLE_TEST_REPORTS + '/coverage';
 module.exports = function(grunt) {
 
     grunt.initConfig({
@@ -30,7 +31,8 @@ module.exports = function(grunt) {
             coverage: {
                 src: 'test',
                 options: {
-                    mochaOptions: ['--ui', 'bdd']
+                    mochaOptions: ['--ui', 'bdd'],
+                    istanbulOptions: ['--dir', coverageFolder]
                 }
             }
         }

@@ -8,6 +8,7 @@ var RequestRecord = require('../utils/RequestRecord');
 
 router.Announcement = Announcement = require('../models/Announcement');
 router.User = require('../models/User');
+router.UserHistroy = require('../models/UserHistory');
 
 /**
  * Retrieve all announcements in database
@@ -24,7 +25,7 @@ router.get('/', function(req, res) {
  * Post an announcement to database
  */
 router.post('/', RequestRecord.record);
-router.post('/', Session.loginRequired);
+router.post('/', Session.CoordinatorRequired);
 router.post('/', function(req, res) {
     if (req.body.content == 'undefined' || req.body.content.trim() == '') {
         res.status(406).end();
@@ -49,7 +50,16 @@ router.post('/', function(req, res) {
                     timestamp: req.body.timestamp,
                     location: req.body.location
                 }).then(function(announcement) {
-                    if(announcement) res.status(201).end();
+                    if(announcement) {
+                        router.UserHistroy.create({
+                            timestamp: new Date(),
+                            username: req.body.author,
+                            type: 4,
+                            content: 'posted an announcement: ' + req.body.content
+                        }).then(function() {
+                            res.status(201).end();
+                        });
+                    }
                     else res.status(503).end();
                 });
             }

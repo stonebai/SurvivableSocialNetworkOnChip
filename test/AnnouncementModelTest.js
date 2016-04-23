@@ -2,7 +2,7 @@
  * Created by baishi on 3/10/16.
  */
 var should = require('should');
-var Announcement = require('../src/models/AnnouncementTest');
+var Announcement = require('../src/models/Announcement');
 
 describe('Announcement Model Tests', function() {
     /**
@@ -147,7 +147,11 @@ describe('Announcement Model Tests', function() {
     });
 
     after(function(done) {
-        Announcement.sync({force: true}).then(function() {
+        Announcement.destroy({
+            where: {
+                content: "Just4Test"
+            }
+        }).then(function() {
             done();
         });
     });

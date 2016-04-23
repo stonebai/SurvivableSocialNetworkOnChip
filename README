@@ -5,5 +5,4 @@ Deployment steps:
 2) run "npm install"
 3) run "node src/app.js"
 
-The application should now be avilable at yourip:3000 
-
+The application should now be avilable at yourip:4000 

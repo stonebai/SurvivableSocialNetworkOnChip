@@ -2,7 +2,6 @@
  * Created by baishi on 2/29/16.
  */
 var should = require("should");
-var should = require('should');
 
 // UNIT test begin
 

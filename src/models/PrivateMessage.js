@@ -1,5 +1,3 @@
-/**4
- */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('private_messages', '', '', {
     logging: false,

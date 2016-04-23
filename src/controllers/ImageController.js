@@ -22,7 +22,6 @@ function generateRandomFileName() {
 router.post('/', Session.loginRequired);
 router.post('/', function(req, res) {
     
-    console.log('file uploadDir');
 
   var form = new formidable.IncomingForm();   //create from 
       form.encoding = 'utf-8';        // set encoding
@@ -32,7 +31,6 @@ router.post('/', function(req, res) {
 
       form.parse(req, function(err, fields, files) {
           
-          console.log('pasre');
 
         if (err) {
           res.locals.error = err;
@@ -67,7 +65,6 @@ router.post('/', function(req, res) {
         var avatarName = generateRandomFileName() + '.' + extName;
         var newPath = form.uploadDir + avatarName;
 
-        console.log(newPath);
         fs.renameSync(files.file.path, newPath);  //
         return res.status(200).json({
             url: newPath,

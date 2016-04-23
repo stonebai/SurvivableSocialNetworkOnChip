@@ -94,7 +94,7 @@
                 author: UserService.currentUser.username,
                 content: message,
                 timestamp: new Date(),
-            }
+            };
             socket.emit('public chat', post);
             $scope.post = "";
         };
@@ -103,7 +103,7 @@
             if(event.keyCode == 13 && message.trim() != '') {
                 $scope.sendMessage(message);
             }
-        }
+        };
 
         BootService.addEventListener('login', function () {
             

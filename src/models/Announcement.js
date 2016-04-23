@@ -27,15 +27,7 @@ var Announcement = sequelize.define('announcement', {
     }
 }, {
     timestamps: false,
-    tableName: 'announcements'
+    tableName: 'announcement'
 });
-
-Announcement.delete = function(id) {
-    this.destroy({
-        where: {
-            id: id
-        }
-    });
-};
 
 module.exports = Announcement;

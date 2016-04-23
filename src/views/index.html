@@ -33,7 +33,7 @@
             <p><a href="#" class="close-panel" ng-click="openPage('announcements')">Announcements</a></p>
             <p><a href="#" class="close-panel" ng-click="openPage('search')">Search</a></p>
 	        <p><a href="#" class="close-panel" ng-click="openPage('dashboard')">Dashboard</a></p>
-	    <p><a href="#" class="close-panel" ng-click="openPage('test')">System Test</a></p>
+	    <p ng-show="isMonitor()"><a href="#" class="close-panel" ng-click="openPage('test')">System Test</a></p>
 	    <p><a href="#" class="close-panel" ng-click="openPage('map')">Map </a></p>
             <p><a href="#" class="close-panel" ng-click="openPage('createRoom')">Create Room</a></p>
             <p><a href="#" class="close-panel" ng-click="openPage('profile')">Profile</a></p>
@@ -201,30 +201,41 @@
                     </div>
                 </div>
 
+		<!------------------------------------------------ Map --------------------------------------------->
                 <style>
-
                   #map{
                   position: fixed;
                   width:100%;
                   height:100%;
                   }
-
+		  #buttons{
+		  position:fixed;
+		  top:90%;
+		  height:10%;
+		  }
                 </style>
 
-                <div data-page="map" class="page cached">
-		                <div class="page-content">
-                            <img src="map.png" id="map" >
-                            <a href="#" ng-click="openPage('about')" class="close-page" >
-                                <div id="markerdiv"></div>
-                            </a>
-                      <!-- todo add map and scale
-                           figure out transform to map coordiantes
-                            -->
-                        </div>
-                </div>
+                <div data-page="map" class="page cached" ng-controller="MapController">
+		  <div class="page-content">
+                    <img src="map.png" id="map" >
+                    <a href="#" ng-click="openPage('map')" class="close-page" >
+                      <div id="markerdiv"></div>
+                    </a>
+		    <div id="buttons" >
+		      <button type="button" onclick="alert('Hello world!')">ALL</button>
+		      <button type="button" onclick="alert('Hello world!')">GREEN ONLY</button>
+		      <button type="button" onclick="alert('Hello world!')">YELLOW ONLY</button>
+		      <button type="button" onclick="alert('Hello world!')">RED ONLY</button>
+		    </div>
+                  </div>
 
+	
+                </div>
+		
+		<!---------------------------------------------- About Page --------------------------------------->
                 <div data-page="about" class="page cached">
                     <div class="page-content">
+		      <div id="aboutPage">
                         <h1>Welecome to Our SSNoC</h1>
                         <p>
                             We call it Survivable Social Network on a Chip, or SSNoC.
@@ -233,12 +244,14 @@
                             Your neighbors can connect to SSNoC wifi through their smartphones, fire up their mobile browser, sign up on the SSNoC, and start sharing and receiving information.
                             They should not need to download an app to access SSNoC. Well, there is no internet, no cellular service, no power, nothing.
                         </p>
+		      </div>
                     </div>
                 </div>
+		<!-- Announcements -->
 
                 <div data-page="announcements" class="page cached" ng-controller="AnnouncementController">
                     <!-- messagebar -->
-                    <div class="toolbar messagebar">
+                    <div class="toolbar messagebar" ng-show="isEditable()">
                         <div class="toolbar-inner">
                             <textarea placeholder="Announcement" ng-model="newAnnouncement"></textarea>
                             <a href="#" class="link" ng-click="postAnnouncement(newAnnouncement)"
@@ -256,148 +269,161 @@
                     </div>
                 </div>
 
-                <!-- system Test -->
-                <div data-page="test" class="page" ng-controller="TestController">
-                    <div class="page-content">
-                        <div class="content-block-title">System Test</div>
-                        <div class="list-block">
-                            <ul>
-
-                                <li id="search_keyword_li">
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Test Duration (seconds):</div>
-                                               <div class="item-input">
-                                                 <input type="text" id="duration" ng-model="keyword" placeholder="1">
-                                               </div>
-                                        </div>
-				                    </div>
-                                </li>
-
-                                <li id="search_keyword_li">
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Request Interval (miliseconds):</div>
-                                               <div class="item-input">
-                                                 <input type="text" id="interval" ng-model="interval" placeholder="100">
-                                               </div>
-					                    </div>
-				                    </div>
-                                </li>
-                                <a href="#" class="button button-big button-fill"
-                                    ng-click="onClickTestButton()">Search Now!</a>
-                            </ul>
-                        </div>
-                    </div>
+		<!-- History Page -->
+		<div data-page="userHistory" class="page cached">
+                  <div class="page-content">
+                        <h1>History </h1>
+			<div class="historyPost" id="history_messages">                     
+			</div>
+                  </div>
                 </div>
 
-                <div data-page="search" class="page cached" ng-controller="SearchController">
-                    <div class="page-content">
-                        <div class="content-block-title">Labels and inputs</div>
-                        <div class="list-block">
-                            <ul>
-                                <li id="search_keyword_li">
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Keyword:</div>
-                                            <div class="item-input">
-                                                <input type="text" ng-model="keyword" placeholder="Search Criteria">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li id="search_status_li">
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Status:</div>
-                                            <div class="item-input">
-                                                <a href="#" id="status_for_search">GREEN</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Context:</div>
-                                            <div class="item-input">
-                                                <a href="#" id="search_context">UserName</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <!-- Select -->
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Display</div>
-                                            <div class="item-input">
-                                                <a href="#" id="search_display_num">10</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
 
+
+                <!------------------------------------------------------- system Test ----------------------------------------------->
+	        <div data-page="test" class="page" ng-controller="SystemTestController">                      
+                <div class="page-content">                                                              
+                    <div class="content-block-title">System Test</div>                  
+                    <div class="list-block">                                                            
+                      <ul>
+                        <li id="request_dyration_li">  
+                          <div class="item-content">                                                    
+                            <div class="item-inner">                                                    
+                              <div class="item-title label">Test Duration (seconds):</div>
+                              <div class="item-input">                                                  
+                                <input type="text" id="duration" ng-model="keyword" placeholder="1">
+                              </div>                                                                    
+                            </div>                                                                      
+			  </div>                                                                        
+                        </li>
+			
+                        <li id="request_interval_li">
+                          <div class="item-content">                                                    
+                            <div class="item-inner">                                                    
+                              <div class="item-title label">Request Interval (miliseconds):</div>          
+                              <div class="item-input">                                                  
+                                <input type="text" id="interval" ng-model="interval" placeholder="100">  
+                              </div>                                                                    
+			    </div>                                                                      
+			  </div>                                                                        
+                        </li>
                         <a href="#" class="button button-big button-fill"
-                           ng-click="onClickSearchButton()">Search Now!</a>
-                    </div>
-                </div>
+                           ng-click="onClickTestButton()">Search Now!</a>
+                      </ul>
+                    </div>                                                                              
+                  </div>                                                                                
+  		</div>                                                                                  
+                <!--------------------------------------------   Search  OB------------------------------------------>
+                <div data-page="search" class="page cached" ng-controller="SearchController">
+                  <div class="page-content">
+                    <div class="content-block-title">Labels and inputs</div>
+                    <div class="list-block">
+                      <ul>
+                        <li id="search_keyword_li">
 
+                        </li>
+			<li id="search_keywords_li">
+                          <div class="item-content">
+                            <div class="item-inner" >
+                              <div class="item-title label">Keyword:</div>
+                              <div class="item-input">
+                                <input type="text" ng-model="keyword" placeholder="Search Criteria">
+                              </div>
+                            </div>
+                          </div>
+			</li>
+                        <li id="search_status_li">
+                          <div class="item-content">
+                            <div class="item-inner">
+                              <div class="item-title label">Status:</div>
+                              <div class="item-input">
+                                <a href="#" id="status_for_search">GREEN</a>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="item-content">
+                            <div class="item-inner">
+                              <div class="item-title label">Context:</div>
+                              <div class="item-input">
+                                <a href="#" id="search_context">UserName</a>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                        <!-- Select -->
+                        <li>
+                          <div class="item-content">
+                            <div class="item-inner">
+                              <div class="item-title label">Display</div>
+                              <div class="item-input">
+                                <a href="#" id="search_display_num">10</a>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+		    
+                    <a href="#" class="button button-big button-fill"
+                       ng-click="onClickSearchButton()">Search Now!</a>
+                  </div>
+                </div>
+		
                 <div data-page="createRoom" class="page cached" ng-controller="CreateRoomController">
                     <div class="page-content">
-                        <div class="list-block">
-                            <ul>
-                                <li>
-                                    <div class="item-content">
-                                        <div class="item-inner">
-                                            <div class="item-title label">Room Name:</div>
-                                            <div class="item-input">
-                                                <input type="text" ng-model="roomname" placeholder="Room name">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="content-block">
-                            <a href="#" class="button" ng-click="createRoom(roomname)">Create!</a>
+                      <div class="list-block">
+                        <ul>
+                          <li>
+                            <div class="item-content">
+                              <div class="item-inner">
+                                <div class="item-title label">Room Name:</div>
+                                <div class="item-input">
+                                  <input type="text" ng-model="roomname" placeholder="Room name">
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="content-block">
+                        <a href="#" class="button" ng-click="createRoom(roomname)">Create!</a>
                         </div>
                     </div>
                 </div>
-
+		
                 <div data-page="room_chat" class="page cached">
-                    <!-- messagebar -->
-                    <div class="toolbar messagebar">
-                        <div class="toolbar-inner">
-                            <textarea placeholder="Message" ng-model="rmsg" ng-keyup="rKeyUp($event, rmsg)"></textarea>
-                            <a href="#" class="link" ng-click="rmsgPost(rmsg)" ng-disabled="rmsg.trim()==''">Send</a>
-                        </div>
+                  <!-- messagebar -->
+                  <div class="toolbar messagebar">
+                    <div class="toolbar-inner">
+                      <textarea placeholder="Message" ng-model="rmsg" ng-keyup="rKeyUp($event, rmsg)"></textarea>
+                      <a href="#" class="link" ng-click="rmsgPost(rmsg)" ng-disabled="rmsg.trim()==''">Send</a>
                     </div>
-                    <!-- Scrollable page content -->
-                    <div class="page-content">
-                        <div class="list-block" style="position: fixed; width: 30%">
-                            <ul>
-                                <li class="item-content open-popup" ng-if="currentRoom.isCreator"
-                                    data-popup=".popup-addUsers" ng-click="updateUserList()">
+                    </div>
+                  <!-- Scrollable page content -->
+                  <div class="page-content">
+                    <div class="list-block" style="position: fixed; width: 30%">
+                      <ul>
+                        <li class="item-content open-popup" ng-if="currentRoom.isCreator"
+                            data-popup=".popup-addUsers" ng-click="updateUserList()">
+                          <div class="item-inner">
+                            <div class="item-title">Invite</div>
+                          </div>
+                        </li>
+                        <li class="item-content" ng-if="currentRoom.isCreator" ng-click="close()">
                                     <div class="item-inner">
-                                        <div class="item-title">Invite</div>
+                                      <div class="item-title">Close</div>
                                     </div>
-                                </li>
-                                <li class="item-content" ng-if="currentRoom.isCreator" ng-click="close()">
-                                    <div class="item-inner">
-                                        <div class="item-title">Close</div>
+                        </li>
+                        <li class="item-content" ng-if="currentRoom.isMember" ng-click="leave()">
+                          <div class="item-inner">
+                            <div class="item-title">Leave</div>
                                     </div>
-                                </li>
-                                <li class="item-content" ng-if="currentRoom.isMember" ng-click="leave()">
-                                    <div class="item-inner">
-                                        <div class="item-title">Leave</div>
-                                    </div>
-                                </li>
-                                <li class="item-content" ng-repeat="mem in members">
+                        </li>
+                        <li class="item-content" ng-repeat="mem in members">
                                     <div class="item-inner" ng-click="remove(mem)">
-                                        <div class="item-title" ng-bind="mem.username"></div>
+                                      <div class="item-title" ng-bind="mem.username"></div>
                                         <div class="item-after" ng-if="mem.isCreator">Administrator</div>
                                     </div>
                                 </li>
@@ -529,7 +555,7 @@
                                 <li ng-repeat="r in requests" class="item-content" ng-click = "confirm(r)">
                                     <div class="item-media"><i class="icon icon-f7"></i></div>
                                     <div class="item-inner">
-                                        <div class="item-title" ng-bind="r.author" </div>
+                                        <div class="item-title" ng-bind="r.author"></div>
                                         <div class="item-after"> </div>
                                     </div>
                                 </li>
@@ -541,6 +567,7 @@
                     </div>
                 </div>
 
+		<!--------------------------------------   Profile ---------------------------------------->
                 <div data-page="profile" class="page cached" ng-controller="ProfileController">
                     <div class="page-content">
                         <div class="row">
@@ -569,8 +596,84 @@
 
                         <div class="content-block">
                             <a href="#" class="button button-big button-fill bg-deeppurple"
+                               ng-click="openUserHistory(profile.username)">User History</a>
+
+                            <a href="#" class="button button-big button-fill bg-deeppurple"
                                ng-click="openEditPage()"
-                               ng-show="editable">Edit</a>
+                               ng-show="editable">Edit My Profile</a>
+                        </div>
+
+                        <div class="content-block">
+                            <a href="#" class="button button-big button-fill bg-green"
+                               ng-click="openAdminPage()"
+                               ng-show="isAdmin()">Administer</a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div data-page="admin_edit" class="page cached" ng-controller="AdminEditController">
+                    <div class="page-content">
+                        <div class="row">
+                            <div class="col-33">
+                                <img ng-src="{{ profile.avatar }}"
+                                     style="width:100px; height:100px; margin:10px auto; display: block;" />
+                                <input style="display:none;" type='file' accept="image/*" id="uploadAvatarInput" name="cameraInputname">
+                            </div>
+                            <div class="col-66">
+                                <h1 ng-bind="profile.username"></h1>
+                            </div>
+                        </div>
+                        <form  id="admin-edit-form" class="list-block" style="margin:4px;">
+                            <ul>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label color-cyan">AccountStatus</div>
+                                            <div class="item-input">
+                                                <a href="#" id="account_status_selector" ng-bind="profile.accountStatus"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label color-cyan">Privilege</div>
+                                            <div class="item-input">
+                                                <a href="#" id="privilege_selector" ng-bind="profile.privilege"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label color-cyan">Username</div>
+                                            <div class="item-input">
+                                                <input type="text" ng-model="profile.username"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title label color-cyan">Password</div>
+                                            <div class="item-input">
+                                                <input type="password" ng-model="profile.password"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
+                        <div class="buttons-row">
+                            <button class="button button-big button-fill bg-cyan" style="margin:4px;"
+                                    ng-click="submit()">OK</button>
+
+                            <button class="button button-big button-fill bg-lime" style="margin:4px;"
+                                    ng-click="cancel()">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -690,7 +793,7 @@
     <script type="text/javascript" src="/public/framework7/js/framework7.min.js"></script>
     <!-- Path to your app js-->
     <script type="text/javascript" src="/public/js/Chart.js"></script>
-    <script type="text/javascript" src="/public/js/angular.min.js"></script>
+    <script type="text/javascript" src="/public/js/angular.js"></script>
     <script type="text/javascript" src="/public/js/angular-chart.min.js"></script>
     <script type="text/javascript" src="/public/js/socket.io.js"></script>
 
@@ -715,6 +818,9 @@
     <script type="text/javascript" src="/public/js/controller/RoomController.js"></script>
     <script type="text/javascript" src="/public/js/controller/ProfileController.js"></script>
     <script type="text/javascript" src="/public/js/controller/EditProfileController.js"></script>
+    <script type="text/javascript" src="/public/js/controller/AdminEditController.js"></script>
+
     <script type="text/javascript" src="/public/js/controller/AgencyContactController.js"></script>
+
 </body>
 </html>

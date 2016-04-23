@@ -1,3 +1,4 @@
+
 /**
  * Created by yuanyuan on 4/1/16.
  */
@@ -22,13 +23,5 @@ var AgencyContact = sequelize.define('AgencyContact', {
 },{
     tableName: 'agencyContact'
 });
-
-AgencyContact.delete = function(id) {
-    this.destroy({
-        where: {
-            id : id
-        }
-    });
-};
 
 module.exports = AgencyContact;

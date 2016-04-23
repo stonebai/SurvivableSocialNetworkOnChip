@@ -3,8 +3,6 @@ var suptertest = require('supertest');
 
 var User = require('../src/models/User');
 
-var UserController = require("../src/controllers/UserController");
-
 var agent = suptertest.agent('http://localhost:4000');
 
 
@@ -16,14 +14,9 @@ describe('Test changeStatus RESTful APIs: put /current', function() {
     var userCookie;
 
     before(function(done) {
-        UserController.User = require('../src/models/UserTest');
         agent.post('/users/UnitTestUser')
         .send({password: 'unittestpass', createdAt: '10000', force:true})
         .end(function(err, res) {
-            if(err) {
-                console.log(err);
-                return done(err);
-            }
             userId = res.body.id;
             userCookie = res.headers['set-cookie'];
             done();
@@ -89,7 +82,6 @@ describe('Test changeStatus RESTful APIs: put /current', function() {
         });
     });
     after(function(done){
-    UserController.User = require('../src/models/UserTest');
     User.destroy({
         where: {
             username: 'UnitTestUser'

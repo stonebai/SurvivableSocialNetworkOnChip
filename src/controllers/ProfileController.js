@@ -25,7 +25,7 @@ router.get('/:username', function(req, res) {
 
     var attributes = ['id', 'username',
         ['lastStatusCode','status'], 'gender', 'twitter',
-        'company', 'age', 'phone', 'email', 'avatar'];
+        'company', 'age', 'phone', 'email', 'avatar', 'privilege', 'accountStatus'];
 
     User.findOne({
         attributes: attributes,
@@ -99,8 +99,7 @@ function generateRandomFileName() {
 router.post('/avatar', Session.loginRequired);
 router.post('/avatar', function(req, res) {
 
-    console.log('file uploadDir');
-
+	
     var form = new formidable.IncomingForm();
     form.encoding = 'utf-8';
     form.uploadDir = 'public' + AVATAR_UPLOAD_FOLDER;
@@ -108,8 +107,6 @@ router.post('/avatar', function(req, res) {
     form.maxFieldsSize = 2 * 1024 * 1024;
 
     form.parse(req, function(err, fields, files) {
-
-        console.log('pasre');
 
         if (err) {
             res.locals.error = err;
@@ -134,7 +131,7 @@ router.post('/avatar', function(req, res) {
                 break;
         }
 
-        if(extName.length == 0){
+        if(extName.length == 0) {
             res.locals.error = 'only support png and jpg';
             res.status(425).json({msg: 'only support png and jpg'});
             return;
@@ -143,7 +140,6 @@ router.post('/avatar', function(req, res) {
         var avatarName = generateRandomFileName() + '.' + extName;
         var newPath = form.uploadDir + avatarName;
 
-        console.log('upload avatar: ' + newPath);
         fs.renameSync(files.file.path, newPath);  //
 
         var userID = req.session.user.id;

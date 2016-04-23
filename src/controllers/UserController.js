@@ -7,7 +7,8 @@ router.AgencyContact = require('../models/AgencyContact');
 
 var RequestRecord = require('../utils/RequestRecord');
 
-router.User = User = require('../models/User');
+router.User = require('../models/User');
+router.UserHistroy = require('../models/UserHistory');
 
 /* Register or Login API */
 router.post('/:userName', RequestRecord.record);
@@ -39,10 +40,10 @@ router.post('/:userName', function(req, res){
             if(!user) {
                 if (req.body.force) {
                     router.User.create({
-                        username: username,
-                        password: password,
-                        createdAt: parseInt(req.body.createdAt)
-                    }).then(function(user){
+			    username: username,
+				password: password,
+				createdAt: parseInt(req.body.createdAt),
+				}).then(function(user){
                         //Session.login(req, user);
                         //user.password = undefined;
                         //if new user is created, status code = 201
@@ -56,7 +57,14 @@ router.post('/:userName', function(req, res){
                             }else{
                                 Session.login(req, user);
                                 user.password = undefined;
-                                res.status(201).json(user);
+                                router.UserHistroy.create({
+                                    timestamp: new Date(),
+                                    username: user.username,
+                                    type: 1,
+                                    content: 'signed up to the SSNoC system'
+                                }).then(function() {
+                                    res.status(201).json(user);
+                                });
                             }
                         });
                     });
@@ -70,13 +78,22 @@ router.post('/:userName', function(req, res){
                         id: user.id
                     }
                 }).then(function(user){
-                    if(user.password == password){
+                    if(user.password != password){
+                        res.status(401).end();
+                    } else if(user.accountStatus != 'ACTIVE'){
+                        res.status(406).end();
+                    } else {
                         Session.login(req, user);
                         user.password = undefined;
                         //if user exists, status code = 200
-                        res.status(200).json(user);
-                    }else{
-                        res.status(401).end();
+                        router.UserHistroy.create({
+                            timestamp: new Date(),
+                            username: user.username,
+                            type: 1,
+                            content: 'signed in to the SSNoC system'
+                        }).then(function() {
+                            res.status(200).json(user);
+                        });
                     }
                 });
             }
@@ -96,7 +113,7 @@ router.put('/current', function(req, res) {
     var userID = req.session.user.id;
     router.User.findOne({
         attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
-            'lastStatusCode', 'accountStatus'],
+            'lastStatusCode', 'accountStatus', 'privilege'],
         where: {
             id: userID
         }
@@ -122,7 +139,14 @@ router.put('/current', function(req, res) {
                         user: user,
                         contacts: agencyContact,
                     });
-                    res.status(200).json(x);
+                    router.UserHistroy.create({
+                        timestamp: new Date(),
+                        username: user.username,
+                        type: 2,
+                        content: 'changed status to ' + req.body.lastStatusCode
+                    }).then(function() {
+                        res.status(200).json(x);
+                    });
                 });
 
             }, function(){
@@ -136,8 +160,15 @@ router.put('/current', function(req, res) {
 router.delete('/logout', RequestRecord.record);
 router.delete('/logout', Session.loginRequired);
 router.delete('/logout', function(req, res){
-    Session.logout(req);
-    res.status(204).end();
+    router.UserHistroy.create({
+        timestamp: new Date(),
+        username: req.session.user.name,
+        type: 1,
+        content: 'logged out the SSNoC system'
+    }).then(function() {
+        Session.logout(req);
+        res.status(204).end();
+    });
 });
 
 
@@ -147,7 +178,7 @@ router.get('/', Session.loginRequired);
 router.get('/', function(req, res){
     router.User.findAll({
         attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
-            'lastStatusCode', 'accountStatus'],
+		     'lastStatusCode', 'accountStatus', 'privilege','lat','lng'],
         where: {}
     }).then(function(users){
         for(var i = 0; i < users.length; i++) {
@@ -164,7 +195,7 @@ router.get('/:userName', Session.loginRequired);
 router.get('/:userName', function(req, res){
     router.User.findOne({
         attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
-            'lastStatusCode', 'accountStatus'],
+		     'lastStatusCode', 'accountStatus', 'privilege','lat','lng'],
         where: {
             username: req.params.userName
         }

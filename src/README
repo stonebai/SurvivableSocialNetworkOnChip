@@ -5,4 +5,8 @@ Deployment steps:
 2) run "npm install"
 3) run "node src/app.js"
 
+
 The application should now be avilable at yourip:4000
+
+if you want to use a diiferent port list the desired port as a argument ie node "app.js 5000"
+if you want to create a new clean database use newdb as an argument ie "app.js 5000 newdb" or "app.js newdb"

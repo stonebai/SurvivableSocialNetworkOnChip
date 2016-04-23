@@ -3,11 +3,16 @@ MyApp.angular.controller('DashboardController',
 function ($scope, $http, $window, BootService, UserService) {
     $scope.type = "/users";
 
-    $http.get('/dashboard/request').success(function(data, status){
+    $http.get('/dashboard/request').success(function(ret, status){
         console.log(status);
-
         if(status == 200){
-            $scope.data = data;
+            var data = {};
+            for(i in ret){
+                if(typeof data[ret[i].date] === "undefined")
+                    data[ret[i].date] = {};
+
+                data[ret[i].date][ret[i].type] = ret[i].count;
+            }
             console.log(data);
 
             //set the line chart
@@ -27,6 +32,7 @@ function ($scope, $http, $window, BootService, UserService) {
                     show_data.push(count);
                 }
             }
+
             line_data.push(show_data);
             $scope.line_labels = line_labels;
             $scope.line_data = line_data;
@@ -69,26 +75,40 @@ function ($scope, $http, $window, BootService, UserService) {
     });
 
     $scope.selectChange = function(){
-        var data = $scope.data;
-        $scope.line_labels = [];
-        var line_labels = [];
-        var line_data = [];
-        var show_data = [];
-        for(date in data){
-            line_labels.push(date);
-            if($scope.type != "ALL"){
-                show_data.push(data[date][$scope.type]);
-            }else{
-                var count = 0;
-                for(type in data[date]){
-                    count += data[date][type];
+        $http.get('/dashboard/request').success(function(ret, status){
+            console.log(status);
+            if(status == 200){
+                var data = {};
+                for(i in ret){
+                    if(typeof data[ret[i].date] === "undefined")
+                        data[ret[i].date] = {};
+
+                    data[ret[i].date][ret[i].type] = ret[i].count;
                 }
-                console.log(count);
-                show_data.push(count);
+                console.log(data);
+
+                $scope.line_labels = [];
+                var line_labels = [];
+                var line_data = [];
+                var show_data = [];
+                for(date in data){
+                    line_labels.push(date);
+                    if($scope.type != "ALL"){
+                        show_data.push(data[date][$scope.type]);
+                    }else{
+                        var count = 0;
+                        for(type in data[date]){
+                            count += data[date][type];
+                        }
+                        console.log(count);
+                        show_data.push(count);
+                    }
+                }
+                $scope.line_labels = line_labels;
+                $scope.line_data = [show_data];
+                $scope.line_series = [$scope.type];
             }
-        }
-        $scope.line_labels = line_labels;
-        $scope.line_data = [show_data];
-        $scope.line_series = [$scope.type];
+        });
     }
-}]);
+}
+]);

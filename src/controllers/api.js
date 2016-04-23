@@ -15,9 +15,10 @@ api.get('/checklogin', function (req, res) {
     else {
         User.findOne({
             attributes: ['id', 'username', 'createdAt', 'updatedAt', 'lastLoginAt',
-                'lastStatusCode', 'accountStatus'],
+                'lastStatusCode', 'accountStatus', 'privilege'],
             where: {
-                id: req.session.user.id
+                id: req.session.user.id,
+                accountStatus: 'ACTIVE',
             }
         }).then(function(user){
             if (!user) {

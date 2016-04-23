@@ -1,8 +1,9 @@
 var should = require('should');
 var supertest = require('supertest');
 
-var chatPubliclyController = require('../src/controllers/ChatPublicController');
 var User = require('../src/models/User');
+
+var testMessage = require('../src/models/PublicMessage');
 
 var agent = supertest.agent('http://localhost:4000');
 
@@ -10,18 +11,14 @@ var agent = supertest.agent('http://localhost:4000');
 * Test chatPublicly RESTful APIs
 */
 describe('Test chat publicly RESTful APIs: POST /:fromUserName', function(){
-    var user1d;
     var userCookie;
 
+    var userId;
+
     before(function(done){
-        chatPubliclyController.Message = require('../src/models/PublicMessageTest');
         agent.post('/users/UnitTestUser')
         .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
-            if(err){
-                console.log(err);
-                return done(err);
-            }
             userId = res.body.id;
             userCookie = res.headers['set-cookie'];
             done();
@@ -34,7 +31,15 @@ describe('Test chat publicly RESTful APIs: POST /:fromUserName', function(){
         .send({})
         .end(function(err, res){
             res.status.should.equal(422);
-            done();
+
+            testMessage.findOne({
+                where: {
+                    author: userId
+                }
+            }).then(function(message){
+                should.not.exist(message);
+                done();
+            });
         });
     });
 
@@ -45,7 +50,15 @@ describe('Test chat publicly RESTful APIs: POST /:fromUserName', function(){
         .send({content: "test message", postedAt: 100002})
         .end(function(err, res){
             res.status.should.equal(401);
-            done();
+
+            testMessage.findOne({
+                where: {
+                    author: userId
+                }
+            }).then(function(message){
+                should.not.exist(message);
+                done();
+            });
         });
 
     });
@@ -60,21 +73,31 @@ describe('Test chat publicly RESTful APIs: POST /:fromUserName', function(){
             res.body.content.should.equal('test message');
             res.body.author.should.equal(userId);
             res.body.postedAt.should.equal("1970-01-01T00:01:40.003Z");
-            done();
+
+            testMessage.findOne({
+                where: {
+                    author: userId
+                }
+            }).then(function(message){
+                should.exist(message);
+                message.content.should.equal("test message");
+                message.author.should.equal(userId);
+                done();
+            });
+
         });
     });
 
     after(function(done){
         console.log("test after");
-        chatPubliclyController.Message = require('../src/models/PublicMessage');
         User.destroy({
             where: {
                 username: 'UnitTestUser'
             }
         }).then(function(){
-            chatPubliclyController.Message.destroy({
+            testMessage.destroy({
                 where: {}
-            }).then(function(err, res){
+            }).then(function() {
                 done();
             });
         });
@@ -91,14 +114,9 @@ describe('Test retrieving all public chat messages: GET /:', function(){
     var userCookie;
 
     before(function(done){
-        chatPubliclyController.Message = require('../src/models/PublicMessageTest');
         agent.post('/users/UnitTestUser')
         .send({password: 'unittestpass', createdAt: 100002, force: true})
         .end(function(err, res){
-            if(err){
-                console.log(err);
-                return done(err);
-            }
             userId = res.body.id;
             userCookie = res.headers['set-cookie'];
 
@@ -134,15 +152,14 @@ describe('Test retrieving all public chat messages: GET /:', function(){
 
     after(function(done){
         console.log("test after");
-        chatPubliclyController.Message = require('../src/models/PublicMessage');
         User.destroy({
             where: {
                 username: 'UnitTestUser'
             }
         }).then(function(){
-            chatPubliclyController.Message.destroy({
+            testMessage.destroy({
                 where: {}
-            }).then(function(err, res){
+            }).then(function() {
                 done();
             });
         });

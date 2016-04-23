@@ -51,13 +51,13 @@ MyApp.angular.controller('SearchController',
                                 searchContext = searchContexts[i];
                                 $$('#search_context').text(searchContext);
                                 if(searchContext == 'Status') {
-                                    $$('#search_status_li').show();
-                                    $$('#search_keyword_li').hide();
+				    $$('#search_status_li').show();
+				    $$('#search_keywords_li').hide();
                                 }
                                 else {
                                     $$('#search_status_li').hide();
-                                    $$('#search_keyword_li').show();
-                                }
+				    $$('#search_keywords_li').show();
+				}
                             }
                         }
                     })(i);
@@ -88,6 +88,7 @@ MyApp.angular.controller('SearchController',
         BootService.addEventListener('open_search', function(){
             BootService.setNavbarTitle("Search");
         });
+	
 
 
         $scope.onClickSearchButton = function() {

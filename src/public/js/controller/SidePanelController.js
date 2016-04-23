@@ -37,8 +37,19 @@ MyApp.angular.controller('SidePanelController',
                 });
             };
 
+            $scope.isMonitor = function() {
+                return UserService.isMonitor();
+            }
+
             function updateUserList() {
-                var users = UserService.getAll();
+                var privilege = UserService.currentUser.privilege;
+                var users = [];
+                if(privilege === 'Administrator') {
+                    users = UserService.getAll();
+                } else {
+                    users = UserService.getActiveUsers();
+                }
+
                 $scope.users = [];
                 var offlineUsers = [];
                 for(var i in users) {
@@ -119,6 +130,24 @@ MyApp.angular.controller('SidePanelController',
                         audio.play();
                     }
 
+                });
+
+                socket.on("user update", function(u){
+                    UserService.update(u);
+                    updateUserList();
+                    $scope.$apply();
+                });
+
+                socket.on('become inactive', function(){
+                    fw7.alert('Your account status becomes INACTIVE! You have to logout now!',
+                        'App Alert', function(){
+                            $http.delete("/users/logout", {}).success(function(data, status){
+                                if(status == 204) {
+                                    fw7.closePanel();
+                                    BootService.trigger('logout');
+                                }
+                            });
+                        });
                 });
 
                 socket.on("user enter", function(u){

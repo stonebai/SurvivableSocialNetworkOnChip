@@ -163,6 +163,8 @@ MyApp.angular.controller('RoomController',
                     for(var i=0;i<users.length;i++) {
                         $scope.allUsers.push(users[i]);
                     }
+                }).error(function(data){
+                    console.log("ROOM ERROR");
                 });
             };
 

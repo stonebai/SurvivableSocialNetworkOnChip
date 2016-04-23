@@ -13,7 +13,7 @@ describe('Test Room Message RESTful APIs: GET /roommessage/:roomname', function 
         server
             .post("/users/User4Test")
             .send({password:'1234', createdAt:1234, force: true})
-            .end(function(err, res) {
+            .end(function() {
                 RoomMessage.create({
                     content: 'Content4Test',
                     author: 'User4Test',

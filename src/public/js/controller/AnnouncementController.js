@@ -8,6 +8,7 @@ MyApp.angular.controller('AnnouncementController',
 
             var socket = null;
             var $$ = Dom7;
+            var fw7 = MyApp.fw7.app;
 
             $scope.postAnnouncement = function(newAnnouncement) {
                 var post = {
@@ -16,8 +17,14 @@ MyApp.angular.controller('AnnouncementController',
                     timestamp: new Date(),
                     location: null
                 };
-                $http.post('/announcements', post);
-                $scope.newAnnouncement = '';
+                $http.post('/announcements', post).success(function(data){
+                    $scope.newAnnouncement = '';
+                }).error(function(data, status) {
+                    console.log(status);
+                    if(status == 441) {
+                        fw7.alert("You don't have privilege to post annoucements", 'ERROR');
+                    }
+                });
             };
 
             function loadAnnouncements(data) {
@@ -47,6 +54,10 @@ MyApp.angular.controller('AnnouncementController',
             function dateFormat(unformatedDate) {
                 var date = new Date(unformatedDate);
                 return BootService.formatDay(date) +'\t' + BootService.formatTime(date);
+            }
+
+            $scope.isEditable = function() {
+                return UserService.isCoordinator();
             }
         }
     ]

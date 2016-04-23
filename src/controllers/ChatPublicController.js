@@ -4,10 +4,10 @@
 var router = require('express').Router();
 var User = require('../models/User');
 var Session = require('../models/Session');
-var Message = require('../models/PublicMessage');
 var RequestRecord = require('../utils/RequestRecord');
 
 router.Message = require('../models/PublicMessage');
+router.UserHistroy = require('../models/UserHistory');
 
 router.post('/:fromUserName', RequestRecord.record);
 router.post('/:fromUserName', Session.loginRequired);
@@ -36,7 +36,14 @@ router.post('/:fromUserName', function(req, res){
                 author: user.id,
                 postedAt: parseInt(req.body.postedAt)
             }).then(function(message){
-                res.status(201).json(message);
+                router.UserHistroy.create({
+                    timestamp: new Date(),
+                    username: req.params.fromUserName,
+                    type: 3,
+                    content: 'said: ' + req.body.content + ' in public chat'
+                }).then(function() {
+                    res.status(201).json(message);
+                });
             });
         }
     });

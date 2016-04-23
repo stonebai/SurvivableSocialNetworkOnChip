@@ -41,10 +41,10 @@ describe('User Register Test', function() {
             .expect(201, {
                 username: 'User4Test'
             })
-            .end(function (err, res) {
+            .end(function () {
                 done();
             });
-    });
+    }).timeout(5000);
 
     after(function(done) {
         User.findOne({
@@ -99,7 +99,7 @@ describe('User Register Test',function() {
             .expect(200, {
                 username: 'User4Test'
             })
-            .end(function(err,res){
+            .end(function(){
                 done();
             });
     });
@@ -107,7 +107,7 @@ describe('User Register Test',function() {
     after(function(done) {
         server
             .delete("/users/logout")
-            .end(function(err,res) {
+            .end(function() {
                 User.destroy({
                     where: {
                         username: 'User4Test'

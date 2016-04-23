@@ -8,9 +8,10 @@ MyApp.angular.controller('ProfileController',
             $scope.profileItems = [];
             $scope.profile = {};
             $scope.editable = false;
+
             $scope.profile.avatar = 'public/img/small-default-avatar.png';
 
-            var fields = [ 'age', 'gender', 'company', 'twitter',
+            var fields = [ 'accountStatus', 'privilege', 'age', 'gender', 'company', 'twitter',
                         'phone', 'email', ];
 
             for(var i = 0; i < fields.length; i++) {
@@ -56,12 +57,63 @@ MyApp.angular.controller('ProfileController',
                 }).error(function(data, status){
                     console.log(data);
                 });
-            });
+		});
 
 
             $scope.openEditPage = function() {
                 BootService.openPage('edit_profile');
             }
+
+            $scope.isAdmin = function() {
+                //return true;
+                var user = UserService.currentUser;
+                return user && user.privilege === 'Administrator';
+            }
+
+            $scope.openAdminPage = function() {
+                var profile = $scope.profile;
+                BootService.openPage('admin_edit', profile);
+
+            }
+	    var historyLayout = MyApp.fw7.app.messages('#history_messages', {
+		    autoLayout: true
+		});
+
+
+	    $scope.openUserHistory = function(user) {
+		console.log("yo");
+		console.log("opening User History "+user);
+		BootService.openPage("userHistory");
+		//TODO remove all of the old history elements
+		
+		socket = MyApp.socket;
+		$scope.username = UserService.currentUser.username;
+		
+		
+		var request = '/userhistory/';
+		request = request.concat(user);
+		$http.get(request).success(function (data, status) {
+			historyLayout.clean();
+
+			if(status == 200) {
+			    for(var i = 0; i < data.length; i++) {
+				console.log(data[i]);
+				var date = new Date(data[i].timestamp);
+				historyLayout.addMessage({
+					text:data[i].content,
+					    name: data[i].username,
+					    day: BootService.formatDay(date),
+					    time: BootService.formatTime(date),
+					    });
+				console.log(data[i].type);
+			    }
+			}
+		    });
+
+	    }
+
+
+
     }]
 );
 

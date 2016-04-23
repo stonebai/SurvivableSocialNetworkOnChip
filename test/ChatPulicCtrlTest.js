@@ -13,9 +13,8 @@ describe('Public Chat Controller Test',function() {
             .get("/messages/public")
             .expect("Content-type",/json/)
             .expect(401)
-            .end(function(err,res){
-                if(err) return done(err);
-                else done();
+            .end(function(){
+                done();
             });
-    });
+    }).timeout(5000);
 });

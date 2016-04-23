@@ -136,6 +136,8 @@
                                         });
                                 });
                         }
+                    }).error(function(data){
+                        console.log("ERROR!!!!!!!!!!!!!");
                     });
                 }
             });

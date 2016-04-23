@@ -14,8 +14,10 @@ before_install:
 install:
   - npm install
   - npm install grunt-cli -g
+  - npm install istanbul
 before_script:
   - node src/initdb.js
+  - node src/initdata.js
   - node src/app.js &
 script:
-  - grunt test
+  - grunt coverage

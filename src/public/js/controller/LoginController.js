@@ -38,7 +38,12 @@
                     loginSuccess(data);
                 }
             }).error(function(data, status){
-                fw7.alert('Wrong user name or password!', "" + status);
+                if(status === 406) {
+                    fw7.alert("Your account is INACTIVE. You cannot login now!", "INACTIVE");
+                }
+                else {
+                    fw7.alert('Wrong user name or password!', "" + status);
+                }
             });
         };
         
@@ -63,6 +68,8 @@
                         });
                     });
                 }
+            }).error(function(data){
+                console.log("ERROR!!!!!!!!!!!!!!!!");
             });
         }
     }]

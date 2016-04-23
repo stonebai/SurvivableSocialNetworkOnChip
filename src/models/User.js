@@ -17,6 +17,16 @@ var User = sequelize.define('user', {
         field: 'username',
         type: Sequelize.STRING,
     },
+    lat: {
+	    field: 'lat',
+	    type: Sequelize.FLOAT,
+	    defaultValue: 40.442403
+    },
+    lng: {
+	    field: 'lng',
+	    type:Sequelize.FLOAT,
+	    defaultValue: -79.9477453
+    },
     password: {
         field: 'password',
         type: Sequelize.STRING,
@@ -73,6 +83,12 @@ var User = sequelize.define('user', {
     email: {
         field: 'email',
         type: Sequelize.STRING,
+    },
+    privilege: {
+        field: 'privilege',
+        type: Sequelize.ENUM,
+        values: ['Administrator', 'Coordinator', 'Monitor', 'Citizen'],
+        defaultValue: 'Citizen'
     },
 
 }, {
