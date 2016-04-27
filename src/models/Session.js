@@ -20,13 +20,13 @@ function checkPrivilege(privilege, req, res, next) {
         res.status(401).json({});
     } else {
         var uid = req.session.user.id;
-        User.findOne({
+        return User.findOne({
             where: {
                 id: uid,
             }
         }).then(function (user) {
             if (!user) {
-                res.status(401).json({});
+                return res.status(401).json({});
             }
             else {
                 var valid = false;
@@ -42,10 +42,10 @@ function checkPrivilege(privilege, req, res, next) {
                 }
 
                 if(valid) {
-                    next();
+                    return next();
                 }
                 else {
-                    res.status(441).json({msg: 'No privilege'});
+                    return res.status(441).json({msg: 'No privilege'});
                 }
             }
         });

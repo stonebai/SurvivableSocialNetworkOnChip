@@ -14,6 +14,16 @@ MyApp.angular.controller('AdminEditController',
             $scope.profile.avatar = 'public/img/small-default-avatar.png';
 
             BootService.addEventListener('open_admin_edit', function(profile){
+                //if(profile.id == UserService.currentUser.id) {
+                //    $$('#admin-edit-form').find('.account-status-list-item').hide();
+                //    $$('#admin-edit-form').find(".privilege-list-item").hide();
+                //}
+                //else {
+                //    $$('#admin-edit-form').find('.account-status-list-item').show();
+                //    $$('#admin-edit-form').find(".privilege-list-item").show();
+                //}
+
+
                 BootService.setNavbarTitle("Admin");
                 $http.get('/profile/' + profile.username).success(function(data){
                     $scope.profile = data;

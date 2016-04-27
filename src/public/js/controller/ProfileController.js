@@ -81,39 +81,9 @@ MyApp.angular.controller('ProfileController',
 
 
 	    $scope.openUserHistory = function(user) {
-		console.log("yo");
-		console.log("opening User History "+user);
-		BootService.openPage("userHistory");
-		//TODO remove all of the old history elements
-		
-		socket = MyApp.socket;
-		$scope.username = UserService.currentUser.username;
-		
-		
-		var request = '/userhistory/';
-		request = request.concat(user);
-		$http.get(request).success(function (data, status) {
-			historyLayout.clean();
-
-			if(status == 200) {
-			    for(var i = 0; i < data.length; i++) {
-				console.log(data[i]);
-				var date = new Date(data[i].timestamp);
-				historyLayout.addMessage({
-					text:data[i].content,
-					    name: data[i].username,
-					    day: BootService.formatDay(date),
-					    time: BootService.formatTime(date),
-					    });
-				console.log(data[i].type);
-			    }
-			}
-		    });
-
+		    console.log("opening User History "+user);
+		    BootService.pushPage("history", user);
 	    }
-
-
-
     }]
 );
 

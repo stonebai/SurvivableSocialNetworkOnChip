@@ -40,7 +40,7 @@ var testController = require('./controllers/TestController');
 var app = express();
 
 //a global variable whcih tells the system if it is running or not running 
-var appRunning = true;
+var appRunning = [true];
 
 
 /**************************************************  Start up database *******************************/
@@ -185,7 +185,7 @@ io.on('connection', function(socket) {
         io.emit('user enter', user);
 	
         socket.on('public chat', function(post) {
-		if(appRunning){
+		if(true){//appRunning[0]){
 		    PublicMessage.create({
 			    author: user.id,
 				content: post.content,
@@ -196,7 +196,7 @@ io.on('connection', function(socket) {
 			    timestamp: new Date(),
 				username: user.username,
 				type: 3,
-				content: 'said: ' + post.content + ' in public chat'
+				content: post.content
 				});
 		    
 		    post.author = user.username;
@@ -215,7 +215,7 @@ io.on('connection', function(socket) {
 	    });//socket.on disconnect
 	
         socket.on('private message', function(post){
-		if(appRunning){
+		if(true){//appRunning[0]){
 		    //var receiver = UserDict.getUser(post.receiver_id);
 		    User.findOne({
 			    attributes: ['id', 'username'],
@@ -246,24 +246,32 @@ io.on('connection', function(socket) {
 			    });//User.findOne
 		}
 	    });//socket.on('private message')
+
+	socket.on('stop_test',function(post){
+		console.log("stoping the log");
+		appRunning[0] = true;
+	    });
 	
 	//monitor and testing system 
 	socket.on('start_test',function(post){
 		
-		appRunning = false;
+		appRunning[0] = false;
 		console.log('runing test duration:'+post.duration+'interval'+post.interval);
 		var testLength = post.duration/2;
-		var postThroughput  = testController.testPutMessages(testLength,post.interval,user,post,io,db);
-		var getThroughput  = testController.testGetMessages(testLength,post.interval,user,post,io,db);
 		
-		var getThroughput = 10;
-		console.log(postThroughput);
-		socket.emit('end_test',{
-			PostThroughput:postThroughput,
-			    getThroughput:getThroughput,
-			    
-			    });
-		appRunning = true;
+		var postThroughput  = testController.testPutMessages(testLength,post.interval,user,post,io,db,appRunning,socket);
+		var getThroughput  = testController.testGetMessages(testLength,post.interval,user,post,io,db,appRunning,socket);
+
+		//only send results if we are still testing 
+		if(appRunning[0] == false){
+		    console.log(postThroughput);
+		    socket.emit('end_test',{
+			    PostThroughput:postThroughput,
+				getThroughput:getThroughput,
+				
+				});
+		appRunning[0] = true;
+		}
 	    });//socket.on('start_test')
 	
 	    });

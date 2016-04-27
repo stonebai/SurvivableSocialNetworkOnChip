@@ -34,6 +34,18 @@ MyApp.angular.controller('SystemTestController',
 				      }
 				   }
 				  
+				  $scope.onClickStopTestButton = function() {
+				      //send the request to the backend 
+				      var post = {
+					  timestamp: new Date()
+				      }
+				      socket.emit('stop_test',post);
+				      messageLayout.clean();
+				      fw7.alert('test has shutdown');
+				  }
+				   	
+
+
 				  
 				  $scope.onClickTestButton = function() {				      
 				      var delay_time = Number(document.getElementById("interval").value);
@@ -48,7 +60,7 @@ MyApp.angular.controller('SystemTestController',
 					  interval: delay_time,
 					  timestamp: new Date(),
 					  
-				      }
+				     }
 				      socket.emit('start_test', post);
 				      
 				      
@@ -71,12 +83,11 @@ MyApp.angular.controller('SystemTestController',
 					      messageLayout.scrollMessages();
 					  });
 				  }
-				  
-				  
-				  
-				  BootService.addEventListener('login', function () {
-					  socket = MyApp.socket;
-					  
-				      });
-				  
+			   
+			   
+			   
+			   BootService.addEventListener('login', function () {
+				   socket = MyApp.socket;   
+			       });
+			   
 			      }]);

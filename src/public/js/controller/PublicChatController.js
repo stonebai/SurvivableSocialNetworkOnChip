@@ -105,19 +105,39 @@
             }
         };
 
+        BootService.addEventListener('open_public_chat', function(){
+            messageLayout.clean();
+            $http.get('/messages/public').success(function (data, status) {
+                console.log('open_public_chat');
+                if(status == 200) {
+                    var msgs = [];
+                    for(var i = 0; i < data.length; i++) {
+                        var u = UserService.getById(data[i].author);
+                        if (u && u.accountStatus === 'ACTIVE') {
+                            var msg = data[i];
+                            msg.author = u.username;
+                            msgs.push(msg);
+                        }
+                    }
+                    addMessages(msgs);
+                }
+            });
+        });
+
         BootService.addEventListener('login', function () {
             
             socket = MyApp.socket;
             $scope.username = UserService.currentUser.username;
 
-            $http.get('/messages/public').success(function (data, status) {
-                if(status == 200) {
-                    for(var i = 0; i < data.length; i++) {
-                        data[i].author = UserService.getById(data[i].author).username;
-                    }
-                    addMessages(data);
-                }
-            });
+            BootService.trigger('open_public_chat');
+            //$http.get('/messages/public').success(function (data, status) {
+            //    if(status == 200) {
+            //        for(var i = 0; i < data.length; i++) {
+            //            data[i].author = UserService.getById(data[i].author).username;
+            //        }
+            //        addMessages(data);
+            //    }
+            //});
 
             socket.on('public chat', function (post) {
                 //$scope.messages.push(post);

@@ -55,7 +55,7 @@ router.post('/', function(req, res) {
                             timestamp: new Date(),
                             username: req.body.author,
                             type: 4,
-                            content: 'posted an announcement: ' + req.body.content
+                            content: '' + req.body.content
                         }).then(function() {
                             res.status(201).end();
                         });

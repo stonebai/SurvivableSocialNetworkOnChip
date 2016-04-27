@@ -37,50 +37,63 @@ MyApp.angular.controller('SearchResultsController',
                 }
                 else if(data.searchContext == 'Announcement' ){
                     $scope.isMediaList = true;
-                    filterAnnouncements(data.results);
+                    data.results = filterAnnouncements(data.results);
                 }
                 else {
                     $scope.isMediaList = true;
-                    filterMessages(data.results);
+                    data.results = filterMessages(data.results);
                 }
                 $scope.results = data.results;
             });
 
             function filterMessages(results) {
+                var msgs = [];
                 for (var i = 0; i < results.length; i++) {
                     var user = UserService.getById(results[i].author);
-                    var username = user? user.username : "";
-                    results[i].sender = username
-                    var date = new Date(results[i].postedAt);
-                    results[i].time = BootService.formatDate(date);
-                    console.log(date);
+                    if(user && user.accountStatus === 'ACTIVE') {
+                        var username = user? user.username : "";
+                        results[i].sender = username
+                        var date = new Date(results[i].postedAt);
+                        results[i].time = BootService.formatDate(date);
+                        msgs.push(results[i]);
+                    }
                 }
+                return msgs;
             }
 
             function filterAnnouncements(results) {
+                var msgs = [];
                 for (var i = 0; i < results.length; i++) {
-                    results[i].sender = results[i].author;
-                    var date = new Date(results[i].timestamp);
-                    results[i].time = BootService.formatDate(date);
-                    console.log(date);
+                    var u = UserService.getByUsername(results[i].author);
+                    if(u && u.accountStatus === 'ACTIVE') {
+                        results[i].sender = results[i].author;
+                        var date = new Date(results[i].timestamp);
+                        results[i].time = BootService.formatDate(date);
+                        msgs.push(results[i]);
+                    }
                 }
+                return msgs;
             }
 
             function filterUsers(results) {
                 var sortedResults = [];
+                var users = [];
                 for (var i = 0; i < results.length; i++) {
                     var user = UserService.getById(results[i].id);
-                    results[i].online = user.online;
-                }
-
-                for(var i = 0; i < results.length; i++) {
-                    if(results[i].online) {
-                        sortedResults.push(results[i]);
+                    if(user && user.accountStatus === 'ACTIVE') {
+                        results[i].online = user.online;
+                        users.push(results[i]);
                     }
                 }
-                for(var i = 0; i < results.length; i++) {
-                    if(!results[i].online) {
-                        sortedResults.push(results[i]);
+
+                for(var i = 0; i < users.length; i++) {
+                    if(users[i].online) {
+                        sortedResults.push(users[i]);
+                    }
+                }
+                for(var i = 0; i < users.length; i++) {
+                    if(!users[i].online) {
+                        sortedResults.push(users[i]);
                     }
                 }
                 return sortedResults;

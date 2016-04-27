@@ -17,6 +17,15 @@ MyApp.angular.factory('UserService', ['$document', '$http', function ($document,
         return users[id];
     }
 
+    pub.getByUsername = function(username) {
+        for(var i in users) {
+            if(users[i].username === username) {
+                return users[i];
+            }
+        }
+        return null;
+    }
+
     pub.add = function(u) {
         var id = u.id;
         users[id] = u;

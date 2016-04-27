@@ -6,6 +6,7 @@ var should = require('should');
 var User = require("../src/models/User");
 var server = supertest.agent("http://localhost:4000");
 var Announcement = require("../src/models/Announcement");
+var UserHistory = require('../src/models/UserHistory');
 
 describe('Test Admin RESTful APIs: POST /admin', function(){
 
@@ -68,48 +69,84 @@ describe('Test Admin RESTful APIs: POST /admin', function(){
     }).timeout(5000);
 
     it("post the invalid password", function(done) {
-        server
-            .post('/admin/' + citizenId)
-            .send({
-                username: 'User4Test',
-                accountStatus: 'INACTIVE',
-                password: '123',
-                privilege: 'Monitor',
-            })
-            .end(function(err, res){
-                res.status.should.equal(403);
-                done();
-            });
+        User.findOne({
+            where: {id: citizenId}
+        }).then(function(originalUser){
+            server
+                .post('/admin/' + citizenId)
+                .send({
+                    username: 'User4Test',
+                    accountStatus: 'INACTIVE',
+                    password: '123',
+                    privilege: 'Monitor',
+                })
+                .end(function(err, res){
+                    res.status.should.equal(403);
+                    User.findOne({
+                        where: {id: citizenId}
+                    }).then(function(user){
+                        user.username.should.equal(originalUser.username);
+                        user.accountStatus.should.equal(originalUser.accountStatus);
+                        user.password.should.equal(originalUser.password);
+                        user.privilege.should.equal(originalUser.privilege);
+                        done();
+                    });
+                });
+        });
     });
 
     it("post invalid privilege, for example: 'visitor'", function(done) {
-        server
-            .post('/admin/' + citizenId)
-            .send({
-                username: 'User4Test',
-                accountStatus: 'INACTIVE',
-                password: '1234',
-                privilege: 'Visitor',
-            })
-            .end(function(err, res){
-                res.status.should.equal(403);
-                done();
-            });
+        User.findOne({
+            where: {id: citizenId}
+        }).then(function(originalUser){
+            server
+                .post('/admin/' + citizenId)
+                .send({
+                    username: 'User4Test',
+                    accountStatus: 'INACTIVE',
+                    password: '1234',
+                    privilege: 'Visitor',
+                })
+                .end(function(err, res){
+                    res.status.should.equal(403);
+                    User.findOne({
+                        where: {id: citizenId}
+                    }).then(function(user){
+                        user.username.should.equal(originalUser.username);
+                        user.accountStatus.should.equal(originalUser.accountStatus);
+                        user.password.should.equal(originalUser.password);
+                        user.privilege.should.equal(originalUser.privilege);
+                        done();
+                    });
+                });
+        });
     });
 
     it("post the invalid username", function(done) {
-        server
-            .post('/admin/' + citizenId)
-            .send({
-                username: 'follow',
-                accountStatus: 'INACTIVE',
-                password: '5678',
-                privilege: 'Monitor',
-            })
-            .end(function(err, res){
-                res.status.should.equal(403);
-                done();
-            });
+        User.findOne({
+            where: {id: citizenId}
+        }).then(function(originalUser){
+            server
+                .post('/admin/' + citizenId)
+                .send({
+                    username: 'follow',
+                    accountStatus: 'INACTIVE',
+                    password: '5678',
+                    privilege: 'Monitor',
+                })
+                .end(function(err, res){
+                    res.status.should.equal(403);
+                    User.findOne({
+                        where: {id: citizenId}
+                    }).then(function(user){
+                        user.username.should.equal(originalUser.username);
+                        user.accountStatus.should.equal(originalUser.accountStatus);
+                        user.password.should.equal(originalUser.password);
+                        user.privilege.should.equal(originalUser.privilege);
+                        done();
+                    });
+                });
+        });
     });
 
     it("Admin has the right to post annoucement", function(done){
@@ -134,11 +171,17 @@ describe('Test Admin RESTful APIs: POST /admin', function(){
                             content: 'Announcement4TestAdmin'
                         }
                     }).then(function(){
-                        done();
+                        UserHistory.destroy({
+                            where: {
+                                content: 'Announcement4TestAdmin'
+                            }
+                        }).then(function(){
+                            done();
+                        })
                     })
                 });
             });
-    }).timeout(5000);
+    });
 
     after(function(done) {
         server
@@ -182,35 +225,31 @@ describe('Test Admin RESTful APIs: POST /admin (When no enough privilege)', func
     });
 
     it('modify the profile without enough privilege', function(done) {
-        server
-            .post('/admin/' + 'SSNAdmin')
-            .send({
-                username: 'Admin4Test',
-                accountStatus: 'INACTIVE',
-                password: '123',
-                privilege: 'Monitor',
-            })
-            .end(function(err, res){
-                // 441 means no enough privilege.
-                res.status.should.equal(441);
-                done();
-            });
+        User.findOne({
+            where: {id: citizenId}
+        }).then(function(originalUser){
+            server
+                .post('/admin/' + citizenId)
+                .send({
+                    username: 'Admin4Test',
+                    accountStatus: 'INACTIVE',
+                    password: '123',
+                    privilege: 'Monitor',
+                })
+                .end(function(err, res){
+                    res.status.should.equal(441);
+                    User.findOne({
+                        where: {id: citizenId}
+                    }).then(function(user){
+                        user.username.should.equal(originalUser.username);
+                        user.accountStatus.should.equal(originalUser.accountStatus);
+                        user.password.should.equal(originalUser.password);
+                        user.privilege.should.equal(originalUser.privilege);
+                        done();
+                    });
+                });
+        });
     });
-
-    it('no privilege to post an annoucement', function(done){
-        server
-            .post('/announcements')
-            .send({
-                author: 'SSNAdmin',
-                content: 'Announcement4TestAdmin',
-                timestamp: 123456,
-                location: null
-            })
-            .end(function(err, res){
-                res.status.should.equal(441);
-                done();
-            });
-    }).timeout(5000);
 
     after(function(done) {
         server
@@ -230,6 +269,8 @@ describe('Test Admin RESTful APIs: POST /admin (When no enough privilege)', func
 
 describe('Test the privilege for Coordinator', function(){
 // add a citizen, login with this user.
+    var userID;
+
     before(function(done){
         User.create({
             username : 'Coordinator4Test',
@@ -237,6 +278,7 @@ describe('Test the privilege for Coordinator', function(){
             createdAt: 123,
             privilege: 'Coordinator',
         }).then(function(user){
+            userID = user.id;
             // login the system using the admin account,
             server
                 .post("/users/Coordinator4Test")
@@ -249,19 +291,31 @@ describe('Test the privilege for Coordinator', function(){
     });
 
     it('modify the profile without enough privilege', function(done) {
-        server
-            .post('/admin/' + 'SSNAdmin')
-            .send({
-                username: 'Admin4Test',
-                accountStatus: 'INACTIVE',
-                password: '123',
-                privilege: 'Monitor',
-            })
-            .end(function(err, res){
-                // 441 means no enough privilege.
-                res.status.should.equal(441);
-                done();
-            });
+
+        User.findOne({
+            where: {username : 'Coordinator4Test',}
+        }).then(function(originalUser){
+            server
+                .post('/admin/' + userID)
+                .send({
+                    username: 'Admin4Test',
+                    accountStatus: 'INACTIVE',
+                    password: '123',
+                    privilege: 'Monitor',
+                })
+                .end(function(err, res){
+                    res.status.should.equal(441);
+                    User.findOne({
+                        where: {id: userID}
+                    }).then(function(user){
+                        user.username.should.equal(originalUser.username);
+                        user.accountStatus.should.equal(originalUser.accountStatus);
+                        user.password.should.equal(originalUser.password);
+                        user.privilege.should.equal(originalUser.privilege);
+                        done();
+                    });
+                });
+        });
     });
 
     it("Coordinator has the right to post annoucement", function(done){
@@ -286,7 +340,13 @@ describe('Test the privilege for Coordinator', function(){
                             content: 'Announcement4TestCoordinator'
                         }
                     }).then(function(){
-                        done();
+                        UserHistory.destroy({
+                            where: {
+                                content: 'Announcement4TestCoordinator'
+                            }
+                        }).then(function(){
+                            done();
+                        })
                     })
                 });
             });
@@ -311,6 +371,8 @@ describe('Test the privilege for Coordinator', function(){
 
 describe('Test the privilege for Monitor', function(){
 // add a citizen, login with this user.
+    var userId;
+
     before(function(done){
         User.create({
             username : 'Monitor4Test',
@@ -318,6 +380,7 @@ describe('Test the privilege for Monitor', function(){
             createdAt: 123,
             privilege: 'Monitor',
         }).then(function(user){
+            userId = user.id;
             // login the system using the admin account,
             server
                 .post("/users/Monitor4Test")
@@ -330,35 +393,31 @@ describe('Test the privilege for Monitor', function(){
     });
 
     it('modify the profile without enough privilege', function(done) {
-        server
-            .post('/admin/' + 'SSNAdmin')
-            .send({
-                username: 'Admin4Test',
-                accountStatus: 'INACTIVE',
-                password: '123',
-                privilege: 'Monitor',
-            })
-            .end(function(err, res){
-                // 441 means no enough privilege.
-                res.status.should.equal(441);
-                done();
-            });
+        User.findOne({
+            where: {username : 'Monitor4Test',}
+        }).then(function(originalUser){
+            server
+                .post('/admin/' + userId)
+                .send({
+                    username: 'Admin4Test',
+                    accountStatus: 'INACTIVE',
+                    password: '123',
+                    privilege: 'Monitor',
+                })
+                .end(function(err, res){
+                    res.status.should.equal(441);
+                    User.findOne({
+                        where: {id: userId}
+                    }).then(function(user){
+                        user.username.should.equal(originalUser.username);
+                        user.accountStatus.should.equal(originalUser.accountStatus);
+                        user.password.should.equal(originalUser.password);
+                        user.privilege.should.equal(originalUser.privilege);
+                        done();
+                    });
+                });
+        });
     });
-
-    it('no privilege to post an annoucement', function(done){
-        server
-            .post('/announcements')
-            .send({
-                author: 'Monitor4Test',
-                content: 'Monitor4TestAdmin',
-                timestamp: 123456,
-                location: null
-            })
-            .end(function(err, res){
-                res.status.should.equal(441);
-                done();
-            });
-    }).timeout(5000);
 
 
     after(function(done) {

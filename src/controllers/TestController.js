@@ -17,6 +17,9 @@ var maxAllowedMessages = 1000;
 //param: delayAmount the number of milliseconds that the system wants to delay for  
 function delay(delayAmount){
     var endTime = (new Date().getTime()) + delayAmount;
+    var now = new Date().getTime();
+    var dt = endTime - now;
+    // defer the execution of anonymous function for dt
     while(new Date().getTime() < endTime){
 	//spin
     }//while
@@ -29,29 +32,31 @@ function delay(delayAmount){
 //param: the post to for the message
 //param: a refrence to the io controller
 //param: the db that the messages are being added to 
-exports.testPutMessages = function(testLength,interval,user,post,io,db){
+exports.testPutMessages = function(testLength,interval,user,post,io,db,appRunning,socket){
     var start = new Date().getTime();
     var postEnd = start + testLength;
     var postMessages = 0.0;
     var now = new Date().getTime();
-    while(now < postEnd){
+    while(now < postEnd && !appRunning[0]){
+	console.log("appRunning:"+appRunning[0]);
 	console.log("put timeRemaning:"+(postEnd-now));
 	//publish the message
+	/*
 	PublicMessage.create({
 		author: user.id,
 		    content: "12345678901234567890",
 		    postedAt : new Date().getTime(),
 		    });
-	
+	*/
 	post.author = user.username;
-	io.emit('public chat', post);
+	//	io.emit('public chat', post);
 	delay(interval);
 	//do profiling 
 	postMessages = postMessages +1.0;
 	if(postMessages > maxAllowedMessages){
 	    socket.emit('error_test',{error:'maxAllowed'});
-	    //TODO reenable the system 
 	    db.run("DELETE FROM public_message WHERE content ='12345678901234567890'");
+	    appRunning[0] = true;
 	    return;
 	}//if
 		    now = new Date().getTime();
@@ -69,12 +74,12 @@ exports.testPutMessages = function(testLength,interval,user,post,io,db){
 //param: post
 //param: io
 //param: db
-exports.testGetMessages = function(testLength,interval,user,post,io,db){
+exports.testGetMessages = function(testLength,interval,user,post,io,db,appRunning,socket){
     var start = new Date().getTime();
     var putEnd = start + testLength;
     var getMessages = 0.0;
     var now = new Date().getTime();
-    while(now < putEnd){
+    while(now < putEnd && !appRunning[0]){
 	console.log("get timeRemaning:"+(putEnd-now));
 	delay(interval);
 	//todo read
@@ -85,5 +90,8 @@ exports.testGetMessages = function(testLength,interval,user,post,io,db){
     var TimeEnd = Date.now();
     var timeDiff = TimeEnd - start;
     var throughput = (1000.0*getMessages)/timeDiff;
+    //removes all elements from the history 
+    db.run("DELETE FROM public_message WHERE content ='12345678901234567890'");
+    
     return throughput;
 };//testGetMessages

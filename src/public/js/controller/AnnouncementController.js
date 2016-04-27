@@ -30,8 +30,11 @@ MyApp.angular.controller('AnnouncementController',
             function loadAnnouncements(data) {
                 $scope.announcements = [];
                 for (var i = 0; i<data.length; i++) {
-                    data[i].dateFormat = dateFormat(data[i].timestamp);
-                    $scope.announcements.unshift(data[i]);
+                    var u = UserService.getByUsername(data[i].author);
+                    if(u && u.accountStatus === 'ACTIVE') {
+                        data[i].dateFormat = dateFormat(data[i].timestamp);
+                        $scope.announcements.unshift(data[i]);
+                    }
                 }
             }
 

@@ -8,21 +8,14 @@ MyApp.angular.factory('MessageService', ['$document', '$http', '$q', 'UserServic
     var messageStorage = {};
 
     pub.getMessages = function(uid) {
-        var defer = $q.defer();
-        if(messageStorage[uid] !== undefined) {
-            defer.resolve(messageStorage[uid]);
-            return defer.promise;
-        }
-        else {
-            var targetUserName = UserService.getById(uid).username;
-            var q = $http.get("/messages/private/" + UserService.currentUser.username + "/" + targetUserName)
-                .then(function(data){
-                messageStorage[uid] = data.data;
-                return messageStorage[uid];
-            });
+        var targetUserName = UserService.getById(uid).username;
+        var q = $http.get("/messages/private/" + UserService.currentUser.username + "/" + targetUserName)
+            .then(function(data){
+            messageStorage[uid] = data.data;
+            return messageStorage[uid];
+        });
 
-            return q;
-        }
+        return q;
     }
 
     pub.add = function(msg) {

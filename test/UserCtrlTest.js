@@ -102,7 +102,7 @@ describe('User Register Test',function() {
             .end(function(){
                 done();
             });
-    }).timeout(5000);
+    });
 
     after(function(done) {
         server

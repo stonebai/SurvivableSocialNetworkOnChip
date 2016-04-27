@@ -23,6 +23,9 @@ router.post('/:uid', function(req, res) {
     o.accountStatus = req.body.accountStatus;
     o.privilege = req.body.privilege;
 
+    // user can not change itself's privilege
+    console.log(req.session.user.id);
+
     if(!o.username || o.username.length === 0) {
         return responseFormatError(res, 'Username could not be empty.');
     }
@@ -46,40 +49,61 @@ router.post('/:uid', function(req, res) {
         return responseFormatError(res, 'Invalid account status');
     }
 
-    User.findOne({
+    // find the number of admins.
+    User.findAll({
         where: {
-            username: o.username,
-            id: {
-                $ne: uid
+            privilege : "Administrator",
+            accountStatus : 'ACTIVE',
+        }
+    }).then(function(admins){
+        User.findOne({
+            where: {
+                username: o.username,
+                id: {
+                    $ne: uid
+                }
             }
-        }
-    }).then(function(existUser) {
-        if(existUser) {
-            return res.status(405).json({msg: "The username has been used."});
-        }
-        else {
-            User.findOne({
-                where : {id: uid}
-            }).then(function(user){
-                if(!user) {
-                    return res.status(406).json({msg: "The user does not exist"});
-                }
-                else {
-                    user.update(o).then(function(data){
-                        data.password = undefined;
-                        if(data.accountStatus === 'INACTIVE') {
-                            UserDict.sendTo(uid, 'become inactive', {});
+        }).then(function(existUser) {
+            if(existUser) {
+                return res.status(405).json({msg: "The username has been used."});
+            }
+            else {
+                User.findOne({
+                    where : {id: uid}
+                }).then(function(user){
+                    if(!user) {
+                        return res.status(406).json({msg: "The user does not exist"});
+                    }
+                    else {
+                        // at least one admin
+                        if(req.session.user.id == uid) {
+                            if(o.privilege != 'Administrator' || o.accountStatus == 'INACTIVE') {
+                                if (!admins || admins.length <= 1) {
+                                    console.log("You are the only Administrator");
+                                    return res.status(403).json({msg: "WARNING: You are the only Administrator There should be at least one Administrator"});
+                                }
+                            }
                         }
-                        io.emit('user update', data);
-                        return res.status(200).json(data);
 
-                    }, function(){
-                        return res.status(440).json({msg: 'db update error'});
-                    });
-                }
-            });
-        }
+                        user.update(o).then(function(data){
+                            data.password = undefined;
+                            if(data.accountStatus === 'INACTIVE') {
+                                UserDict.sendTo(uid, 'become inactive', {});
+                            }
+                            io.emit('user update', data);
+                            return res.status(200).json(data);
+
+                        }, function(){
+                            return res.status(440).json({msg: 'db update error'});
+                        });
+                    }
+                });
+            }
+        });
+
     });
+
+
 
 });
 

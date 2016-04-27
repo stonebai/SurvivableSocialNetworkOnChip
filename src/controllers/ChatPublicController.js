@@ -36,11 +36,13 @@ router.post('/:fromUserName', function(req, res){
                 author: user.id,
                 postedAt: parseInt(req.body.postedAt)
             }).then(function(message){
+                var historyContent = req.body.content;
+                console.log(historyContent);
                 router.UserHistroy.create({
                     timestamp: new Date(),
                     username: req.params.fromUserName,
                     type: 3,
-                    content: 'said: ' + req.body.content + ' in public chat'
+                    content: historyContent
                 }).then(function() {
                     res.status(201).json(message);
                 });

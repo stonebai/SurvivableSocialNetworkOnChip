@@ -269,17 +269,6 @@
                     </div>
                 </div>
 
-		<!-- History Page -->
-		<div data-page="userHistory" class="page cached">
-                  <div class="page-content">
-                        <h1>History </h1>
-			<div class="historyPost" id="history_messages">                     
-			</div>
-                  </div>
-                </div>
-
-
-
                 <!------------------------------------------------------- system Test ----------------------------------------------->
 	        <div data-page="test" class="page" ng-controller="SystemTestController">                      
                 <div class="page-content">                                                              
@@ -308,7 +297,11 @@
 			  </div>                                                                        
                         </li>
                         <a href="#" class="button button-big button-fill"
-                           ng-click="onClickTestButton()">Search Now!</a>
+                           ng-click="onClickTestButton()">Test Now!</a>
+			<!-- we need to be able to stop a test after it has started for the alternative flow -->
+                        <a href="#" class="button button-big button-fill"
+                           ng-click="onClickStopTestButton()">Stop Test</a>
+
                       </ul>
                     </div>                                                                              
                   </div>                                                                                
@@ -438,20 +431,20 @@
                     <div class="page-content">
                         <div class="content-block-title">Search Results ({{ results.length }} items) </div>
                         <div class="list-block media-list" ng-if="isMediaList">
-                            <ul>
-                                <li ng-repeat="m in results">
-                                    <a href="#" class="item-link item-content" ng-click="showDetailMesssage(m)">
-                                        <div class="item-inner">
-                                            <div class="item-title-row">
-                                                <div class="item-title" ng-bind="m.sender"></div>
-                                                <div class="item-after" ng-bind="m.time"></div>
-                                            </div>
-                                            <div class="item-text" ng-bind="m.content"></div>
+                        <ul>
+                            <li ng-repeat="m in results">
+                                <a href="#" class="item-link item-content" ng-click="showDetailMesssage(m)">
+                                    <div class="item-inner">
+                                        <div class="item-title-row">
+                                            <div class="item-title" ng-bind="m.sender"></div>
+                                            <div class="item-after" ng-bind="m.time"></div>
                                         </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                                        <div class="item-text" ng-bind="m.content"></div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
                         <div class="list-block" ng-if="!isMediaList">
                             <ul>
@@ -612,6 +605,28 @@
                     </div>
                 </div>
 
+                <div data-page="history" class="page cached" ng-controller="HistoryController">
+                    <div class="page-content">
+                        <div class="content-block-title">{{ username }}'s History</div>
+                        <div class="list-block media-list">
+                            <ul>
+                                <li ng-repeat="m in results">
+                                    <a href="#" class="item-link item-content" ng-click="showDetailMesssage(m)">
+                                        <div class="item-inner">
+                                            <div class="item-title-row">
+                                                <div class="item-title" ng-bind="m.type"></div>
+                                                <div class="item-after" ng-bind="m.time"></div>
+                                            </div>
+                                            <div class="item-text" ng-bind="m.content"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div data-page="admin_edit" class="page cached" ng-controller="AdminEditController">
                     <div class="page-content">
                         <div class="row">
@@ -626,7 +641,7 @@
                         </div>
                         <form  id="admin-edit-form" class="list-block" style="margin:4px;">
                             <ul>
-                                <li>
+                                <li class="account-status-list-item">
                                     <div class="item-content">
                                         <div class="item-inner">
                                             <div class="item-title label color-cyan">AccountStatus</div>
@@ -636,7 +651,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li>
+                                <li class="privilege-list-item">
                                     <div class="item-content">
                                         <div class="item-inner">
                                             <div class="item-title label color-cyan">Privilege</div>
@@ -819,7 +834,7 @@
     <script type="text/javascript" src="/public/js/controller/ProfileController.js"></script>
     <script type="text/javascript" src="/public/js/controller/EditProfileController.js"></script>
     <script type="text/javascript" src="/public/js/controller/AdminEditController.js"></script>
-
+    <script type="text/javascript" src="/public/js/controller/HistoryController.js"></script>
     <script type="text/javascript" src="/public/js/controller/AgencyContactController.js"></script>
 
 </body>

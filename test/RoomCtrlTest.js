@@ -8,6 +8,7 @@ var Room = require("../src/models/Room");
 var server = supertest.agent("http://localhost:4000");
 
 describe('Test Room RESTful APIs: GET /room/rooms/:username', function() {
+    this.timeout(10000);
     before(function(done) {
         server
             .post("/users/User4Test")
